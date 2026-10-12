@@ -5,7 +5,7 @@ import type { ErrorResponse, HealthResponse } from '@ecommerce/contracts';
 import { errorHandler } from './middleware/error-handler.js';
 
 type GatewayOptions = Pick<GatewayEnvironment, 'CATALOG_SERVICE_URL' | 'CATALOG_REQUEST_TIMEOUT_MS'>
-  & Partial<Pick<GatewayEnvironment, 'AUTH_SERVICE_URL' | 'AUTH_REQUEST_TIMEOUT_MS' | 'CART_SERVICE_URL' | 'CART_REQUEST_TIMEOUT_MS' | 'ORDERS_SERVICE_URL' | 'ORDERS_REQUEST_TIMEOUT_MS'>>;
+  & Partial<Pick<GatewayEnvironment, 'AUTH_SERVICE_URL' | 'AUTH_REQUEST_TIMEOUT_MS' | 'CART_SERVICE_URL' | 'CART_REQUEST_TIMEOUT_MS' | 'ORDERS_SERVICE_URL' | 'ORDERS_REQUEST_TIMEOUT_MS' | 'INVENTORY_SERVICE_URL' | 'INVENTORY_REQUEST_TIMEOUT_MS'>>;
 
 export function createApp(options: GatewayOptions = loadGatewayEnvironment({})) {
   const app = express();
@@ -17,6 +17,7 @@ export function createApp(options: GatewayOptions = loadGatewayEnvironment({})) 
   });
 
   const upstreams = {
+    Inventory: { url: options.INVENTORY_SERVICE_URL ?? 'http://127.0.0.1:4005', timeout: options.INVENTORY_REQUEST_TIMEOUT_MS ?? 10000 },
     Catalog: { url: options.CATALOG_SERVICE_URL, timeout: options.CATALOG_REQUEST_TIMEOUT_MS },
     Auth: { url: options.AUTH_SERVICE_URL ?? 'http://127.0.0.1:4000', timeout: options.AUTH_REQUEST_TIMEOUT_MS ?? 3000 },
     Orders: { url: options.ORDERS_SERVICE_URL ?? 'http://127.0.0.1:4003', timeout: options.ORDERS_REQUEST_TIMEOUT_MS ?? 10000 },
@@ -62,6 +63,10 @@ export function createApp(options: GatewayOptions = loadGatewayEnvironment({})) 
 
   app.post('/orders', body, forward('Orders'));
   app.get(['/orders', '/orders/:id'], forward('Orders'));
+
+  app.get('/inventory/:productId', forward('Inventory'));
+  app.put('/inventory/:productId', body, forward('Inventory'));
+  app.post(['/inventory/reservations', '/inventory/reservations/:orderId/confirm', '/inventory/reservations/:orderId/release'], body, forward('Inventory'));
 
   app.get('/cart', forward('Cart'));
   app.post('/cart/items', body, forward('Cart'));

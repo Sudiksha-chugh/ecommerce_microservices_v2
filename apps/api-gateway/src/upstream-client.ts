@@ -6,7 +6,7 @@ export class UpstreamRequestError extends Error {
 
 export async function requestUpstream(origin: string, path: string, timeoutMs: number,
   options: { method: string; body?: string; contentType?: string; authorization?: string; idempotencyKey?: string } = { method: 'GET' },
-  service: 'Catalog' | 'Auth' | 'Cart' | 'Orders' = 'Catalog',
+  service: 'Catalog' | 'Auth' | 'Cart' | 'Orders' | 'Inventory' = 'Catalog',
 ) {
   const controller = new AbortController();
   // Keep the deadline active until the full response body has been read.
