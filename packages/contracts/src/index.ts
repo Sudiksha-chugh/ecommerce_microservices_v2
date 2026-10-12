@@ -1,6 +1,6 @@
 export interface HealthResponse {
   status: 'ok';
-  service: 'api-gateway' | 'catalog-service' | 'auth-service' | 'cart-service' | 'orders-service';
+  service: 'api-gateway' | 'catalog-service' | 'auth-service' | 'cart-service' | 'orders-service' | 'inventory-service';
 }
 
 export interface ErrorResponse {
@@ -33,3 +33,10 @@ export interface OrderSummary {
   createdAt: string; updatedAt: string;
 }
 export interface Order extends OrderSummary { items: OrderItem[] }
+
+export interface InventoryStock { productId: string; totalStock: number; reservedStock: number; availableStock: number }
+export type ReservationStatus = 'RESERVED' | 'CONFIRMED' | 'RELEASED' | 'EXPIRED';
+export interface ReservationGroup {
+  orderId: string; status: ReservationStatus; expiresAt: string;
+  items: Array<{ id: string; productId: string; quantity: number; status: ReservationStatus; expiresAt: string }>;
+}

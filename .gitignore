@@ -13,3 +13,4 @@ coverage/
 *.key
 !.env.cart.example
 !.env.orders.example
+!.env.inventory.example

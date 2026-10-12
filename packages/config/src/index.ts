@@ -23,6 +23,8 @@ const gatewayEnvironmentSchema = z.object({
   HOST: host.default('127.0.0.1'),
   PORT: port.default(3000),
   CATALOG_SERVICE_URL: upstreamOrigin.default('http://127.0.0.1:4001'),
+  INVENTORY_SERVICE_URL: upstreamOrigin.default('http://127.0.0.1:4005'),
+  INVENTORY_REQUEST_TIMEOUT_MS: z.coerce.number().int().min(1).max(120000).default(10000),
   ORDERS_SERVICE_URL: upstreamOrigin.default('http://127.0.0.1:4003'),
   ORDERS_REQUEST_TIMEOUT_MS: z.coerce.number().int().min(1).max(120000).default(10000),
   CART_SERVICE_URL: upstreamOrigin.default('http://127.0.0.1:4002'),
@@ -137,6 +139,31 @@ export function loadOrdersEnvironment(environment: NodeJS.ProcessEnv = process.e
   if (!result.success) {
     const issues = result.error.issues.map((issue) => `${issue.path.join('.')}: ${issue.message}`);
     throw new Error(`Invalid Orders Service environment: ${issues.join('; ')}`);
+  }
+  return result.data;
+}
+
+const inventoryEnvironmentSchema = z.object({
+  ...commonEnvironment, ...jwtEnvironment,
+  INVENTORY_HOST: host.default('127.0.0.1'), INVENTORY_PORT: port.default(4005),
+  INVENTORY_PGHOST: host.default('127.0.0.1'), INVENTORY_PGPORT: port.default(5432),
+  INVENTORY_PGDATABASE: z.literal('inventory_db').default('inventory_db'),
+  INVENTORY_PGUSER: z.string().min(1).default('inventory_user'), INVENTORY_PGPASSWORD: z.string().min(1),
+  INVENTORY_PGPOOL_MAX: z.coerce.number().int().min(1).max(50).default(10),
+  INVENTORY_PGCONNECT_TIMEOUT_MS: z.coerce.number().int().min(1).max(30000).default(2000),
+  INVENTORY_PGQUERY_TIMEOUT_MS: z.coerce.number().int().min(1).max(30000).default(2000),
+  CATALOG_SERVICE_URL: upstreamOrigin.default('http://127.0.0.1:4001'),
+  CATALOG_REQUEST_TIMEOUT_MS: z.coerce.number().int().min(1).max(120000).default(2000),
+  RESERVATION_TTL_SECONDS: z.coerce.number().int().min(1).max(604800).default(900),
+  EXPIRATION_WORKER_INTERVAL_MS: z.coerce.number().int().min(50).max(60000).default(5000),
+  EXPIRATION_WORKER_BATCH_SIZE: z.coerce.number().int().min(1).max(500).default(100),
+});
+export type InventoryEnvironment = z.infer<typeof inventoryEnvironmentSchema>;
+export function loadInventoryEnvironment(environment: NodeJS.ProcessEnv = process.env): InventoryEnvironment {
+  const result = inventoryEnvironmentSchema.safeParse(environment);
+  if (!result.success) {
+    const issues = result.error.issues.map((issue) => `${issue.path.join('.')}: ${issue.message}`);
+    throw new Error(`Invalid Inventory Service environment: ${issues.join('; ')}`);
   }
   return result.data;
 }
