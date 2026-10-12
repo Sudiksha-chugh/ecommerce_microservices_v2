@@ -1,6 +1,6 @@
 # ecommerce-microservices-v2
 
-Phase 7: Orders creates and persists owner-scoped order snapshots in `orders_db`. Catalog owns product CRUD and `catalog_db`; Auth owns registration, login, RS256 access tokens, and `auth_db`; Cart owns Redis-backed authenticated carts. Gateway forwards HTTP requests and never connects to PostgreSQL. Public product reads remain unchanged; product writes require an admin JWT. Remaining services are placeholders.
+Phase 8: Inventory owns stock and atomic, expiring reservations in `inventory_db`. Orders creates and persists owner-scoped order snapshots in `orders_db`. Catalog owns product CRUD and `catalog_db`; Auth owns registration, login, RS256 access tokens, and `auth_db`; Cart owns Redis-backed authenticated carts. Gateway forwards HTTP requests and never connects to PostgreSQL. Public product reads remain unchanged; product writes require an admin JWT. Remaining services are placeholders.
 
 ## Requirements and setup
 
@@ -14,9 +14,10 @@ cp .env.example .env
 cp .env.auth.example .env.auth
 cp .env.cart.example .env.cart
 cp .env.orders.example .env.orders
+cp .env.inventory.example .env.inventory
 ```
 
-Set non-empty `PGPASSWORD` and `CATALOG_TEST_PASSWORD` in `.env`, and independent `AUTH_PGPASSWORD` and `AUTH_TEST_PASSWORD` in `.env.auth`, and `ORDERS_PGPASSWORD` and `ORDERS_TEST_PASSWORD` in `.env.orders`. Passwords have no defaults. All local environment files are ignored by Git. Auth loads only `.env.auth`; Cart loads only `.env.cart`; Orders loads only `.env.orders`; Catalog and Gateway load `.env`. Keep private-key settings and Auth credentials out of `.env`. Compose creates separate development and test databases and roles; test roles cannot connect to development databases.
+Set non-empty `PGPASSWORD` and `CATALOG_TEST_PASSWORD` in `.env`, and independent `AUTH_PGPASSWORD` and `AUTH_TEST_PASSWORD` in `.env.auth`, and `ORDERS_PGPASSWORD` and `ORDERS_TEST_PASSWORD` in `.env.orders`. Set independent `INVENTORY_PGPASSWORD` and `INVENTORY_TEST_PASSWORD` in `.env.inventory`. Passwords have no defaults. All local environment files are ignored by Git. Auth loads only `.env.auth`; Cart loads only `.env.cart`; Orders loads only `.env.orders`; Inventory loads only `.env.inventory`; Catalog and Gateway load `.env`. Keep private-key settings and Auth credentials out of `.env`. Compose creates separate development and test databases and roles; test roles cannot connect to development databases.
 
 ```sh
 npm run db:up
@@ -26,6 +27,8 @@ npm run db:seed
 npm run auth:migrate
 npm run db:provision-orders # also required when upgrading an existing volume
 npm run orders:migrate
+npm run db:provision-inventory # required when upgrading an existing volume
+npm run inventory:migrate
 ```
 
 Compose runs PostgreSQL 17 and Redis 8, bound to localhost, each with a persistent named volume. Redis uses append-only persistence with fsync every second. Its small Dockerfile copies the test-database initialization script with explicit permissions. Automatic initialization runs only on a fresh volume; `npm run db:provision-auth` also provisions the Auth databases on an existing volume without deleting Catalog data. It skips existing roles/databases and does not reset passwords. Changing `.env` passwords does not change existing database credentials; update them in PostgreSQL when retaining an existing volume. `docker compose stop` stops PostgreSQL while preserving data.
@@ -55,10 +58,11 @@ npm run dev:catalog
 npm run dev:auth
 npm run dev:cart
 npm run dev:orders
+npm run dev:inventory
 npm run dev:gateway
 ```
 
-Without watch mode, use `npm run start:catalog` and `npm run start:gateway`. `npm run dev` and `npm start` remain gateway aliases. Gateway and Catalog load the root `.env`; Auth loads only `.env.auth`; Cart loads only `.env.cart`; Orders loads only `.env.orders`. Use `npm run start:auth` without watch mode. Generate local keys as documented below before starting Auth, Catalog, Cart, or Orders.
+Without watch mode, use `npm run start:catalog` and `npm run start:gateway`. `npm run dev` and `npm start` remain gateway aliases. Gateway and Catalog load the root `.env`; Auth loads only `.env.auth`; Cart loads only `.env.cart`; Orders loads only `.env.orders`. Use `npm run start:auth` without watch mode. Generate local keys as documented below before starting Auth, Catalog, Cart, Orders, or Inventory.
 
 ```sh
 curl http://127.0.0.1:4001/health
@@ -174,7 +178,7 @@ See [ADR 003](docs/adr/003-authentication-and-authorization.md) for security and
 
 ## Redis and Cart Service
 
-Run `npm run db:up` to start both infrastructure services, or `npm run redis:up` to start only Redis. Redis data lives in the `cart_redis_data` named volume. `docker compose --env-file .env --env-file .env.auth --env-file .env.orders stop redis` preserves carts. No orders, checkout, prices, inventory reservations, or Catalog/Auth database access is part of Cart.
+Run `npm run db:up` to start both infrastructure services, or `npm run redis:up` to start only Redis. Redis data lives in the `cart_redis_data` named volume. `docker compose --env-file .env --env-file .env.auth --env-file .env.orders --env-file .env.inventory stop redis` preserves carts. No orders, checkout, prices, inventory reservations, or Catalog/Auth database access is part of Cart.
 
 ```sh
 npm run redis:up
@@ -296,9 +300,80 @@ A key names one immutable checkout attempt for one authenticated user. Completed
 
 For a fresh key, the checkout snapshot consists of product UUIDs, original product names, authoritative unit prices, cart quantities, computed line totals, and final total. Canonically sorted items plus a version marker are SHA-256 hashed into `request_fingerprint`. Database uniqueness is the final race guard. If first attempts overlap, the losing transaction rolls back/releases its client, then loads the winning order. Identical snapshots replay it; different snapshots return 409. Thus a completed retry and competing first attempts have distinct semantics. Because the valid POST body carries no checkout data, it cannot distinguish an intentional new checkout from a retry using a completed key: clients must use a new key for new intent.
 
-Cart contents and Catalog products remain unchanged. Persisted names/prices/totals are used for historical reads, so later Catalog changes cannot rewrite past orders. Cart clearing, inventory reservations, and payments require later checkout orchestration and are deliberately absent. JWTs retain the existing until-expiry account-change limitations.
+Cart contents and Catalog products remain unchanged. Persisted names/prices/totals are used for historical reads, so later Catalog changes cannot rewrite past orders. Orders does not invoke Inventory yet; cart clearing and payments require later checkout orchestration. JWTs retain the existing until-expiry account-change limitations.
 
 Orders integration tests use real `orders_test_db` as `orders_test_user`, validate identity, migrate into a random schema, and drop only that schema. They use ephemeral JWT keys and local Cart/Catalog HTTP fixtures, so development carts/products/orders are untouched. Coverage includes atomic rollback, database constraints/failures, exact money boundaries, ownership, pagination, idempotent concurrency and conflicts, changed-cart replays, and bounded dependency failures. Run `npm run typecheck` and `npm test` after starting infrastructure and provisioning all test databases. See [ADR 005](docs/adr/005-orders-and-idempotency.md).
+
+## Inventory Service (Phase 8)
+
+Inventory runs independently on port 4005, owns `inventory_db` with a non-superuser `inventory_user`, and checks product existence through Catalog HTTP when stock is initialized or replaced. It never reads other service databases. Gateway only forwards HTTP. Orders and Cart do not call Inventory in this phase; inventory is not automatically created when Catalog products are created.
+
+Copy `.env.inventory.example` to `.env.inventory`, set independent development/test passwords, and retain matching JWT issuer, audience, and public key settings. Inventory loads only this file and never imports the private signing key. Run:
+
+```sh
+npm run db:up
+npm run db:provision-inventory
+npm run inventory:migrate
+npm run start:inventory # or npm run dev:inventory
+npm run start:gateway
+npm run typecheck
+npm test
+```
+
+Provisioning is repeatable and preserves existing volumes/data. Fresh volumes provision all four database domains automatically. Migrations use a checksum-tracked `schema_migrations` table and an advisory transaction lock; they run explicitly, never as automatic schema synchronization. Inventory integration tests hardcode `inventory_test_db` / `inventory_test_user`, assert the connection identity, migrate into a random schema, and drop only that schema. The test role is denied access to all development databases. `INVENTORY_TEST_PASSWORD` is required for tests.
+
+Environment defaults in `.env.inventory.example`:
+
+- `INVENTORY_HOST=127.0.0.1`, `INVENTORY_PORT=4005`.
+- `INVENTORY_PGHOST=127.0.0.1`, `INVENTORY_PGPORT=5432`, owning `INVENTORY_PGDATABASE=inventory_db`, `INVENTORY_PGUSER=inventory_user`, required `INVENTORY_PGPASSWORD`.
+- Pool maximum 10 (`INVENTORY_PGPOOL_MAX`, limit 50); connection and query deadlines 2000 ms (`INVENTORY_PGCONNECT_TIMEOUT_MS`, `INVENTORY_PGQUERY_TIMEOUT_MS`), idle timeout 10 seconds.
+- `CATALOG_SERVICE_URL=http://127.0.0.1:4001`, `CATALOG_REQUEST_TIMEOUT_MS=2000`.
+- `JWT_ISSUER`, `JWT_AUDIENCE`, `JWT_PUBLIC_KEY_FILE` match Auth; only the public key is needed.
+- `RESERVATION_TTL_SECONDS=900` (1–604800), `EXPIRATION_WORKER_INTERVAL_MS=5000` (50–60000), `EXPIRATION_WORKER_BATCH_SIZE=100` (1–500), `SHUTDOWN_TIMEOUT_MS=10000`.
+
+Gateway `.env` uses `INVENTORY_SERVICE_URL=http://127.0.0.1:4005` and `INVENTORY_REQUEST_TIMEOUT_MS=10000`. All settings are validated with Zod. For another PostgreSQL host port, update Inventory and Orders port settings alongside Catalog/Auth.
+
+Endpoints are available directly on 4005 and through Gateway on 3000:
+
+- `GET /health`: process liveness, without database dependency (direct service endpoint).
+- `GET /inventory/:productId`: public stock only; 200 with `{productId,totalStock,reservedStock,availableStock}`.
+- `PUT /inventory/:productId`: admin-only absolute replacement of unconsumed `totalStock`; 200 with stock. This is not an increment. Catalog must contain the product; reductions below reserved stock return 409.
+- `POST /inventory/reservations`: admin-only; 201 with an order reservation group, including on identical replay.
+- `POST /inventory/reservations/:orderId/confirm`: admin-only; 200 with confirmed group, including stable repeated confirmation.
+- `POST /inventory/reservations/:orderId/release`: admin-only; 200 with released group, including stable repeated release.
+
+```sh
+# Set PRODUCT_ID to an existing Catalog UUID and ORDER_ID to a new UUID.
+curl -X PUT "http://127.0.0.1:3000/inventory/$PRODUCT_ID" \
+  -H "Authorization: Bearer $ADMIN_TOKEN" -H 'Content-Type: application/json' \
+  -d '{"totalStock":10}'
+# {"productId":"<uuid>","totalStock":10,"reservedStock":0,"availableStock":10}
+curl "http://127.0.0.1:3000/inventory/$PRODUCT_ID"
+curl -X POST http://127.0.0.1:3000/inventory/reservations \
+  -H "Authorization: Bearer $ADMIN_TOKEN" -H 'Content-Type: application/json' \
+  -d "{\"orderId\":\"$ORDER_ID\",\"items\":[{\"productId\":\"$PRODUCT_ID\",\"quantity\":2}]}"
+# 201: {"orderId":"<uuid>","status":"RESERVED","expiresAt":"<ISO timestamp>",
+#       "items":[{"id":"<reservation uuid>","productId":"<uuid>","quantity":2,
+#                 "status":"RESERVED","expiresAt":"<same ISO timestamp>"}]}
+curl -X POST "http://127.0.0.1:3000/inventory/reservations/$ORDER_ID/confirm" \
+  -H "Authorization: Bearer $ADMIN_TOKEN"
+# 200, status CONFIRMED; totalStock=8, reservedStock=0, availableStock=8.
+# For another RESERVED order, use /release; totalStock remains unchanged.
+```
+
+UUIDs normalize to lowercase. Stock and quantities are JSON integers within PostgreSQL INTEGER bounds (0–2147483647 for stock, 1–2147483647 for quantities). A reservation requires 1–100 items, unique normalized product IDs, and an order UUID. Unknown fields are rejected. Confirm/release accept no body or an empty JSON object. Missing/invalid JWTs return 401; customer JWTs return 403. Every write verifies the RS256 signature, issuer, audience, expiration, and UUID subject independently. User-supplied service headers never grant privileges. Secure internal service identity is deferred until checkout integration; reservation access is admin-only now.
+
+`inventory` enforces non-negative total/reserved stock and `reserved_stock <= total_stock`. `total_stock` means stock not yet consumed by confirmed reservations; available stock is always `total_stock - reserved_stock`. Reserving 3 of 10 yields 10/3/7. Confirming yields 7/0/7; releasing yields 10/0/10. The reservation ledger has generated UUIDs, positive quantities, constrained statuses, unique order/product pairs, timestamps, and only local foreign keys. Indexes support status/expiry, order, and product lookups. `inventory_reservation_requests` stores the durable whole-order fingerprint and serialization row.
+
+Transactions first lock the order request and then all stock rows in sorted product UUID order. All items are checked before writes; any failure rolls back stock, rows, and fingerprint together. A versioned SHA-256 fingerprint of the sorted normalized product/quantity set makes concurrent identical requests one logical result. Replays preserve reservation IDs and expiry, return the current stored status, and never reserve again, even after terminal states. Changed quantities, added/removed/replaced products for the same order return 409. A failed initial request leaves no fingerprint and can be retried after availability is fixed.
+
+Allowed transitions are RESERVED → CONFIRMED, RELEASED, or EXPIRED. Repeated confirmation/release returns the same persisted result; incompatible terminal transitions return 409. Confirmation rechecks the PostgreSQL clock after stock locks are acquired, so lock waits cannot permit late confirmation. A late confirm/release commits expiration and releases stock, then returns 409. Replay does not revive an expired group.
+
+The worker polls persisted deadlines, claims order request rows with `FOR UPDATE SKIP LOCKED`, locks all affected stock rows in sorted order, and expires complete groups atomically. Multiple service instances cannot release the same stock twice or race a confirmation incorrectly. No in-memory timer defines reservation expiry: the timer only schedules database scans. Worker logs contain counts or generic failures. Shutdown stops scheduling, waits for its active transaction, drains HTTP, and closes the pool. Expired reservations may remain counted as reserved until a worker scan or a late transition expires them; public GET never mutates stock. Batch limits and the interval determine cleanup latency.
+
+Errors: 400 invalid input, 401 invalid/missing token, 403 customer, 404 absent product/inventory/reservation, 409 insufficient stock or incompatible replay/state, 502 unavailable Catalog, 504 Catalog deadline, and sanitized 500 database/internal failures. Gateway preserves these responses and returns 502/504 for Inventory connection/deadline failures.
+
+Tests cover real database constraints and rollback, whole-order idempotency, final-unit contention, many simultaneous reservations, reversed multi-product lock ordering, concurrent stock replacement, confirmation/release races, expiry after lock waits, multiple workers, worker shutdown/failure logging, independent JWT checks, and gateway byte/header/status forwarding. See [ADR 006](docs/adr/006-inventory-reservations.md).
 
 ## Layout and scope
 
@@ -306,6 +381,7 @@ Orders integration tests use real `orders_test_db` as `orders_test_user`, valida
 - `apps/catalog-service`: product API, public-key authorization, repository, migrations, and database tests.
 - `apps/auth-service`: authentication business logic, user repository, RS256 signing, migrations, admin CLI, and tests.
 - `apps/cart-service`: authenticated cart routes, Catalog HTTP client, atomic Redis repository, lifecycle, and tests.
+- `apps/inventory-service`: stock, reservations, PostgreSQL transactions, Catalog HTTP client, public-key admin authorization, expiration worker, migrations, and tests.
 - `apps/orders-service`: authenticated order creation/history, snapshot business logic, PostgreSQL transactions, migrations, and tests.
 - `packages/security`: shared public-key JWT verification; no signing or private-key access.
 - `packages/config`: Zod environment validation.
@@ -313,4 +389,4 @@ Orders integration tests use real `orders_test_db` as `orders_test_user`, valida
 - `compose.yaml` and `infrastructure/docker`: local PostgreSQL and Redis.
 - `docs/adr/002-postgresql-access.md`: raw SQL decision.
 
-OAuth, Auth0, refresh tokens, password reset, email verification, RabbitMQ, inventory, payments, ORM, Kubernetes, and remaining service implementations are outside this phase. Checkout, product price calculations, and inventory reservations are also deferred. Saga orchestration, transactional outbox, and refunds are deferred. Work stops at Phase 7.
+OAuth, Auth0, refresh tokens, password reset, email verification, RabbitMQ, payments, ORM, Kubernetes, and remaining service implementations are outside this phase. Checkout orchestration, transactional outbox, and refunds are deferred. Work stops at Phase 8.
