@@ -1,6 +1,6 @@
 # ecommerce-microservices-v2
 
-Phase 8: Inventory owns stock and atomic, expiring reservations in `inventory_db`. Orders creates and persists owner-scoped order snapshots in `orders_db`. Catalog owns product CRUD and `catalog_db`; Auth owns registration, login, RS256 access tokens, and `auth_db`; Cart owns Redis-backed authenticated carts. Gateway forwards HTTP requests and never connects to PostgreSQL. Public product reads remain unchanged; product writes require an admin JWT. Remaining services are placeholders.
+Phase 9: Payments owns payment intents, durable attempts, and reconciliation in `payments_db`. Its durable mock provider owns a separate database. Inventory owns stock and atomic, expiring reservations in `inventory_db`. Orders creates and persists owner-scoped order snapshots in `orders_db`. Catalog owns product CRUD and `catalog_db`; Auth owns registration, login, RS256 access tokens, and `auth_db`; Cart owns Redis-backed authenticated carts. Gateway forwards HTTP requests and never connects to PostgreSQL. Public product reads remain unchanged; product writes require an admin JWT. Remaining services are placeholders.
 
 ## Requirements and setup
 
@@ -15,9 +15,11 @@ cp .env.auth.example .env.auth
 cp .env.cart.example .env.cart
 cp .env.orders.example .env.orders
 cp .env.inventory.example .env.inventory
+cp .env.payments.example .env.payments
+cp .env.mock-provider.example .env.mock-provider
 ```
 
-Set non-empty `PGPASSWORD` and `CATALOG_TEST_PASSWORD` in `.env`, and independent `AUTH_PGPASSWORD` and `AUTH_TEST_PASSWORD` in `.env.auth`, and `ORDERS_PGPASSWORD` and `ORDERS_TEST_PASSWORD` in `.env.orders`. Set independent `INVENTORY_PGPASSWORD` and `INVENTORY_TEST_PASSWORD` in `.env.inventory`. Passwords have no defaults. All local environment files are ignored by Git. Auth loads only `.env.auth`; Cart loads only `.env.cart`; Orders loads only `.env.orders`; Inventory loads only `.env.inventory`; Catalog and Gateway load `.env`. Keep private-key settings and Auth credentials out of `.env`. Compose creates separate development and test databases and roles; test roles cannot connect to development databases.
+Set non-empty `PGPASSWORD` and `CATALOG_TEST_PASSWORD` in `.env`, and independent `AUTH_PGPASSWORD` and `AUTH_TEST_PASSWORD` in `.env.auth`, and `ORDERS_PGPASSWORD` and `ORDERS_TEST_PASSWORD` in `.env.orders`. Set independent `INVENTORY_PGPASSWORD` and `INVENTORY_TEST_PASSWORD` in `.env.inventory`. Set `PAYMENTS_PGPASSWORD` / `PAYMENTS_TEST_PASSWORD` in `.env.payments` and `MOCK_PGPASSWORD` / `MOCK_TEST_PASSWORD` in `.env.mock-provider` independently. Passwords have no defaults. All local environment files are ignored by Git. Auth loads only `.env.auth`; Cart loads only `.env.cart`; Orders loads only `.env.orders`; Inventory loads only `.env.inventory`; Catalog and Gateway load `.env`. Keep private-key settings and Auth credentials out of `.env`. Compose creates separate development and test databases and roles; test roles cannot connect to development databases.
 
 ```sh
 npm run db:up
@@ -29,6 +31,9 @@ npm run db:provision-orders # also required when upgrading an existing volume
 npm run orders:migrate
 npm run db:provision-inventory # required when upgrading an existing volume
 npm run inventory:migrate
+npm run db:provision-payments
+npm run payments:migrate
+npm run mock-provider:migrate
 ```
 
 Compose runs PostgreSQL 17 and Redis 8, bound to localhost, each with a persistent named volume. Redis uses append-only persistence with fsync every second. Its small Dockerfile copies the test-database initialization script with explicit permissions. Automatic initialization runs only on a fresh volume; `npm run db:provision-auth` also provisions the Auth databases on an existing volume without deleting Catalog data. It skips existing roles/databases and does not reset passwords. Changing `.env` passwords does not change existing database credentials; update them in PostgreSQL when retaining an existing volume. `docker compose stop` stops PostgreSQL while preserving data.
@@ -59,6 +64,8 @@ npm run dev:auth
 npm run dev:cart
 npm run dev:orders
 npm run dev:inventory
+npm run start:mock-provider
+npm run dev:payments
 npm run dev:gateway
 ```
 
@@ -178,7 +185,7 @@ See [ADR 003](docs/adr/003-authentication-and-authorization.md) for security and
 
 ## Redis and Cart Service
 
-Run `npm run db:up` to start both infrastructure services, or `npm run redis:up` to start only Redis. Redis data lives in the `cart_redis_data` named volume. `docker compose --env-file .env --env-file .env.auth --env-file .env.orders --env-file .env.inventory stop redis` preserves carts. No orders, checkout, prices, inventory reservations, or Catalog/Auth database access is part of Cart.
+Run `npm run db:up` to start both infrastructure services, or `npm run redis:up` to start only Redis. Redis data lives in the `cart_redis_data` named volume. `docker compose --env-file .env --env-file .env.auth --env-file .env.orders --env-file .env.inventory --env-file .env.payments --env-file .env.mock-provider stop redis` preserves carts. No orders, checkout, prices, inventory reservations, or Catalog/Auth database access is part of Cart.
 
 ```sh
 npm run redis:up
@@ -320,7 +327,7 @@ npm run typecheck
 npm test
 ```
 
-Provisioning is repeatable and preserves existing volumes/data. Fresh volumes provision all four database domains automatically. Migrations use a checksum-tracked `schema_migrations` table and an advisory transaction lock; they run explicitly, never as automatic schema synchronization. Inventory integration tests hardcode `inventory_test_db` / `inventory_test_user`, assert the connection identity, migrate into a random schema, and drop only that schema. The test role is denied access to all development databases. `INVENTORY_TEST_PASSWORD` is required for tests.
+Provisioning is repeatable and preserves existing volumes/data. Fresh volumes provision all service and mock-provider databases automatically. Migrations use a checksum-tracked `schema_migrations` table and an advisory transaction lock; they run explicitly, never as automatic schema synchronization. Inventory integration tests hardcode `inventory_test_db` / `inventory_test_user`, assert the connection identity, migrate into a random schema, and drop only that schema. The test role is denied access to all development databases. `INVENTORY_TEST_PASSWORD` is required for tests.
 
 Environment defaults in `.env.inventory.example`:
 
@@ -375,12 +382,66 @@ Errors: 400 invalid input, 401 invalid/missing token, 403 customer, 404 absent p
 
 Tests cover real database constraints and rollback, whole-order idempotency, final-unit contention, many simultaneous reservations, reversed multi-product lock ordering, concurrent stock replacement, confirmation/release races, expiry after lock waits, multiple workers, worker shutdown/failure logging, independent JWT checks, and gateway byte/header/status forwarding. See [ADR 006](docs/adr/006-inventory-reservations.md).
 
+## Payments Service (Phase 9)
+
+Payments runs on 4004 and owns `payments_db`; the durable mock provider runs on 4006 and owns `mock_provider_db`. Both use restricted non-superuser roles and separate environment files. No existing orders, inventory, or carts are changed by Payments. Order totals are supplied only by authorized admins for this phase; checkout will derive authoritative amounts later. Reservation orchestration and real payment providers remain deferred.
+
+```sh
+cp .env.payments.example .env.payments
+cp .env.mock-provider.example .env.mock-provider
+# Set independent development/test passwords in both files.
+npm run db:up
+npm run db:provision-payments # required for an existing volume; repeatable
+npm run payments:migrate
+npm run mock-provider:migrate
+# Separate terminals:
+npm run start:mock-provider
+npm run start:payments # or dev:payments
+npm run start:gateway
+npm run typecheck
+npm test
+```
+
+All Compose scripts now load `.env`, `.env.auth`, `.env.orders`, `.env.inventory`, `.env.payments`, and `.env.mock-provider`; copy/configure each example before starting infrastructure. Provisioning preserves existing roles/databases and volumes, does not reset passwords, and denies test roles access to development databases. Payments migrations are checksum-tracked and explicitly applied. The provider schema is version controlled and initialized explicitly; neither server synchronizes schemas at startup.
+
+Payments configuration in `.env.payments`: owning `PAYMENTS_PGDATABASE=payments_db`, `PAYMENTS_PGUSER=payments_user`, required password, host/port defaults 127.0.0.1/5432, `PAYMENTS_HOST=127.0.0.1`, `PAYMENTS_PORT=4004`. Pool maximum defaults to 10 (`PAYMENTS_PGPOOL_MAX`, maximum 50); connection/query deadlines default to 2000 ms (`PAYMENTS_PGCONNECT_TIMEOUT_MS`, `PAYMENTS_PGQUERY_TIMEOUT_MS`), idle timeout 10 seconds. JWT issuer/audience/public-key path must match Auth; no private key is loaded. `MOCK_PROVIDER_URL=http://127.0.0.1:4006`, `PROVIDER_REQUEST_TIMEOUT_MS=2000`, `PAYMENT_LEASE_MS=10000` (must exceed the provider deadline), `RECONCILIATION_INTERVAL_MS=5000`, `RECONCILIATION_BATCH_SIZE=10`, `SHUTDOWN_TIMEOUT_MS=10000`. Gateway `.env` uses `PAYMENTS_SERVICE_URL=http://127.0.0.1:4004` and `PAYMENTS_REQUEST_TIMEOUT_MS=10000`.
+
+The provider loads only `.env.mock-provider`: owning `MOCK_PGDATABASE=mock_provider_db`, `MOCK_PGUSER=mock_provider_user`, required password, `MOCK_PGHOST=127.0.0.1`, `MOCK_PGPORT=5432`, `MOCK_HOST=127.0.0.1`, `MOCK_PORT=4006`, `MOCK_DELAY_MS=3000`. `MOCK_SCENARIO` selects `success`, `decline`, `timeout` (charge commits, then response is delayed), `temporary-failure` (definitive failure), `lost-response` (charge commits, then socket closes), or `ambiguous` (unresolved durable operation). Restart the provider after changing its scenario; saved operations remain unchanged. No scenario/header override is accepted from callers. Keep this local simulator bound to loopback; it is not a real/public provider.
+
+Endpoints through Gateway 3000 or directly on Payments 4004:
+
+- `POST /payments/intents`: admin-only, required visible ASCII `Idempotency-Key` of 1–255 characters. Strict JSON requires order/user UUIDs, positive safe integer `amountPaise`, and `currency: "INR"`. Returns 201 and Location, including on identical replay. Keys are scoped to the authenticated admin; changed input returns 409. PostgreSQL additionally enforces one payment per order and unique owner/key pairs.
+- `POST /payments/:paymentId/process`: admin-only, no body or `{}`. Returns current payment, 202 when another caller holds an active processing claim, otherwise 200. It commits a durable attempt before calling the provider. Repeated processing never creates another charge; uncertain results require reconciliation.
+- `POST /payments/:paymentId/reconcile`: admin-only, no body or `{}`. Queries the original provider operation, returns 200; CREATED payments return 409. Repeated/concurrent reconciliation is safe.
+- `GET /payments/:paymentId`: authenticated; admins can read any payment, customers only their own. Unauthorized/nonexistent records return 404. Public JSON contains paymentId, orderId, status, amountPaise, currency, without provider metadata.
+- `GET /health` directly on 4004: process liveness.
+
+```sh
+curl -i -X POST http://127.0.0.1:3000/payments/intents \
+  -H "Authorization: Bearer $ADMIN_TOKEN" -H 'Idempotency-Key: phase9-example-1' \
+  -H 'Content-Type: application/json' \
+  -d '{"orderId":"11111111-1111-4111-8111-111111111111","userId":"22222222-2222-4222-8222-222222222222","amountPaise":50000,"currency":"INR"}'
+# 201: {"paymentId":"<uuid>","orderId":"<uuid>","status":"CREATED","amountPaise":50000,"currency":"INR"}
+curl -X POST "http://127.0.0.1:3000/payments/$PAYMENT_ID/process" -H "Authorization: Bearer $ADMIN_TOKEN"
+curl -X POST "http://127.0.0.1:3000/payments/$PAYMENT_ID/reconcile" -H "Authorization: Bearer $ADMIN_TOKEN"
+curl "http://127.0.0.1:3000/payments/$PAYMENT_ID" -H "Authorization: Bearer $CUSTOMER_TOKEN"
+```
+
+States: CREATED → PROCESSING → SUCCEEDED / FAILED / REQUIRES_RECONCILIATION. Uncertain payments reconcile to SUCCEEDED / FAILED, or remain uncertain. Terminal states cannot restart or change outcome. Process/reconcile on a terminal payment return its stored result. A lease token fences stale HTTP responses after recovery. The stable provider request ID is persisted on attempt 1 and is never replaced. The mock commits in another database, independently of Payments' local transaction, and uniquely stores request IDs/amounts/currency. Provider retries therefore cannot create a second charge.
+
+Network timeout, provider unavailability, invalid provider data, or a missing provider result remain uncertain; they are never proof that no charge occurred. Reconciliation only queries, never recharges. A provider operation that stays absent/unknown remains REQUIRES_RECONCILIATION until a definitive result or a future operator policy; automatic replacement charging is deliberately absent. Definitive temporary failures are terminal in this single-attempt phase. The bounded worker polls due candidates, claims each under a row lock and database-clock lease, and retries lookups with persisted scheduling. Multiple workers cannot claim an active lease. Graceful shutdown stops scheduling and drains work before pool closure. These guarantees depend on provider idempotency and do not claim exactly-once network delivery.
+
+Errors: 400 invalid input, 401 missing/invalid JWT, 403 customer write attempts, 404 absent/unauthorized payment, 409 conflicting intent or invalid transition, and sanitized 500 internal/database failures. Provider ambiguity is represented in payment state. Gateway preserves status/body/Authorization/Idempotency-Key/Location and returns 502/504 for service connection/deadline failures.
+
+Tests require `PAYMENTS_TEST_PASSWORD` and `MOCK_TEST_PASSWORD`, use distinct hardcoded restricted test databases, validate connected identities, and create/drop random schemas. They never mutate development payments or provider operations. Coverage includes unit/state/validation tests, creation/processing/reconciliation races, independent JWT/ownership checks, provider scenarios, real PostgreSQL rollback/constraints, and an actual process killed after a provider commit then restarted twice to verify one durable charge. See [ADR 007](docs/adr/007-payments-and-reconciliation.md).
+
 ## Layout and scope
 
 - `apps/api-gateway`: HTTP forwarding, health, timeouts, and tests.
 - `apps/catalog-service`: product API, public-key authorization, repository, migrations, and database tests.
 - `apps/auth-service`: authentication business logic, user repository, RS256 signing, migrations, admin CLI, and tests.
 - `apps/cart-service`: authenticated cart routes, Catalog HTTP client, atomic Redis repository, lifecycle, and tests.
+- `apps/payments-service`: payment intents, attempts, leases, reconciliation worker, public-key authorization, migrations, and an independently persisted mock provider.
 - `apps/inventory-service`: stock, reservations, PostgreSQL transactions, Catalog HTTP client, public-key admin authorization, expiration worker, migrations, and tests.
 - `apps/orders-service`: authenticated order creation/history, snapshot business logic, PostgreSQL transactions, migrations, and tests.
 - `packages/security`: shared public-key JWT verification; no signing or private-key access.
@@ -389,4 +450,4 @@ Tests cover real database constraints and rollback, whole-order idempotency, fin
 - `compose.yaml` and `infrastructure/docker`: local PostgreSQL and Redis.
 - `docs/adr/002-postgresql-access.md`: raw SQL decision.
 
-OAuth, Auth0, refresh tokens, password reset, email verification, RabbitMQ, payments, ORM, Kubernetes, and remaining service implementations are outside this phase. Checkout orchestration, transactional outbox, and refunds are deferred. Work stops at Phase 8.
+OAuth, Auth0, refresh tokens, password reset, email verification, RabbitMQ, real payment gateways, ORM, Kubernetes, and remaining service implementations are outside this phase. Checkout orchestration, transactional outbox, and refunds are deferred. Work stops at Phase 9.
