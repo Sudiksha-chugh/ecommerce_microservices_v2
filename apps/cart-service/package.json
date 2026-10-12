@@ -1,0 +1,18 @@
+{
+  "name": "@ecommerce/cart-service",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "dependencies": {
+    "@redis/client": "^6.3.0",
+    "@ecommerce/config": "0.1.0",
+    "@ecommerce/contracts": "0.1.0",
+    "@ecommerce/security": "0.1.0",
+    "express": "^5.1.0",
+    "zod": "^4.0.0"
+  },
+  "scripts": {
+    "dev": "tsx watch --env-file-if-exists=../../.env.cart src/server.ts",
+    "start": "tsx --env-file-if-exists=../../.env.cart src/server.ts"
+  }
+}

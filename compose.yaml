@@ -1,0 +1,40 @@
+services:
+  postgres:
+    build:
+      context: .
+      dockerfile: infrastructure/docker/postgres.Dockerfile
+    environment:
+      POSTGRES_DB: catalog_db
+      POSTGRES_USER: ${PGUSER:?Set PGUSER in .env}
+      POSTGRES_PASSWORD: ${PGPASSWORD:?Set PGPASSWORD in .env}
+      CATALOG_TEST_PASSWORD: ${CATALOG_TEST_PASSWORD:?Set CATALOG_TEST_PASSWORD in .env}
+      AUTH_PGUSER: ${AUTH_PGUSER:-auth_user}
+      AUTH_PGPASSWORD: ${AUTH_PGPASSWORD:?Set AUTH_PGPASSWORD in .env.auth}
+      AUTH_TEST_PASSWORD: ${AUTH_TEST_PASSWORD:?Set AUTH_TEST_PASSWORD in .env.auth}
+      ORDERS_PGUSER: ${ORDERS_PGUSER:-orders_user}
+      ORDERS_PGPASSWORD: ${ORDERS_PGPASSWORD:?Set ORDERS_PGPASSWORD in .env.orders}
+      ORDERS_TEST_PASSWORD: ${ORDERS_TEST_PASSWORD:?Set ORDERS_TEST_PASSWORD in .env.orders}
+    ports:
+      - "127.0.0.1:${PGPORT:-5432}:5432"
+    volumes:
+      - catalog_postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U $$POSTGRES_USER -d catalog_db"]
+      interval: 2s
+      timeout: 5s
+      retries: 30
+  redis:
+    image: redis:8
+    command: ["redis-server", "--appendonly", "yes", "--appendfsync", "everysec"]
+    ports:
+      - "127.0.0.1:${CART_REDIS_PORT:-6379}:6379"
+    volumes:
+      - cart_redis_data:/data
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 2s
+      timeout: 5s
+      retries: 30
+volumes:
+  cart_redis_data:
+  catalog_postgres_data:

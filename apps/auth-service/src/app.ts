@@ -1,0 +1,28 @@
+import express from 'express';
+import type { AuthService } from './auth-service.js';
+import { loginSchema, registrationSchema } from './user-validation.js';
+import { errorHandler } from './middleware/error-handler.js';
+
+export function createApp(auth: AuthService) {
+  const app = express();
+  app.disable('x-powered-by');
+  app.get('/health', (_req, res) => res.json({ status: 'ok', service: 'auth-service' }));
+  // Auth responses must not be cached, especially access tokens and user identities.
+  app.use('/auth', (_req, res, next) => { res.set('Cache-Control', 'no-store'); next(); });
+  app.post('/auth/register', express.json(), async (req, res) => {
+    const input = registrationSchema.safeParse(req.body);
+    if (!input.success) { res.status(400).json({ error: { message: 'Invalid registration body' } }); return; }
+    res.status(201).json(await auth.register(input.data));
+  });
+  app.post('/auth/login', express.json(), async (req, res) => {
+    const input = loginSchema.safeParse(req.body);
+    if (!input.success) { res.status(400).json({ error: { message: 'Invalid login body' } }); return; }
+    res.json(await auth.login(input.data));
+  });
+  app.get('/auth/me', async (req, res) => {
+    res.json(await auth.currentUser(req.headers.authorization));
+  });
+  app.use((_req, res) => res.status(404).json({ error: { message: 'Route not found' } }));
+  app.use(errorHandler);
+  return app;
+}

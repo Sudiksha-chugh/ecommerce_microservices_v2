@@ -1,0 +1,22 @@
+{
+  "name": "@ecommerce/auth-service",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "dependencies": {
+    "argon2": "^0.45.1",
+    "jose": "^6.2.12",
+    "@ecommerce/config": "0.1.0",
+    "@ecommerce/contracts": "0.1.0",
+    "@ecommerce/security": "0.1.0",
+    "express": "^5.1.0",
+    "pg": "^8.23.1",
+    "zod": "^4.0.0"
+  },
+  "scripts": {
+    "dev": "tsx watch --env-file-if-exists=../../.env.auth src/server.ts",
+    "start": "tsx --env-file-if-exists=../../.env.auth src/server.ts",
+    "migrate": "tsx --env-file-if-exists=../../.env.auth src/db/cli.ts migrate",
+    "bootstrap-admin": "tsx --env-file-if-exists=../../.env.auth src/db/cli.ts bootstrap-admin"
+  }
+}

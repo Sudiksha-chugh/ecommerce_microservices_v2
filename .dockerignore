@@ -1,0 +1,5 @@
+**
+!infrastructure/
+!infrastructure/docker/
+!infrastructure/docker/postgres.Dockerfile
+!infrastructure/docker/init-test-db.sh
