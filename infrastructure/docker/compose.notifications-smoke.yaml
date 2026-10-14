@@ -1,0 +1,17 @@
+# Merge with compose.yaml using a separate project. No development volumes or ports.
+services:
+  notifications-db:
+    ports: !override ["127.0.0.1:0:5432"]
+    volumes: !reset []
+    tmpfs: [/var/lib/postgresql/data]
+  rabbitmq:
+    hostname: notification-smoke-rabbitmq
+    restart: "no"
+    ports: !override ["127.0.0.1:0:5672", "127.0.0.1:0:15672"]
+    volumes: !reset []
+    user: "999:999"
+    tmpfs: ["/var/lib/rabbitmq:uid=999,gid=999,mode=0700"]
+  notification-service:
+    ports: !override ["127.0.0.1:0:4007"]
+    volumes: !override
+      - ${NOTIFICATION_SMOKE_PUBLIC_KEY:?Set generated test public key}:/run/keys/auth-public.pem:ro

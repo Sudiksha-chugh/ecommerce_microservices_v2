@@ -1,3 +1,4 @@
+import {testEnvironmentFile} from '../../../test/environment.js';
 import { randomUUID } from 'node:crypto';
 import { readFile } from 'node:fs/promises';
 import { loadEnvFile } from 'node:process';
@@ -16,7 +17,7 @@ import { ProviderClient } from '../src/provider-client.js';
 import { createMockProvider, type Scenario } from '../src/mock-provider/app.js';
 import { migrate } from '../src/db/migrate.js';
 import { startReconciliationWorker } from '../src/reconciliation-worker.js';
-loadEnvFile('.env.payments'); loadEnvFile('.env.mock-provider');
+loadEnvFile(testEnvironmentFile('.env.payments')); loadEnvFile(testEnvironmentFile('.env.mock-provider'));
 if (!process.env.PAYMENTS_TEST_PASSWORD || !process.env.MOCK_TEST_PASSWORD) throw new Error('Payments and provider test passwords required');
 const config = {host:process.env.PAYMENTS_PGHOST ?? '127.0.0.1',port:Number(process.env.PAYMENTS_PGPORT ?? 5432),database:'payments_test_db',user:'payments_test_user',password:process.env.PAYMENTS_TEST_PASSWORD,max:10,connectionTimeoutMillis:2000,statement_timeout:3000};
 const mockConfig = {...config,host:process.env.MOCK_PGHOST ?? '127.0.0.1',port:Number(process.env.MOCK_PGPORT ?? 5432),database:'mock_provider_test_db',user:'mock_provider_test_user',password:process.env.MOCK_TEST_PASSWORD};
@@ -77,7 +78,13 @@ describe('Processing and persisted state machine',() => {
  it('fences a stale processing result after lease recovery',async () => {const id=await payment();const original=await repository.claim(id,'process');await pool.query("UPDATE payments SET lease_expires_at=clock_timestamp()-INTERVAL '1 second' WHERE id=$1",[id]);const recovery=await repository.claim(id,'reconcile');const done=await repository.finish(id,recovery.token!,{status:'FAILED',failureCode:'DECLINED'});expect(done.status).toBe('FAILED');expect((await repository.finish(id,original.token!,{status:'SUCCEEDED',providerPaymentId:randomUUID()})).status).toBe('FAILED');});
  it.each(['process','reconcile'])('validates %s paths and operation bodies',async (action) => {await operate('bad',action).expect(400);await operate(randomUUID(),action).expect(404);await request(app).post(`/payments/${randomUUID()}/${action}`).set('authorization',adminToken).send({extra:1}).expect(400);});
  it('rejects reconciliation before processing without creating an attempt',async () => {const id=await payment();await operate(id,'reconcile').expect(409);expect((await state(id)).status).toBe('CREATED');expect((await pool.query('SELECT * FROM payment_attempts')).rowCount).toBe(0);expect(chargeCalls).toBe(0);});
- it('does not hold a local transaction open during provider I/O',async () => {scenario='timeout';const id=await payment();const running=operate(id).then((r) => r);await vi.waitFor(async () => expect(await chargeCount()).toBe(1));const client=await pool.connect();try {await client.query('BEGIN');await client.query('SET LOCAL lock_timeout=100');await client.query('SELECT * FROM payments WHERE id=$1 FOR UPDATE NOWAIT',[id]);await client.query('ROLLBACK');} finally {client.release();}expect((await running).status).toBe(200);});
+ it('does not hold a local transaction open during provider I/O',async () => {
+  let release!:()=>void,accepted!:()=>void;const gate=new Promise<void>(r=>{release=r;}),providerAccepted=new Promise<void>(r=>{accepted=r;});
+  const proxy=createServer(async(req,res)=>{const chunks:Buffer[]=[];for await(const chunk of req)chunks.push(Buffer.from(chunk));const upstream=await fetch(new URL(req.url!,url),{method:req.method!,headers:{'content-type':'application/json'},body:Buffer.concat(chunks)});const body=await upstream.text();accepted();await gate;res.writeHead(upstream.status,{'content-type':'application/json'});res.end(body);});
+  await new Promise<void>(r=>proxy.listen(0,'127.0.0.1',r));app=application(`http://127.0.0.1:${(proxy.address() as AddressInfo).port}`);const id=await payment();let settled=false;const running=operate(id).then(r=>{settled=true;return r;});
+  try{await providerAccepted;expect(settled).toBe(false);expect(await chargeCount()).toBe(1);const client=await pool.connect();try{await client.query('BEGIN');await client.query('SET LOCAL lock_timeout=100');await client.query('SELECT * FROM payments WHERE id=$1 FOR UPDATE NOWAIT',[id]);await client.query('ROLLBACK');}finally{await client.query('ROLLBACK').catch(()=>{});client.release();}expect(settled).toBe(false);}finally{release();await running;proxy.closeAllConnections();await new Promise<void>(r=>proxy.close(()=>r()));}
+  expect((await running).status).toBe(200);
+ });
 });
 describe('Reconciliation worker and real process crash recovery',() => {
  it('recovers a killed Payments process after provider commit, then survives a second restart',async () => {
@@ -98,7 +105,7 @@ describe('Reconciliation worker and real process crash recovery',() => {
   try {await vi.waitFor(() => expect(log).toHaveBeenCalledWith('Payment reconciliation failed'));}finally{await worker.stop();await pool.query('ALTER TABLE payments_unavailable RENAME TO payments');}
   expect(log.mock.calls.flat().every((message) => !String(message).includes('SELECT'))).toBe(true);
  });
- it('runs a bounded worker and stops scheduling on shutdown',async () => {scenario='lost-response';const id=await payment();await operate(id).expect(200);const log=vi.spyOn(console,'info').mockImplementation(() => {});const worker=startReconciliationWorker(service,50,2);workers.push(worker);await vi.waitFor(async () => expect((await state(id)).status).toBe('SUCCEEDED'));await worker.stop();expect(log).toHaveBeenCalled();});
+ it('runs a bounded worker and stops scheduling on shutdown',async () => {scenario='lost-response';const id=await payment();await operate(id).expect(200);await pool.query('UPDATE payments SET next_reconcile_at=clock_timestamp() WHERE id=$1',[id]);const log=vi.spyOn(console,'info').mockImplementation(() => {});const worker=startReconciliationWorker(service,50,2);workers.push(worker);await vi.waitFor(async () => expect((await state(id)).status).toBe('SUCCEEDED'));await worker.stop();expect(log).toHaveBeenCalled();const stoppedLookups=lookupCalls;await service.reconcileBatch(2);expect(lookupCalls).toBe(stoppedLookups);});
 });
 describe('Independent JWT and owner-level status access',() => {
  it.each([['post','/payments/intents'],['post',`/payments/${owner}/process`],['post',`/payments/${owner}/reconcile`],['get',`/payments/${owner}`]] as const)('requires authentication on %s %s',async (method,path) => {await request(app)[method](path).set('X-Service-Name','orders').send({}).expect(401);});
@@ -123,7 +130,7 @@ describe('Database constraints and local transaction failures',() => {
   await pool.query("UPDATE payments SET lease_expires_at=clock_timestamp()-INTERVAL '1 second' WHERE id=$1",[id]);expect((await operate(id,'reconcile').expect(200)).body.status).toBe('SUCCEEDED');expect(chargeCalls).toBe(1);
  });
  it('reuses the provider key independently of Payments transactions',async () => {const id=randomUUID();const client=new ProviderClient(url,1000);const r=await Promise.all(Array.from({length:10},() => client.charge(id,10,'INR')));expect(new Set(r.map((result) => JSON.stringify(result))).size).toBe(1);expect(await chargeCount()).toBe(1);const mismatch=await client.charge(id,20,'INR');expect(mismatch.status).toBe('UNKNOWN');expect(await chargeCount()).toBe(1);});
- it('runs migrations repeatedly without reapplying',async () => {await migrate(pool);expect((await pool.query('SELECT * FROM schema_migrations')).rowCount).toBe(1);});
+ it('runs migrations repeatedly without reapplying',async () => {await migrate(pool);expect((await pool.query('SELECT * FROM schema_migrations')).rowCount).toBe(4);});
  it.each(['payments_db','mock_provider_db','orders_db','inventory_db','catalog_db','auth_db','mock_provider_test_db'])('Payments test role cannot access %s',async (database) => {const other=new Pool({...config,database});try {await expect(other.query('SELECT 1')).rejects.toMatchObject({code:'42501'});}finally{await other.end();}});
  it.each(['payments_test_db','payments_db','mock_provider_db','orders_db','inventory_db'])('provider test role cannot access %s',async (database) => {const other=new Pool({...mockConfig,database});try {await expect(other.query('SELECT 1')).rejects.toMatchObject({code:'42501'});}finally{await other.end();}});
 });

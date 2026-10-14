@@ -1,3 +1,4 @@
+import {telemetryFetch} from '@ecommerce/observability';
 export class UpstreamRequestError extends Error {
   constructor(public readonly status: 502 | 504, message: string) {
     super(message);
@@ -6,13 +7,13 @@ export class UpstreamRequestError extends Error {
 
 export async function requestUpstream(origin: string, path: string, timeoutMs: number,
   options: { method: string; body?: string; contentType?: string; authorization?: string; idempotencyKey?: string } = { method: 'GET' },
-  service: 'Catalog' | 'Auth' | 'Cart' | 'Orders' | 'Inventory' = 'Catalog',
+  service: 'Catalog' | 'Auth' | 'Cart' | 'Orders' | 'Inventory' | 'Payments' | 'Search' = 'Catalog',
 ) {
   const controller = new AbortController();
   // Keep the deadline active until the full response body has been read.
   const deadline = setTimeout(() => controller.abort(), timeoutMs);
   try {
-    const response = await fetch(new URL(path, origin), {
+    const response = await telemetryFetch(new URL(path, origin), {
       signal: controller.signal,
       redirect: 'error',
       method: options.method,

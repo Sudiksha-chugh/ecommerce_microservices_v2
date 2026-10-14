@@ -1,3 +1,4 @@
+import {instrumentRedis} from '@ecommerce/observability';
 import { createClient } from '@redis/client';
 
 export function createRedisClient(url: string, connectTimeoutMs = 2000) {
@@ -10,7 +11,7 @@ export function createRedisClient(url: string, connectTimeoutMs = 2000) {
   });
   // Never log URLs, credentials, tokens, or internal Redis errors.
   client.on('error', () => console.error('Cart Redis connection failed'));
-  return client;
+  return instrumentRedis(client);
 }
 export type CartRedisClient = ReturnType<typeof createRedisClient>;
 

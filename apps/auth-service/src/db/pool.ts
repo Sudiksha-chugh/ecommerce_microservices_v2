@@ -1,3 +1,4 @@
+import {instrumentPg} from '@ecommerce/observability';
 import { Pool } from 'pg';
 import type { AuthEnvironment } from '@ecommerce/config';
 
@@ -11,7 +12,7 @@ export function createPool(environment: AuthEnvironment) {
     query_timeout: environment.AUTH_PGQUERY_TIMEOUT_MS,
   });
   pool.on('error', () => console.error('Auth database idle connection failed'));
-  return pool;
+  return instrumentPg(pool);
 }
 
 // Fail closed if Auth is accidentally configured with Catalog's superuser credentials.

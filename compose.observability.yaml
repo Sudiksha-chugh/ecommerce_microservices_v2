@@ -1,0 +1,46 @@
+services:
+  otel-collector:
+    profiles: [observability]
+    image: otel/opentelemetry-collector-contrib:0.162.0
+    command: [--config=/etc/otelcol/config.yaml]
+    mem_limit: 512m
+    cpus: 1
+    ports: ["127.0.0.1:${OTEL_HTTP_PORT:-4318}:4318"]
+    volumes: ["./infrastructure/observability/collector.yaml:/etc/otelcol/config.yaml:ro"]
+  prometheus:
+    profiles: [observability]
+    image: prom/prometheus:v3.13.4
+    command: [--config.file=/etc/prometheus/prometheus.yaml, --storage.tsdb.retention.time=24h, --storage.tsdb.retention.size=256MB, --web.enable-lifecycle]
+    mem_limit: 384m
+    cpus: 1
+    ports: ["127.0.0.1:${PROMETHEUS_PORT:-9090}:9090"]
+    volumes: ["./infrastructure/observability/prometheus.yaml:/etc/prometheus/prometheus.yaml:ro"]
+    tmpfs: ["/prometheus:uid=65534,gid=65534,mode=0700"]
+  tempo:
+    profiles: [observability]
+    image: grafana/tempo:2.10.8
+    command: [-config.file=/etc/tempo/tempo.yaml]
+    mem_limit: 512m
+    cpus: 1
+    ports: ["127.0.0.1:${TEMPO_PORT:-3200}:3200"]
+    volumes: ["./infrastructure/observability/tempo.yaml:/etc/tempo/tempo.yaml:ro"]
+    tmpfs: ["/var/tempo:uid=10001,gid=10001,mode=0700"]
+  grafana:
+    profiles: [observability]
+    image: grafana/grafana:13.1.6
+    mem_limit: 512m
+    cpus: 1
+    ports: ["127.0.0.1:${GRAFANA_PORT:-3000}:3000"]
+    environment:
+      GF_SECURITY_ADMIN_USER: observability-admin
+      GF_SECURITY_ADMIN_PASSWORD__FILE: /run/secrets/grafana_password
+      GF_AUTH_ANONYMOUS_ENABLED: "false"
+      GF_USERS_ALLOW_SIGN_UP: "false"
+      GF_ANALYTICS_REPORTING_ENABLED: "false"
+      GF_ANALYTICS_CHECK_FOR_UPDATES: "false"
+    secrets: [grafana_password]
+    volumes: ["./infrastructure/observability/grafana/provisioning:/etc/grafana/provisioning:ro", "./infrastructure/observability/grafana/dashboards:/etc/grafana/dashboards:ro"]
+    tmpfs: ["/var/lib/grafana:uid=472,gid=472,mode=0700"]
+secrets:
+  grafana_password:
+    file: ${OBS_GRAFANA_PASSWORD_FILE:-./.secrets/observability-grafana-password}

@@ -1,0 +1,24 @@
+import '@ecommerce/observability/bootstrap';
+import {readFile} from 'node:fs/promises';
+import {createTokenVerifier} from '@ecommerce/security';
+import {bootstrapMessaging} from '@ecommerce/messaging';
+import {pollWorker} from '@ecommerce/event-persistence';
+import {loadNotificationEnvironment,notificationVerificationKeys} from './config.js';
+import {notificationPool,verifyNotificationBoundary} from './db/pool.js';
+import {NotificationRepository} from './repository.js';
+import {RecipientResolver} from './recipient-resolver.js';
+import {DeterministicMockEmailProvider} from './providers/mock-email.js';
+import {NotificationDeliveryWorker} from './workers/delivery.js';
+import {notificationHandler} from './consumers/business-events.js';
+import {createNotificationApp} from './app.js';
+const env=loadNotificationEnvironment(),pool=notificationPool(env.DATABASE_URL),providerPool=notificationPool(env.MOCK_EMAIL_DATABASE_URL);
+await verifyNotificationBoundary(pool);const providerIdentity=(await providerPool.query('SELECT current_database() AS db,r.rolsuper FROM pg_roles r WHERE r.rolname=current_user')).rows[0];if(providerIdentity.db!=='mock_email_provider_db'||providerIdentity.rolsuper)throw new Error('Email provider requires its dedicated database role');
+const verify=await createTokenVerifier(await readFile(env.JWT_PUBLIC_KEY_FILE,'utf8'),{issuer:env.JWT_ISSUER,audience:env.JWT_AUDIENCE});
+const repository=new NotificationRepository(pool,env.NOTIFICATION_MAX_ATTEMPTS,env.NOTIFICATION_RETRY_BASE_MS,env.NOTIFICATION_LEASE_MS);
+const provider=new DeterministicMockEmailProvider(providerPool,()=>env.MOCK_EMAIL_SCENARIO),delivery=new NotificationDeliveryWorker(repository,provider,new RecipientResolver(env.AUTH_SERVICE_URL,env.ORDERS_SERVICE_URL,env.NOTIFICATION_LOOKUP_KEY,env.NOTIFICATION_LOOKUP_TIMEOUT_MS));
+const messaging=bootstrapMessaging('notifications',{...process.env,MESSAGING_ENABLED:env.NOTIFICATION_CONSUMER_ENABLED?'true':'false',MESSAGING_DIAGNOSTIC_CONSUMERS:'false',...(env.RABBITMQ_URL?{MESSAGING_URL:env.RABBITMQ_URL}:{})},env.NOTIFICATION_CONSUMER_ENABLED?{'notifications.business-events.v1':notificationHandler(pool,repository,notificationVerificationKeys())}:{});
+const worker=env.NOTIFICATION_WORKER_ENABLED?pollWorker(async()=>{await delivery.runOnce(env.NOTIFICATION_BATCH_SIZE);console.info(JSON.stringify({component:'notification-metrics',...await repository.metrics()}));},env.NOTIFICATION_POLL_MS,'notification-worker'):undefined;
+const retention=pollWorker(()=>repository.scrub(env.NOTIFICATION_RETENTION_DAYS),60000,'notification-retention');
+const server=createNotificationApp(repository,verify,messaging.readiness,provider.capabilities.statusLookup).listen(env.NOTIFICATION_PORT,env.NOTIFICATION_HOST,()=>console.info(JSON.stringify({component:'notification-service',outcome:'listening',port:env.NOTIFICATION_PORT})));
+let closing=false;async function stop(){if(closing)return;closing=true;const deadline=setTimeout(()=>process.exit(1),env.SHUTDOWN_TIMEOUT_MS);deadline.unref();server.close();await Promise.all([worker?.stop(),retention.stop()]);await messaging.stop();await Promise.all([pool.end(),providerPool.end()]);server.closeAllConnections();clearTimeout(deadline);}
+server.on('error',()=>{process.exitCode=1;void stop();});for(const signal of ['SIGINT','SIGTERM'])process.on(signal,()=>{void stop();});

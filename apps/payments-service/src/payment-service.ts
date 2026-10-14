@@ -1,3 +1,4 @@
+import {observeBusiness} from '@ecommerce/observability';
 import type { PaymentRepository, PaymentRow } from './payment-repository.js';
 import type { ProviderClient } from './provider-client.js';
 import type { Intent } from './validation.js';
@@ -12,8 +13,9 @@ export class PaymentService {
  async operate(id: string,operation: 'process' | 'reconcile') {
   const claim = await this.repository.claim(id,operation);
   if (!claim.token || !claim.requestId) return view(claim.payment);
+  observeBusiness(operation==='process'?'payment_attempt':'reconciliation_attempt');
   const result = operation === 'process' ? await this.provider.charge(claim.requestId,Number(claim.payment.amount_paise),claim.payment.currency) : await this.provider.lookup(claim.requestId);
-  return view(await this.repository.finish(id,claim.token,result));
+  const completed=await this.repository.finish(id,claim.token,result);if(completed.status==='SUCCEEDED'||completed.status==='FAILED')observeBusiness(completed.status==='SUCCEEDED'?'payment_success':'payment_failure','observed');return view(completed);
  }
  async reconcileBatch(limit: number) { const ids = await this.repository.pending(limit); for (const id of ids) await this.operate(id,'reconcile'); return ids.length; }
 }

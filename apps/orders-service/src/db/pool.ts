@@ -1,3 +1,4 @@
+import {instrumentPg} from '@ecommerce/observability';
 import { Pool } from 'pg';
 import type { OrdersEnvironment } from '@ecommerce/config';
 
@@ -11,7 +12,7 @@ export function createPool(environment: OrdersEnvironment) {
     query_timeout: environment.ORDERS_PGQUERY_TIMEOUT_MS,
   });
   pool.on('error', () => console.error('Orders database idle connection failed'));
-  return pool;
+  return instrumentPg(pool);
 }
 
 // Fail closed if Orders is accidentally configured with Catalog's superuser credentials.

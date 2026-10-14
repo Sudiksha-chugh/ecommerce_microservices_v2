@@ -8,13 +8,16 @@
     "@ecommerce/security": "0.1.0",
     "pg": "^8.23.1",
     "express": "^5.1.0",
-    "zod": "^4.0.0"
+    "zod": "^4.0.0",
+    "@ecommerce/messaging": "0.1.0",
+    "@ecommerce/event-persistence": "0.1.0",
+    "@ecommerce/observability": "0.1.0"
   },
   "scripts": {
-    "dev": "tsx watch --env-file-if-exists=../../.env.payments src/server.ts",
-    "start": "tsx --env-file-if-exists=../../.env.payments src/server.ts",
+    "dev": "tsx watch --env-file-if-exists=../../.env.payments --import ../../packages/observability/bootstrap.mjs src/server.ts",
+    "start": "tsx --env-file-if-exists=../../.env.payments --import ../../packages/observability/bootstrap.mjs src/server.ts",
     "migrate": "tsx --env-file-if-exists=../../.env.payments src/db/cli.ts",
-    "mock-provider": "tsx --env-file-if-exists=../../.env.mock-provider src/mock-provider/server.ts",
+    "mock-provider": "tsx --env-file-if-exists=../../.env.mock-provider --import ../../packages/observability/bootstrap.mjs src/mock-provider/server.ts",
     "mock:migrate": "tsx --env-file-if-exists=../../.env.mock-provider src/mock-provider/migrate.ts"
   }
 }

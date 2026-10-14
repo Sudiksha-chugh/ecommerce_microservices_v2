@@ -1,3 +1,4 @@
+import {httpTelemetry} from '@ecommerce/observability';
 import express from 'express';
 import type { TokenVerifier } from '@ecommerce/security';
 import type { CartService } from './cart-service.js';
@@ -6,7 +7,7 @@ import { errorHandler } from './middleware/error-handler.js';
 import { addItemSchema, updateItemSchema, productIdSchema } from './cart-validation.js';
 
 export function createApp(cart: CartService, verify: TokenVerifier) {
-  const app = express();
+  const app = express();app.use(httpTelemetry('cart-service'));
   app.disable('x-powered-by');
   app.get('/health', (_req, res) => res.json({ status: 'ok', service: 'cart-service' }));
   app.use('/cart', (_req, res, next) => { res.set('Cache-Control', 'no-store'); next(); }, authenticate(verify));

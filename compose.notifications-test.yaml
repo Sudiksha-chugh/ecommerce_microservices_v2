@@ -1,0 +1,17 @@
+# Explicit, isolated Phase 14 test project. It does not mount development volumes.
+services:
+  notification-test-postgres:
+    image: postgres:17
+    environment:
+      POSTGRES_USER: notification_test_admin
+      POSTGRES_PASSWORD: notification_test_only_password
+      POSTGRES_DB: postgres
+    ports:
+      - "127.0.0.1:${NOTIFICATION_TEST_PGPORT:-55440}:5432"
+    tmpfs:
+      - /var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U notification_test_admin -d postgres"]
+      interval: 2s
+      timeout: 5s
+      retries: 30

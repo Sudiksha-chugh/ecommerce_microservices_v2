@@ -1,3 +1,4 @@
+import {observeBusiness} from '@ecommerce/observability';
 import type { InventoryRepository } from './inventory-repository.js';
 export function startExpirationWorker(repository: InventoryRepository, intervalMs: number, batchSize: number) {
   let stopped = false;
@@ -7,6 +8,7 @@ export function startExpirationWorker(repository: InventoryRepository, intervalM
     active = (async () => {
       try {
         const count = await repository.expireBatch(batchSize);
+        for(let i=0;i<count;i++)observeBusiness('reservation_expired','success');
         if (count > 0) console.info(`Inventory expired ${count} reservation groups`);
       } catch { console.error('Inventory expiration failed'); }
     })().finally(() => {

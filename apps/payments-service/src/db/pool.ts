@@ -1,3 +1,4 @@
+import {instrumentPg} from '@ecommerce/observability';
 import { Pool } from 'pg';
 import type { PaymentsEnvironment } from '@ecommerce/config';
 
@@ -11,7 +12,7 @@ export function createPool(environment: PaymentsEnvironment) {
     query_timeout: environment.PAYMENTS_PGQUERY_TIMEOUT_MS,
   });
   pool.on('error', () => console.error('Payments database idle connection failed'));
-  return pool;
+  return instrumentPg(pool);
 }
 
 // Fail closed if Payments is accidentally configured with Catalog's superuser credentials.

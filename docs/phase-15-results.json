@@ -1,0 +1,131 @@
+{
+  "runtime": "Node.js v24.21.0 darwin-arm64",
+  "testInfrastructure": "Established guarded test databases/vhost; disposable Notification PostgreSQL and rate-limit Redis; random namespaces",
+  "typecheck": "passed",
+  "composeValidation": [
+    "main compose config --quiet passed",
+    "rate-limit-test config --quiet passed"
+  ],
+  "runs": [
+    {
+      "run": "baseline",
+      "passed": 711,
+      "failed": 0,
+      "skipped": 0,
+      "total": 711,
+      "success": true,
+      "durationSeconds": 66.87,
+      "failures": []
+    },
+    {
+      "run": "rate-and-gateway-1",
+      "passed": 160,
+      "failed": 2,
+      "skipped": 0,
+      "total": 162,
+      "success": false,
+      "durationSeconds": 20.03,
+      "failures": [
+        "Redis outages, recovery and bounded lifecycle bounds slow-command latency, uses 503 instead of 429, and recovers without replaying",
+        "Redis outages, recovery and bounded lifecycle bounds pending commands under a stalled socket"
+      ]
+    },
+    {
+      "run": "rate-and-gateway-2",
+      "passed": 162,
+      "failed": 0,
+      "skipped": 0,
+      "total": 162,
+      "success": true,
+      "durationSeconds": 10.84,
+      "failures": []
+    },
+    {
+      "run": "rate-and-gateway-3",
+      "passed": 164,
+      "failed": 1,
+      "skipped": 0,
+      "total": 165,
+      "success": false,
+      "durationSeconds": 13.12,
+      "failures": [
+        "Node 24 Gateway process lifecycle drains an in-flight slow Redis decision within the command deadline during shutdown"
+      ]
+    },
+    {
+      "run": "rate-and-gateway-4",
+      "passed": 164,
+      "failed": 1,
+      "skipped": 0,
+      "total": 165,
+      "success": false,
+      "durationSeconds": 26.52,
+      "failures": [
+        "Node 24 Gateway process lifecycle drains an in-flight slow Redis decision within the command deadline during shutdown"
+      ]
+    },
+    {
+      "run": "rate-and-gateway-5",
+      "passed": 169,
+      "failed": 0,
+      "skipped": 0,
+      "total": 169,
+      "success": true,
+      "durationSeconds": 11.3,
+      "failures": []
+    },
+    {
+      "run": "full-1",
+      "passed": 800,
+      "failed": 0,
+      "skipped": 0,
+      "total": 800,
+      "success": true,
+      "durationSeconds": 85.56,
+      "failures": []
+    },
+    {
+      "run": "full-2",
+      "passed": 800,
+      "failed": 0,
+      "skipped": 0,
+      "total": 800,
+      "success": true,
+      "durationSeconds": 92.23,
+      "failures": []
+    },
+    {
+      "run": "notifications-independent",
+      "passed": 66,
+      "failed": 0,
+      "skipped": 0,
+      "total": 66,
+      "success": true,
+      "durationSeconds": 13.16,
+      "failures": []
+    }
+  ],
+  "concurrencyEvidence": {
+    "multiBucket": {
+      "competingDecisions": 300,
+      "independentClients": 2,
+      "allowed": 15,
+      "denied": 285,
+      "globalTokensRemaining": 25
+    },
+    "twoGateways": {
+      "requests": 100,
+      "allowedAndForwarded": 20,
+      "denied429": 80
+    },
+    "postDisconnectRecovery": {
+      "capacity": 5,
+      "ambiguousCommandExecutedBeforeDisconnect": 1,
+      "recoveryBurst": 20,
+      "allowed": 4,
+      "denied": 16
+    }
+  },
+  "cleanup": "Disposable rate-limit Compose projects and Phase 14 Notification test database removed; existing development containers remain running",
+  "priorMigrationAndReportChecksums": "25 protected existing files unchanged"
+}

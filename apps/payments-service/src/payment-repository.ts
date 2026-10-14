@@ -1,3 +1,5 @@
+import {emitCheckoutPayment} from './checkout-consumer.js';
+import type {SagaKeys} from '@ecommerce/messaging';
 import { createHash, randomUUID } from 'node:crypto';
 import type { Pool, PoolClient } from 'pg';
 import type { Intent } from './validation.js';
@@ -8,23 +10,25 @@ export type ProviderResult = { status: 'SUCCEEDED'; providerPaymentId: string } 
 export interface PaymentRow { id: string; order_id: string; user_id: string; created_by: string; amount_paise: string; currency: 'INR'; status: PaymentStatus; request_fingerprint: string; provider_payment_id: string | null; lease_token: string | null; lease_expires_at: Date | null }
 export interface Claim { payment: PaymentRow; token?: string; requestId?: string }
 export class PaymentRepository {
- constructor(private readonly pool: Pool, private readonly leaseMs: number, private readonly retryMs: number) {}
+ constructor(private readonly pool: Pool, private readonly leaseMs: number, private readonly retryMs: number, private readonly checkoutKeys?: SagaKeys) {}
  private async tx<T>(operation: (client: PoolClient) => Promise<T>): Promise<T> {
   let client: PoolClient; try { client = await this.pool.connect(); } catch { throw new PaymentDatabaseError(); }
   let broken = false;
+ const onClientError = () => { broken = true; }; client.on('error', onClientError);
   try { await client.query('BEGIN'); const result = await operation(client); await client.query('COMMIT'); return result; }
   catch (error) { try { await client.query('ROLLBACK'); } catch { broken = true; } if (!broken && error instanceof PaymentError) throw error; throw new PaymentDatabaseError(); }
-  finally { client.release(broken); }
+  finally { client.release(broken); client.off('error', onClientError); }
  }
- async create(principal: string, key: string, input: Intent): Promise<PaymentRow> {
+ async create(principal: string, key: string, input: Intent, transactionClient?: PoolClient): Promise<PaymentRow> {
   const hash = createHash('sha256').update(JSON.stringify(input)).digest('hex');
-  return this.tx(async (client) => {
+  const operation = async (client: PoolClient) => {
    const inserted = await client.query<PaymentRow>(`INSERT INTO payments (order_id,user_id,created_by,amount_paise,currency,idempotency_key,request_fingerprint)
     VALUES ($1,$2,$3,$4,$5,$6,$7) ON CONFLICT DO NOTHING RETURNING *`, [input.orderId,input.userId,principal,String(input.amountPaise),input.currency,key,hash]);
    if (inserted.rows[0]) return inserted.rows[0];
    const existing = (await client.query<PaymentRow>('SELECT * FROM payments WHERE created_by=$1 AND idempotency_key=$2 FOR UPDATE', [principal,key])).rows[0];
    if (!existing || existing.request_fingerprint !== hash) throw new PaymentError(409,'Payment request conflicts'); return existing;
-  });
+  };
+  return transactionClient ? operation(transactionClient) : this.tx(operation);
  }
  async get(id: string, owner?: string): Promise<PaymentRow> {
   try { const row = (await this.pool.query<PaymentRow>('SELECT * FROM payments WHERE id=$1 AND ($2::uuid IS NULL OR user_id=$2)', [id,owner ?? null])).rows[0]; if (!row) throw new PaymentError(404,'Payment not found'); return row; }
@@ -60,8 +64,10 @@ export class PaymentRepository {
    const status = result.status === 'UNKNOWN' ? 'REQUIRES_RECONCILIATION' : result.status;
    assertTransition(payment.status,status);
    await client.query(`UPDATE payment_attempts SET status=$2, failure_code=$3, updated_at=clock_timestamp() WHERE payment_id=$1`, [id,result.status,result.status === 'FAILED' ? result.failureCode : null]);
-   return (await client.query<PaymentRow>(`UPDATE payments SET status=$2, provider_payment_id=$3, lease_token=NULL, lease_expires_at=NULL,
+   const updated = (await client.query<PaymentRow>(`UPDATE payments SET status=$2, provider_payment_id=$3, lease_token=NULL, lease_expires_at=NULL,
     next_reconcile_at=clock_timestamp()+$4::integer*INTERVAL '1 millisecond', updated_at=clock_timestamp() WHERE id=$1 RETURNING *`, [id,status,result.status === 'SUCCEEDED' ? result.providerPaymentId : null,this.retryMs])).rows[0]!;
+   if(this.checkoutKeys)await emitCheckoutPayment(client,updated,this.checkoutKeys);
+   return updated;
   });
  }
  async pending(limit: number): Promise<string[]> {

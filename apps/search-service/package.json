@@ -1,0 +1,20 @@
+{
+  "name": "@ecommerce/search-service",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "tsx watch --env-file-if-exists=../../.env.search --import ../../packages/observability/bootstrap.mjs src/server.ts",
+    "start": "tsx --env-file-if-exists=../../.env.search --import ../../packages/observability/bootstrap.mjs src/server.ts",
+    "migrate": "tsx --env-file-if-exists=../../.env.search src/migrate-cli.ts"
+  },
+  "dependencies": {
+    "@ecommerce/messaging": "0.1.0",
+    "@ecommerce/event-persistence": "0.1.0",
+    "@ecommerce/security": "0.1.0",
+    "pg": "^8.23.1",
+    "express": "^5.1.0",
+    "zod": "^4.0.0",
+    "@ecommerce/observability": "0.1.0"
+  }
+}

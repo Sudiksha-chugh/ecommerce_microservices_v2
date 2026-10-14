@@ -1,3 +1,4 @@
+import {instrumentPg} from '@ecommerce/observability';
 import { Pool } from 'pg';
 import type { InventoryEnvironment } from '@ecommerce/config';
 
@@ -11,7 +12,7 @@ export function createPool(environment: InventoryEnvironment) {
     query_timeout: environment.INVENTORY_PGQUERY_TIMEOUT_MS,
   });
   pool.on('error', () => console.error('Inventory database idle connection failed'));
-  return pool;
+  return instrumentPg(pool);
 }
 
 // Fail closed if Inventory is accidentally configured with Catalog's superuser credentials.

@@ -1,11 +1,21 @@
+import {httpTelemetry} from '@ecommerce/observability';
+import {verifyInternalRequest} from '@ecommerce/security';
+import {z} from 'zod';
+import type {PublicUser} from '@ecommerce/contracts';
 import express from 'express';
 import type { AuthService } from './auth-service.js';
 import { loginSchema, registrationSchema } from './user-validation.js';
 import { errorHandler } from './middleware/error-handler.js';
 
-export function createApp(auth: AuthService) {
-  const app = express();
+export function createApp(auth: AuthService,internal?:{key:string;lookup:(id:string)=>Promise<PublicUser|undefined>}) {
+  const app = express();app.use(httpTelemetry('auth-service'));
   app.disable('x-powered-by');
+  app.get('/internal/users/:id/contact',async(req,res)=>{
+    res.set('Cache-Control','no-store');
+    if(!internal||!verifyInternalRequest(req.headers,req.method,req.path,internal.key)){res.status(401).json({error:{message:'Unauthorized'}});return;}
+    const id=z.uuid().safeParse(req.params.id);if(!id.success){res.status(400).json({error:{message:'Invalid user ID'}});return;}
+    const user=await internal.lookup(id.data);if(!user){res.status(404).json({error:{message:'Contact unavailable'}});return;}res.json({userId:user.id,email:user.email});
+  });
   app.get('/health', (_req, res) => res.json({ status: 'ok', service: 'auth-service' }));
   // Auth responses must not be cached, especially access tokens and user identities.
   app.use('/auth', (_req, res, next) => { res.set('Cache-Control', 'no-store'); next(); });

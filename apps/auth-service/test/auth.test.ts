@@ -1,3 +1,4 @@
+import {testEnvironmentFile} from '../../../test/environment.js';
 import { bootstrapAdmin } from '../src/bootstrap-admin.js';
 import { verifyDatabaseBoundary } from '../src/db/pool.js';
 import { randomUUID } from 'node:crypto';
@@ -16,7 +17,7 @@ import { UserRepository } from '../src/user-repository.js';
 import { createTokenService } from '../src/token-service.js';
 import { migrate } from '../src/db/migrate.js';
 
-if (existsSync('.env.auth')) loadEnvFile('.env.auth');
+if (existsSync(testEnvironmentFile('.env.auth'))) loadEnvFile(testEnvironmentFile('.env.auth'));
 const environment = z.object({
   AUTH_PGHOST: z.string().min(1).default('127.0.0.1'),
   AUTH_PGPORT: z.coerce.number().int().min(1).max(65535).default(5432),

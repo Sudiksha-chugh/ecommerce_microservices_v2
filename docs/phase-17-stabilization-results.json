@@ -1,0 +1,521 @@
+{
+  "phase": "17.1",
+  "status": "INCOMPLETE",
+  "source": {
+    "branch": "backend",
+    "head": "e501bc4b9a6ba1e346aa64d9d43da1609c5f455c",
+    "uncommitted": true
+  },
+  "baseline": {
+    "verifiedCommit": "f5a3e805424f0cdbb56112fecd95b4bf7906151f",
+    "verifiedFiles": 315,
+    "unchangedAtStart": 246,
+    "expectedPhase17ChangesAtStart": 69,
+    "missingVerifiedPaths": [],
+    "unknownPrePhase17Differences": [],
+    "backendHeadVsVerifiedPaths": 224,
+    "verifiedFixes": "all three present in working tree; absent from old backend commit"
+  },
+  "historicalRegression": [
+    {
+      "total": 970,
+      "passed": 957,
+      "failed": 13,
+      "unexecuted": 0
+    },
+    {
+      "total": 970,
+      "passed": 936,
+      "failed": 6,
+      "unexecuted": 28
+    }
+  ],
+  "historicalReadinessAttempts": 4,
+  "localExecution": {
+    "hostMemoryBytes": 17179869184,
+    "swapUsedMiB": 11571.88,
+    "dockerMemoryBytes": 8319504384,
+    "existingRunningContainers": 34,
+    "freeDiskGiB": 46,
+    "decision": "do not start another full-store or observability stack run; underlying historical causes remain unknown"
+  },
+  "verification": {
+    "fiveProofs": {
+      "total": 5,
+      "executed": 0,
+      "passed": 0
+    },
+    "fullRegression": "blocked; historical results do not certify final source",
+    "collector": "unexecuted",
+    "tempo": "unexecuted",
+    "prometheus": "unexecuted",
+    "grafana": "unexecuted",
+    "staticConfiguration": "prior Phase17 final static pass retained; configuration unchanged",
+    "observabilityUnits": {
+      "success": true,
+      "numTotalTests": 32,
+      "numPassedTests": 32,
+      "numFailedTests": 0,
+      "numPendingTests": 0,
+      "numFailedTestSuites": 0
+    },
+    "focusedDisabledAndUnit": {
+      "success": true,
+      "numTotalTests": 255,
+      "numPassedTests": 255,
+      "numFailedTests": 0,
+      "numPendingTests": 0,
+      "numFailedTestSuites": 0
+    },
+    "harness": {
+      "success": true,
+      "numTotalTests": 40,
+      "numPassedTests": 40,
+      "numFailedTests": 0,
+      "numPendingTests": 0,
+      "numFailedTestSuites": 0
+    },
+    "additionalControlledAmqp": {
+      "total": 5,
+      "passed": 5,
+      "failed": 0,
+      "pending": 0,
+      "transport": "controlled; actual Messaging implementation; not real broker"
+    },
+    "typecheck": "passed",
+    "compiledPreload": "passed",
+    "expandedDiscovery": {
+      "defaultCases": 980,
+      "files": 39,
+      "proofCases": 5,
+      "executedHooks": 0
+    }
+  },
+  "performance": {
+    "method": {
+      "repetitions": 3,
+      "order": "ABC / BCA / CAB",
+      "requests": 20000,
+      "warmups": 500,
+      "concurrency": 5,
+      "samplingRatio": 0.1,
+      "A": "SDK disabled",
+      "B": "SDK enabled; in-process no-op exporters, no telemetry network; retains queue/batch/periodic reader",
+      "C": "SDK with actual OTLP HTTP to isolated acknowledging receiver (NOT Collector)",
+      "limitations": [
+        "Manual instrumentation only; no automatic patching exists",
+        "Startup excluded from HTTP timing, recorded separately",
+        "Process CPU and sampled peak memory; other host/container workloads not controlled",
+        "No real broker or store load; event workload is an awaited operation fixture",
+        "C without supplied Collector does not measure Collector/Tempo/Prometheus cost",
+        "No acceptance threshold is inferred from these results"
+      ]
+    },
+    "medians": {
+      "A": {
+        "httpP50Ms": 0.7415829999999914,
+        "httpP95Ms": 2.6760410000001684,
+        "httpP99Ms": 5.107833000000028,
+        "throughputPerSecond": 4529.6817734942015,
+        "cpuMsPerRequest": 0.2315208,
+        "cpuCorePercent": 111.8396336170366,
+        "peakRssBytes": 290045952,
+        "peakHeapBytes": 146136256,
+        "warmupMs": 452.604667,
+        "measurementMs": 4415.321208,
+        "initializationMs": 129.828292,
+        "p95RangeMs": [
+          1.9653330000001006,
+          2.870625000000018
+        ]
+      },
+      "B": {
+        "httpP50Ms": 0.9834169999994629,
+        "httpP95Ms": 2.502958000000035,
+        "httpP99Ms": 5.73804199999995,
+        "throughputPerSecond": 4064.2938091585643,
+        "cpuMsPerRequest": 0.2771919,
+        "cpuCorePercent": 112.65893231188997,
+        "peakRssBytes": 288899072,
+        "peakHeapBytes": 168182912,
+        "warmupMs": 313.1035,
+        "measurementMs": 4920.904082999999,
+        "initializationMs": 288.77108300000003,
+        "p95RangeMs": [
+          2.316291999999976,
+          6.305625000000873
+        ]
+      },
+      "C": {
+        "httpP50Ms": 1.0686249999998836,
+        "httpP95Ms": 3.4621250000000146,
+        "httpP99Ms": 7.592208000000028,
+        "throughputPerSecond": 3399.8382302232667,
+        "cpuMsPerRequest": 0.3151866,
+        "cpuCorePercent": 107.15834523340885,
+        "peakRssBytes": 294846464,
+        "peakHeapBytes": 160621128,
+        "warmupMs": 543.3422910000002,
+        "measurementMs": 5882.632833,
+        "initializationMs": 484.71833300000003,
+        "p95RangeMs": [
+          3.4044159999998556,
+          4.106500000000324
+        ]
+      }
+    },
+    "results": [
+      {
+        "repeat": 1,
+        "mode": "A",
+        "requests": 20000,
+        "concurrency": 5,
+        "warmups": 500,
+        "warmupMs": 452.604667,
+        "measurementMs": 4415.321208,
+        "initializationMs": 118.28270800000001,
+        "samplingRatio": 0,
+        "errorCount": 0,
+        "errorRate": 0,
+        "warmupErrors": 0,
+        "httpP50Ms": 0.6057919999998376,
+        "httpP95Ms": 2.870625000000018,
+        "httpP99Ms": 7.43591699999979,
+        "throughputPerSecond": 4529.6817734942015,
+        "cpuUserMs": 3741.345,
+        "cpuSystemMs": 889.071,
+        "cpuCorePercent": 104.87155479447962,
+        "cpuMsPerRequest": 0.2315208,
+        "peakRssBytes": 292618240,
+        "peakHeapBytes": 146136256,
+        "eventOperations": 1000,
+        "eventMeasurementMs": 3.610500000000684,
+        "eventP50Ms": 0.0019579999998313724,
+        "eventP95Ms": 0.006124999999883585,
+        "receiver": "none",
+        "exportsDuringHttp": {
+          "traces": 0,
+          "metrics": 0
+        },
+        "localReceiverTotals": {
+          "traces": 0,
+          "metrics": 0,
+          "bytes": 0
+        }
+      },
+      {
+        "repeat": 1,
+        "mode": "B",
+        "requests": 20000,
+        "concurrency": 5,
+        "warmups": 500,
+        "warmupMs": 313.1035,
+        "measurementMs": 11202.253042,
+        "initializationMs": 273.280167,
+        "samplingRatio": 0.1,
+        "errorCount": 0,
+        "errorRate": 0,
+        "warmupErrors": 0,
+        "httpP50Ms": 1.9892500000005384,
+        "httpP95Ms": 6.305625000000873,
+        "httpP99Ms": 17.604083000000173,
+        "throughputPerSecond": 1785.3551357048518,
+        "cpuUserMs": 7144.578,
+        "cpuSystemMs": 2200.295,
+        "cpuCorePercent": 83.41958501529803,
+        "cpuMsPerRequest": 0.46724364999999995,
+        "peakRssBytes": 254689280,
+        "peakHeapBytes": 168182912,
+        "eventOperations": 1000,
+        "eventMeasurementMs": 22.8648749999993,
+        "eventP50Ms": 0.007541999999375548,
+        "eventP95Ms": 0.07387500000004366,
+        "receiver": "none",
+        "exportsDuringHttp": {
+          "traces": 0,
+          "metrics": 0
+        },
+        "localReceiverTotals": {
+          "traces": 0,
+          "metrics": 0,
+          "bytes": 0
+        }
+      },
+      {
+        "repeat": 1,
+        "mode": "C",
+        "requests": 20000,
+        "concurrency": 5,
+        "warmups": 500,
+        "warmupMs": 1044.7397079999998,
+        "measurementMs": 7509.832292000001,
+        "initializationMs": 484.71833300000003,
+        "samplingRatio": 0.1,
+        "errorCount": 0,
+        "errorRate": 0,
+        "warmupErrors": 0,
+        "httpP50Ms": 1.471958000000086,
+        "httpP95Ms": 4.106500000000324,
+        "httpP99Ms": 9.268082999999933,
+        "throughputPerSecond": 2663.1753176839115,
+        "cpuUserMs": 6050.244,
+        "cpuSystemMs": 1551.781,
+        "cpuCorePercent": 101.22762672208019,
+        "cpuMsPerRequest": 0.38010125,
+        "peakRssBytes": 271663104,
+        "peakHeapBytes": 169702008,
+        "eventOperations": 1000,
+        "eventMeasurementMs": 6.228084000000308,
+        "eventP50Ms": 0.0037080000001878943,
+        "eventP95Ms": 0.016832999999678577,
+        "receiver": "isolated OTLP acknowledgement fixture",
+        "exportsDuringHttp": {
+          "traces": 16,
+          "metrics": 7
+        },
+        "localReceiverTotals": {
+          "traces": 18,
+          "metrics": 11,
+          "bytes": 1217957
+        }
+      },
+      {
+        "repeat": 2,
+        "mode": "B",
+        "requests": 20000,
+        "concurrency": 5,
+        "warmups": 500,
+        "warmupMs": 208.14525000000003,
+        "measurementMs": 4920.904082999999,
+        "initializationMs": 288.77108300000003,
+        "samplingRatio": 0.1,
+        "errorCount": 0,
+        "errorRate": 0,
+        "warmupErrors": 0,
+        "httpP50Ms": 0.9834169999994629,
+        "httpP95Ms": 2.502958000000035,
+        "httpP99Ms": 5.73804199999995,
+        "throughputPerSecond": 4064.2938091585643,
+        "cpuUserMs": 4518.134,
+        "cpuSystemMs": 1025.704,
+        "cpuCorePercent": 112.65893231188997,
+        "cpuMsPerRequest": 0.2771919,
+        "peakRssBytes": 288899072,
+        "peakHeapBytes": 168271016,
+        "eventOperations": 1000,
+        "eventMeasurementMs": 4.515000000000327,
+        "eventP50Ms": 0.003666000000521308,
+        "eventP95Ms": 0.005417000000306871,
+        "receiver": "none",
+        "exportsDuringHttp": {
+          "traces": 0,
+          "metrics": 0
+        },
+        "localReceiverTotals": {
+          "traces": 0,
+          "metrics": 0,
+          "bytes": 0
+        }
+      },
+      {
+        "repeat": 2,
+        "mode": "C",
+        "requests": 20000,
+        "concurrency": 5,
+        "warmups": 500,
+        "warmupMs": 187.61458299999993,
+        "measurementMs": 5882.632833,
+        "initializationMs": 280.34129199999995,
+        "samplingRatio": 0.1,
+        "errorCount": 0,
+        "errorRate": 0,
+        "warmupErrors": 0,
+        "httpP50Ms": 1.0686249999998836,
+        "httpP95Ms": 3.4044159999998556,
+        "httpP99Ms": 7.592208000000028,
+        "throughputPerSecond": 3399.8382302232667,
+        "cpuUserMs": 5072.263,
+        "cpuSystemMs": 1231.469,
+        "cpuCorePercent": 107.15834523340885,
+        "cpuMsPerRequest": 0.3151866,
+        "peakRssBytes": 294846464,
+        "peakHeapBytes": 160621128,
+        "eventOperations": 1000,
+        "eventMeasurementMs": 8.659082999999555,
+        "eventP50Ms": 0.0042920000005324255,
+        "eventP95Ms": 0.022832999999991443,
+        "receiver": "isolated OTLP acknowledgement fixture",
+        "exportsDuringHttp": {
+          "traces": 15,
+          "metrics": 6
+        },
+        "localReceiverTotals": {
+          "traces": 17,
+          "metrics": 9,
+          "bytes": 1218717
+        }
+      },
+      {
+        "repeat": 2,
+        "mode": "A",
+        "requests": 20000,
+        "concurrency": 5,
+        "warmups": 500,
+        "warmupMs": 503.6289170000001,
+        "measurementMs": 4634.728166,
+        "initializationMs": 374.45037499999995,
+        "samplingRatio": 0,
+        "errorCount": 0,
+        "errorRate": 0,
+        "warmupErrors": 0,
+        "httpP50Ms": 0.7892920000003869,
+        "httpP95Ms": 2.6760410000001684,
+        "httpP99Ms": 5.107833000000028,
+        "throughputPerSecond": 4315.247687387239,
+        "cpuUserMs": 4175.168,
+        "cpuSystemMs": 1008.295,
+        "cpuCorePercent": 111.8396336170366,
+        "cpuMsPerRequest": 0.25917314999999996,
+        "peakRssBytes": 290045952,
+        "peakHeapBytes": 144081856,
+        "eventOperations": 1000,
+        "eventMeasurementMs": 7.558374999999614,
+        "eventP50Ms": 0.0023339999997915584,
+        "eventP95Ms": 0.02641600000060862,
+        "receiver": "none",
+        "exportsDuringHttp": {
+          "traces": 0,
+          "metrics": 0
+        },
+        "localReceiverTotals": {
+          "traces": 0,
+          "metrics": 0,
+          "bytes": 0
+        }
+      },
+      {
+        "repeat": 3,
+        "mode": "C",
+        "requests": 20000,
+        "concurrency": 5,
+        "warmups": 500,
+        "warmupMs": 543.3422910000002,
+        "measurementMs": 5011.554334,
+        "initializationMs": 1068.9829169999998,
+        "samplingRatio": 0.1,
+        "errorCount": 0,
+        "errorRate": 0,
+        "warmupErrors": 0,
+        "httpP50Ms": 0.7136249999998654,
+        "httpP95Ms": 3.4621250000000146,
+        "httpP99Ms": 7.235874999999396,
+        "throughputPerSecond": 3990.777843974184,
+        "cpuUserMs": 4654.972,
+        "cpuSystemMs": 948.565,
+        "cpuCorePercent": 111.81235653744785,
+        "cpuMsPerRequest": 0.28017685000000003,
+        "peakRssBytes": 304136192,
+        "peakHeapBytes": 158141120,
+        "eventOperations": 1000,
+        "eventMeasurementMs": 7.72845899999993,
+        "eventP50Ms": 0.005541999999877589,
+        "eventP95Ms": 0.0157920000001468,
+        "receiver": "isolated OTLP acknowledgement fixture",
+        "exportsDuringHttp": {
+          "traces": 15,
+          "metrics": 5
+        },
+        "localReceiverTotals": {
+          "traces": 17,
+          "metrics": 8,
+          "bytes": 1212526
+        }
+      },
+      {
+        "repeat": 3,
+        "mode": "A",
+        "requests": 20000,
+        "concurrency": 5,
+        "warmups": 500,
+        "warmupMs": 168.331792,
+        "measurementMs": 3798.934667,
+        "initializationMs": 129.828292,
+        "samplingRatio": 0,
+        "errorCount": 0,
+        "errorRate": 0,
+        "warmupErrors": 0,
+        "httpP50Ms": 0.7415829999999914,
+        "httpP95Ms": 1.9653330000001006,
+        "httpP99Ms": 3.496458000000075,
+        "throughputPerSecond": 5264.633838989893,
+        "cpuUserMs": 3528.888,
+        "cpuSystemMs": 838.183,
+        "cpuCorePercent": 114.95514881935716,
+        "cpuMsPerRequest": 0.21835355,
+        "peakRssBytes": 288063488,
+        "peakHeapBytes": 146395152,
+        "eventOperations": 1000,
+        "eventMeasurementMs": 3.4355420000001686,
+        "eventP50Ms": 0.00204200000007404,
+        "eventP95Ms": 0.003915999999662745,
+        "receiver": "none",
+        "exportsDuringHttp": {
+          "traces": 0,
+          "metrics": 0
+        },
+        "localReceiverTotals": {
+          "traces": 0,
+          "metrics": 0,
+          "bytes": 0
+        }
+      },
+      {
+        "repeat": 3,
+        "mode": "B",
+        "requests": 20000,
+        "concurrency": 5,
+        "warmups": 500,
+        "warmupMs": 523.5004590000001,
+        "measurementMs": 3590.9407500000007,
+        "initializationMs": 520.358625,
+        "samplingRatio": 0.1,
+        "errorCount": 0,
+        "errorRate": 0,
+        "warmupErrors": 0,
+        "httpP50Ms": 0.5360829999999623,
+        "httpP95Ms": 2.316291999999976,
+        "httpP99Ms": 4.07458299999962,
+        "throughputPerSecond": 5569.5711492872715,
+        "cpuUserMs": 3770.063,
+        "cpuSystemMs": 731.19,
+        "cpuCorePercent": 125.35024422221387,
+        "cpuMsPerRequest": 0.22506264999999998,
+        "peakRssBytes": 301514752,
+        "peakHeapBytes": 155733328,
+        "eventOperations": 1000,
+        "eventMeasurementMs": 4.305374999999913,
+        "eventP50Ms": 0.0035410000000410946,
+        "eventP95Ms": 0.00537499999973079,
+        "receiver": "none",
+        "exportsDuringHttp": {
+          "traces": 0,
+          "metrics": 0
+        },
+        "localReceiverTotals": {
+          "traces": 0,
+          "metrics": 0,
+          "bytes": 0
+        }
+      }
+    ],
+    "benchmarkSha256": "44e6793d0f3fc9646d8b156e014522c0f3f48e950935e1d74295bf2141d8e910",
+    "runtime": "v24.21.0",
+    "host": "darwin-arm64; existing host/container workloads uncontrolled"
+  },
+  "safety": {
+    "newDockerProjectsStarted": 0,
+    "developmentStoreCommandsIssued": 0,
+    "gitMutationsIssued": 0,
+    "externalSourceTransfer": false
+  }
+}

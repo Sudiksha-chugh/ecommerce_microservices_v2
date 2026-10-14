@@ -1,0 +1,12 @@
+# Disposable only: random loopback port, no development volume or configuration.
+services:
+  redis:
+    image: redis:8
+    command: [redis-server, --save, "", --appendonly, "no"]
+    ports: ["127.0.0.1::6379"]
+    tmpfs: [/data]
+    healthcheck:
+      test: [CMD, redis-cli, ping]
+      interval: 1s
+      timeout: 2s
+      retries: 20

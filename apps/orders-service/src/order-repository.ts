@@ -1,10 +1,14 @@
+import {observeBusiness} from '@ecommerce/observability';
+import type {SagaKeys} from '@ecommerce/messaging';
+import {startSaga} from './saga/repository.js';
+import { insertOutbox, createEvent } from '@ecommerce/event-persistence';
 import type { Pool, PoolClient } from 'pg';
 import type { Order, OrderItem, OrderSummary } from '@ecommerce/contracts';
 import { databaseMoney } from './money.js';
 import { OrderDatabaseError, OrderError } from './errors.js';
 
 interface OrderRow {
-  id: string; user_id: string; status: 'PENDING'; total_amount_paise: string;
+  id: string; user_id: string; status: 'PENDING' | 'CONFIRMED' | 'FAILED' | 'CANCELLED'; total_amount_paise: string;
   request_fingerprint: string; created_at: Date; updated_at: Date;
 }
 interface ItemRow {
@@ -56,10 +60,11 @@ export class OrderRepository {
         ORDER BY created_at DESC, id DESC LIMIT $2 OFFSET $3`, [userId, limit, offset])).rows.map(summary);
     } catch { throw new OrderDatabaseError(); }
   }
-  async create(userId: string, key: string, fingerprint: string, snapshot: CheckoutSnapshot): Promise<Order> {
+  async create(userId: string, key: string, fingerprint: string, snapshot: CheckoutSnapshot, checkoutKeys?: SagaKeys): Promise<Order> {
     let client: PoolClient;
     try { client = await this.pool.connect(); } catch { throw new OrderDatabaseError(); }
     let discard = false;
+ const onClientError = () => { discard = true; }; client.on('error', onClientError);
     let conflict = false;
     let order: Order | undefined;
     try {
@@ -77,13 +82,25 @@ export class OrderRepository {
         [row.id, snapshot.items.map((item) => item.productId), snapshot.items.map((item) => item.productName),
           snapshot.items.map((item) => String(item.unitPriceInPaise)), snapshot.items.map((item) => item.quantity),
           snapshot.items.map((item) => String(item.lineTotalInPaise))]);
+      const persistedItems = (await client.query<ItemRow>(`SELECT product_id, product_name, unit_price_paise::text,
+        quantity, line_total_paise::text FROM order_items WHERE order_id=$1 ORDER BY product_id`, [row.id])).rows;
+      const event = createEvent('order.created', { orderId: row.id, userId: row.user_id,
+        totalAmountPaise: databaseMoney(row.total_amount_paise), currency: 'INR',
+        items: persistedItems.map((item) => ({ productId: item.product_id, quantity: item.quantity })),
+        createdAt: row.created_at.toISOString() }, undefined, row.created_at.toISOString());
+      await insertOutbox(client, event, row.id);
+      if(checkoutKeys){
+        if(snapshot.totalAmountInPaise<=0)throw new OrderError(422,'Checkout requires a positive total');
+        await startSaga(client,row.id,userId,snapshot.items.map(({productId,quantity})=>({productId,quantity})),checkoutKeys);
+      }
       order = { ...summary(row), items: snapshot.items };
-      await client.query('COMMIT');
+      await client.query('COMMIT');observeBusiness('order_created','success');
     } catch (error) {
       try { await client.query('ROLLBACK'); } catch { discard = true; }
       if (!discard && isKeyConflict(error)) conflict = true;
+      else if(error instanceof OrderError)throw error;
       else throw new OrderDatabaseError();
-    } finally { client.release(discard); }
+    } finally { client.release(discard); client.off('error', onClientError); }
     // Release the transaction client before a replay lookup, even with a pool of size one.
     if (conflict) {
       const existing = await this.findByKey(userId, key);

@@ -1,3 +1,4 @@
+import '@ecommerce/observability/bootstrap';
 import { loadAuthEnvironment } from '@ecommerce/config';
 import { createApp } from './app.js';
 import { createPool, verifyDatabaseBoundary } from './db/pool.js';
@@ -22,7 +23,7 @@ try {
   await pool.end();
   throw new Error('Auth startup failed; check database readiness and dedicated role permissions');
 }
-const server = createApp(auth).listen(environment.AUTH_PORT, environment.AUTH_HOST, () => {
+const server = createApp(auth,process.env.NOTIFICATION_LOOKUP_KEY?{key:process.env.NOTIFICATION_LOOKUP_KEY,lookup:id=>new UserRepository(pool).findById(id)}:undefined).listen(environment.AUTH_PORT, environment.AUTH_HOST, () => {
   console.info(`Auth Service listening on http://${environment.AUTH_HOST}:${environment.AUTH_PORT}`);
 });
 

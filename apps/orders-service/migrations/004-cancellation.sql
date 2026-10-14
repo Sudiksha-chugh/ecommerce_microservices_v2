@@ -1,0 +1,21 @@
+ALTER TABLE checkout_sagas DROP CONSTRAINT checkout_sagas_state_check;
+ALTER TABLE checkout_sagas ADD CONSTRAINT checkout_sagas_state_check CHECK(state IN (
+ 'CREATED','INVENTORY_PENDING','INVENTORY_RESERVED','PAYMENT_PENDING','PAYMENT_RECONCILIATION_REQUIRED','PAYMENT_SUCCEEDED','INVENTORY_CONFIRMATION_PENDING','COMPLETED','COMPENSATION_PENDING','COMPENSATED','FAILED','MANUAL_REVIEW_REQUIRED',
+ 'CANCELLATION_REQUESTED','CANCELLATION_PENDING','REFUND_PENDING','REFUND_RECONCILIATION_REQUIRED','INVENTORY_RELEASE_PENDING','CANCELLED','CANCELLATION_FAILED'));
+ALTER TABLE checkout_sagas ADD COLUMN cancellation_kind TEXT CHECK(cancellation_kind IN ('CUSTOMER_CANCELLATION','PAID_UNFULFILLED'));
+ALTER TABLE checkout_sagas ADD COLUMN refund_operation_id UUID UNIQUE;
+ALTER TABLE checkout_sagas ADD COLUMN refund_id UUID;
+ALTER TABLE checkout_sagas ADD COLUMN compensation_operation_id UUID UNIQUE;
+ALTER TABLE checkout_sagas ADD COLUMN cancellation_wait TEXT CHECK(cancellation_wait IN ('INVENTORY','PAYMENT'));
+ALTER TABLE checkout_sagas ADD COLUMN refund_amount_paise BIGINT CHECK(refund_amount_paise>0);
+CREATE TABLE cancellation_requests (
+ id UUID PRIMARY KEY DEFAULT gen_random_uuid(),saga_id UUID NOT NULL REFERENCES checkout_sagas(id),
+ principal_id UUID NOT NULL,idempotency_key TEXT NOT NULL,request_fingerprint TEXT NOT NULL,
+ created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),UNIQUE(principal_id,idempotency_key)
+);
+CREATE TABLE order_refunds (
+ refund_id UUID PRIMARY KEY,order_id UUID NOT NULL REFERENCES orders(id),refund_operation_id UUID NOT NULL UNIQUE,
+ amount_paise BIGINT NOT NULL CHECK(amount_paise>0),currency VARCHAR(3) NOT NULL CHECK(currency='INR'),
+ status TEXT NOT NULL CHECK(status IN ('SUCCEEDED','FAILED','REQUIRES_RECONCILIATION','MANUAL_REVIEW_REQUIRED')),
+ updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
+);

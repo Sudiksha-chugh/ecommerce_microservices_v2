@@ -1,3 +1,4 @@
+import {instrumentPg} from '@ecommerce/observability';
 import { Pool } from 'pg';
 import type { CatalogEnvironment } from '@ecommerce/config';
 
@@ -12,5 +13,5 @@ export function createPool(environment: CatalogEnvironment) {
     query_timeout: environment.PGQUERY_TIMEOUT_MS,
   });
   pool.on('error', () => console.error('Catalog database idle connection failed'));
-  return pool;
+  return instrumentPg(pool);
 }

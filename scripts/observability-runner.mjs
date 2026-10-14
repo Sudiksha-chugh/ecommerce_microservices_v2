@@ -1,0 +1,40 @@
+// One random owned telemetry project; business stores are owned by the existing portable harness.
+import {execFile,spawn} from 'node:child_process';
+import {promisify} from 'node:util';
+import {mkdtemp,writeFile,rm,mkdir,readFile} from 'node:fs/promises';
+import {randomBytes} from 'node:crypto';
+import {tmpdir} from 'node:os';
+import {join,resolve} from 'node:path';
+import {waitForBackend,ownedContainerState} from './observability-readiness.mjs';
+const execute=promisify(execFile),project='commerce-v2-observability-'+randomBytes(6).toString('hex'),directory=await mkdtemp(join(tmpdir(),project+'-'));
+const env={...process.env,OTEL_ENABLED:'false',OTEL_HTTP_PORT:'0',TEMPO_PORT:'0',PROMETHEUS_PORT:'0',GRAFANA_PORT:'0',OBS_GRAFANA_PASSWORD_FILE:join(directory,'grafana-password')};
+const password=randomBytes(24).toString('hex');await writeFile(env.OBS_GRAFANA_PASSWORD_FILE,password,{mode:0o444});
+const base=['compose','-p',project,'-f','compose.observability.yaml','--profile','observability'];
+const docker=async args=>(await execute('docker',[...base,...args],{env,timeout:120000,killSignal:'SIGKILL',maxBuffer:200000})).stdout.trim();
+const report={project,started:new Date().toISOString(),checks:[],passed:false,cleanup:false};
+const reportDir=resolve(process.env.OBSERVABILITY_REPORT_DIR??join(tmpdir(),'commerce-v2-observability-evidence',project));await mkdir(reportDir,{recursive:true});
+const until=(name,check)=>waitForBackend(name,check,report,{interrupted:()=>interrupted});
+const fetchJson=async(url,headers)=>{const response=await fetch(url,{headers,signal:AbortSignal.timeout(2000)});if(!response.ok)throw new Error('Backend HTTP '+response.status);return response.json();};
+let child,interrupted=false;for(const signal of ['SIGINT','SIGTERM'])process.once(signal,()=>{interrupted=true;child?.kill('SIGTERM');});
+async function run(args,extra={}){if(interrupted)throw new Error('Verification interrupted');await new Promise((resolve,reject)=>{child=spawn(process.execPath,args,{env:{...env,...extra},stdio:'inherit'});child.once('error',reject);child.once('exit',code=>code===0?resolve():reject(new Error('Proof child failed '+code)));});}
+try{
+ await docker(['config','--quiet']);await docker(['up','-d']);
+ const endpoint=async(service,port)=>'http://127.0.0.1:'+Number((await docker(['port',service,String(port)])).split(':').at(-1));
+ console.log(JSON.stringify({component:'observability-runner',project,stage:'discovering-endpoints'}));
+ env.OTEL_EXPORTER_OTLP_ENDPOINT=await endpoint('otel-collector',4318);env.OBS_TEMPO_URL=await endpoint('tempo',3200);env.OBS_PROMETHEUS_URL=await endpoint('prometheus',9090);env.OBS_GRAFANA_URL=await endpoint('grafana',3000);
+ report.endpoints={collector:env.OTEL_EXPORTER_OTLP_ENDPOINT,tempo:env.OBS_TEMPO_URL,prometheus:env.OBS_PROMETHEUS_URL,grafana:env.OBS_GRAFANA_URL};
+ console.log(JSON.stringify({component:'observability-runner',stage:'waiting-for-query-backends',tempo:env.OBS_TEMPO_URL,prometheus:env.OBS_PROMETHEUS_URL,grafana:env.OBS_GRAFANA_URL}));
+ const auth={Authorization:'Basic '+Buffer.from('observability-admin:'+password).toString('base64')};
+ await until('collector-otlp-http',async()=>{const r=await fetch(env.OTEL_EXPORTER_OTLP_ENDPOINT+'/v1/traces',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({resourceSpans:[]}),signal:AbortSignal.timeout(2000)});if(!r.ok)throw new Error('Collector OTLP HTTP '+r.status);await r.arrayBuffer();});
+ await until('tempo-ready',async()=>{const response=await fetch(env.OBS_TEMPO_URL+'/ready',{signal:AbortSignal.timeout(2000)});if(!response.ok)throw new Error('Tempo not ready');});
+ await until('prometheus-config',()=>fetchJson(env.OBS_PROMETHEUS_URL+'/api/v1/status/config'));await until('grafana-health',()=>fetchJson(env.OBS_GRAFANA_URL+'/api/health'));console.log(JSON.stringify({component:'observability-runner',stage:'backends-ready'}));
+ await until('grafana-datasource-health',async()=>{for(const uid of ['prometheus','tempo']){const health=await fetchJson(env.OBS_GRAFANA_URL+'/api/datasources/uid/'+uid+'/health',auth);if(health.status!=='OK')throw new Error('Datasource not ready');}});
+ const unauthenticated=await fetch(env.OBS_GRAFANA_URL+'/api/search',{signal:AbortSignal.timeout(2000)});await unauthenticated.arrayBuffer();if(unauthenticated.status!==401)throw new Error('Grafana API did not require authentication');report.checks.push({name:'grafana-authentication',passed:true,status:401});
+ const dashboards=await until('grafana-dashboard-provisioning',async()=>{const result=await fetchJson(env.OBS_GRAFANA_URL+'/api/search?type=dash-db',auth);if(result.length!==7)throw new Error('Dashboard count '+result.length);return result;});report.checks.push({name:'grafana-provisioning',datasources:2,dashboards:dashboards.length});
+ await run(['scripts/integration-runner.mjs','--config','vitest.observability.config.mjs','--reporter=json','--outputFile='+join(reportDir,'proof-tests.json')],{...env,INTEGRATION_EXECUTION:'host',OBS_PROOF_FILE:join(reportDir,'flow-proof.json'),OBS_BACKEND_PROJECT:project});
+ const flow=JSON.parse(await readFile(join(reportDir,'flow-proof.json'),'utf8'));const viaGrafana=await fetchJson(env.OBS_GRAFANA_URL+'/api/datasources/proxy/uid/tempo/api/traces/'+flow.checkout.traceId,{...auth,Accept:'application/json'});if(!JSON.stringify(viaGrafana).includes('rabbitmq process'))throw new Error('Grafana Tempo trace navigation lacks checkout trace');report.checks.push({name:'grafana-tempo-trace-navigation',passed:true,traceId:flow.checkout.traceId});
+ for(const d of dashboards){const dashboard=await fetchJson(env.OBS_GRAFANA_URL+'/api/dashboards/uid/'+d.uid,auth);for(const panel of dashboard.dashboard.panels)for(const target of panel.targets??[]){const result=await fetchJson(env.OBS_PROMETHEUS_URL+'/api/v1/query?query='+encodeURIComponent(target.expr));if(result.status!=='success')throw new Error('Invalid PromQL');if(result.data.result.length===0)throw new Error('Dashboard query has no application series: '+d.uid);report.checks.push({name:'promql',dashboard:d.uid,expression:target.expr,series:result.data.result.length});}}
+ report.checks.push({name:'backend-outages-with-committed-checkout',services:['otel-collector','tempo','prometheus','grafana'],passed:true});
+ await until('prometheus-config',()=>fetchJson(env.OBS_PROMETHEUS_URL+'/api/v1/status/config'));if(process.env.OBS_RUN_PERFORMANCE==='true')await run(['scripts/observability-benchmark.mjs'],{OBSERVABILITY_REPORT_DIR:join(reportDir,'performance'),OBS_PERFORMANCE_ENDPOINT:env.OTEL_EXPORTER_OTLP_ENDPOINT});report.passed=true;
+}catch(error){report.error=error.message;report.cause=error.cause?.code;process.exitCode=1;try{const ids=(await execute('docker',['ps','-aq','--filter','label=com.docker.compose.project='+project],{timeout:10000})).stdout.trim().split(/\s+/).filter(Boolean);if(ids.length){const rows=JSON.parse((await execute('docker',['inspect',...ids],{timeout:10000,maxBuffer:200000})).stdout);report.containers=ownedContainerState(rows,project);report.resourceSample=(await execute('docker',['stats','--no-stream','--format','{{json .}}',...ids],{timeout:15000,maxBuffer:50000})).stdout.trim().split('\n').map(JSON.parse).map(r=>({id:r.ID,cpu:r.CPUPerc,memory:r.MemUsage,memoryPercent:r.MemPerc,pids:r.PIDs}));}}catch(diagnostic){report.diagnosticError=diagnostic.message;}try{await writeFile(join(reportDir,'backend.log'),await docker(['logs','--no-color','--tail','100']));}catch{}}
+finally{try{await docker(['down','--volumes','--remove-orphans']);const remaining=await execute('docker',['ps','-aq','--filter','label=com.docker.compose.project='+project],{timeout:10000});if(remaining.stdout.trim())throw new Error('Owned containers remain');report.cleanup=true;}catch(error){report.cleanupError=error.message;process.exitCode=1;}await writeFile(join(reportDir,'result.json'),JSON.stringify(report,null,2));if(report.cleanup)await rm(directory,{recursive:true,force:true});console.log(JSON.stringify({component:'observability-runner',project,passed:report.passed,cleanup:report.cleanup,report:reportDir}));}

@@ -1,3 +1,4 @@
+import {committed,rolledBack} from '@ecommerce/observability';
 import { createHash } from 'node:crypto';
 import type { Pool, PoolClient } from 'pg';
 import type { InventoryStock, ReservationGroup, ReservationStatus } from '@ecommerce/contracts';
@@ -15,18 +16,19 @@ export class InventoryRepository {
     let client: PoolClient;
     try { client = await this.pool.connect(); } catch { throw new InventoryDatabaseError(); }
     let discard = false;
+ const onClientError = () => { discard = true; }; client.on('error', onClientError);
     try {
       await client.query('BEGIN'); const result = await operation(client);
-      await client.query('COMMIT'); return result;
+      await client.query('COMMIT');committed(client); return result;
     } catch (error) {
-      try { await client.query('ROLLBACK'); } catch { discard = true; }
+      try { await client.query('ROLLBACK');rolledBack(client); } catch { discard = true; }
       if (!discard && error instanceof InventoryError) throw error;
       throw new InventoryDatabaseError();
-    } finally { client.release(discard); }
+    } finally { rolledBack(client);client.release(discard); client.off('error', onClientError); }
   }
   private async lockRequest(client: PoolClient, orderId: string) {
     const row = (await client.query<{ request_fingerprint: string }>(
-      'SELECT request_fingerprint FROM inventory_reservation_requests WHERE order_id = $1 FOR UPDATE', [orderId],
+      'SELECT request_fingerprint, saga_id, fulfillment_blocked FROM inventory_reservation_requests WHERE order_id = $1 FOR UPDATE', [orderId],
     )).rows[0];
     if (!row) throw new InventoryError(404, 'Reservation not found');
     return row;
@@ -61,14 +63,15 @@ export class InventoryRepository {
       return row;
     } catch (error) { if (error instanceof InventoryError) throw error; throw new InventoryDatabaseError(); }
   }
-  async reserve(input: ReservationInput): Promise<ReservationGroup> {
+  async reserve(input: ReservationInput, transactionClient?: PoolClient, hold = false): Promise<ReservationGroup> {
     const items = [...input.items].sort((a, b) => a.productId.localeCompare(b.productId));
     const fingerprint = createHash('sha256').update(JSON.stringify({ version: 1, items })).digest('hex');
-    return this.transaction(async (client) => {
+    const operation = async (client: PoolClient) => {
       const inserted = await client.query(`INSERT INTO inventory_reservation_requests (order_id, request_fingerprint)
         VALUES ($1, $2) ON CONFLICT (order_id) DO NOTHING RETURNING order_id`, [input.orderId, fingerprint]);
       const request = await this.lockRequest(client, input.orderId);
       if (request.request_fingerprint !== fingerprint) throw new InventoryError(409, 'Order reservation request conflicts');
+      if (hold && inserted.rowCount === 0 && !('saga_id' in request && request.saga_id)) throw new InventoryError(409, 'Existing reservation cannot be adopted');
       if (inserted.rowCount === 0) return this.group(input.orderId, await this.rows(client, [input.orderId]));
       const stocks = await this.lockStock(client, items.map((item) => item.productId));
       if (stocks.length !== items.length) throw new InventoryError(404, 'Inventory not found');
@@ -84,8 +87,10 @@ export class InventoryRepository {
         SELECT $1::uuid, item.product_id, item.quantity, deadline.expires_at
         FROM UNNEST($2::uuid[], $3::integer[]) AS item(product_id, quantity) CROSS JOIN deadline`,
         [input.orderId, items.map((item) => item.productId), items.map((item) => item.quantity), this.ttlSeconds]);
+      if (hold) await client.query('UPDATE inventory_reservations SET checkout_hold=TRUE WHERE order_id=$1',[input.orderId]);
       return this.group(input.orderId, await this.rows(client, [input.orderId]));
-    });
+    };
+    return transactionClient ? operation(transactionClient) : this.transaction(operation);
   }
   private async decreaseReserved(client: PoolClient, rows: ReservationRow[], consume: boolean) {
     const quantities = new Map<string, number>();
@@ -96,17 +101,19 @@ export class InventoryRepository {
       updated_at = clock_timestamp() FROM UNNEST($1::uuid[], $2::integer[]) AS item(product_id, quantity)
       WHERE i.product_id = item.product_id`, [[...quantities.keys()], [...quantities.values()], consume]);
   }
-  async finish(orderId: string, target: 'CONFIRMED' | 'RELEASED'): Promise<ReservationGroup> {
-    const result = await this.transaction(async (client) => {
-      await this.lockRequest(client, orderId);
+  async finish(orderId: string, target: 'CONFIRMED' | 'RELEASED', transactionClient?: PoolClient): Promise<ReservationGroup> {
+    const operation = async (client: PoolClient) => {
+      const request = await this.lockRequest(client, orderId);
+      if (!transactionClient && 'saga_id' in request && request.saga_id) throw new InventoryError(409, 'Checkout reservation is managed by its Saga');
       const rows = await this.rows(client, [orderId]);
       const group = this.group(orderId, rows);
+      if (target==='CONFIRMED' && 'fulfillment_blocked' in request && request.fulfillment_blocked) throw new InventoryError(409,'Fulfillment is blocked');
       if (group.status === target) return { group, expired: false };
       if (group.status !== 'RESERVED') throw new InventoryError(409, 'Invalid reservation state transition');
       await this.lockStock(client, rows.map((row) => row.product_id));
       // Recheck the database clock after waiting for all stock locks. One decision for all items.
       const changed = await client.query<{ status: ReservationStatus }>(`WITH decision AS MATERIALIZED (
-        SELECT BOOL_OR(expires_at <= clock_timestamp()) AS expired FROM inventory_reservations WHERE order_id = $1)
+        SELECT BOOL_OR(NOT checkout_hold AND expires_at <= clock_timestamp()) AS expired FROM inventory_reservations WHERE order_id = $1)
         UPDATE inventory_reservations SET status = CASE WHEN decision.expired THEN 'EXPIRED' ELSE $2::text END,
           updated_at = clock_timestamp() FROM decision WHERE order_id = $1 AND status = 'RESERVED' RETURNING status`, [orderId, target]);
       const status = changed.rows[0]?.status;
@@ -114,16 +121,30 @@ export class InventoryRepository {
       await this.decreaseReserved(client, rows, status === 'CONFIRMED');
       await client.query('UPDATE inventory_reservation_requests SET updated_at = clock_timestamp() WHERE order_id = $1', [orderId]);
       return { group: this.group(orderId, await this.rows(client, [orderId])), expired: status === 'EXPIRED' };
-    });
+    };
+    const result = transactionClient ? await operation(transactionClient) : await this.transaction(operation);
     // Keep the expiration/release committed even though the attempted late transition returns 409.
     if (result.expired) throw new InventoryError(409, 'Reservation has expired');
     return result.group;
+  }
+  async compensate(orderId:string,refundVerified:boolean,client:PoolClient):Promise<'RELEASED'|'RESTORED'|'ALREADY_RELEASED'|'ALREADY_EXPIRED'|'ALREADY_RESTORED'> {
+    await this.lockRequest(client,orderId);
+    const rows=await this.rows(client,[orderId]),group=this.group(orderId,rows);
+    if(group.status==='RESERVED'){await this.finish(orderId,'RELEASED',client);return 'RELEASED';}
+    if(group.status==='CONFIRMED'){
+      if(!refundVerified)throw new InventoryError(409,'Confirmed stock requires verified refund authorization');
+      await this.lockStock(client,rows.map(r=>r.product_id));
+      await client.query(`UPDATE inventory i SET total_stock=i.total_stock+item.quantity,updated_at=clock_timestamp()
+        FROM UNNEST($1::uuid[],$2::integer[]) AS item(product_id,quantity) WHERE i.product_id=item.product_id`,[rows.map(r=>r.product_id),rows.map(r=>r.quantity)]);
+      await client.query("UPDATE inventory_reservations SET status='RESTORED',updated_at=clock_timestamp() WHERE order_id=$1 AND status='CONFIRMED'",[orderId]);return 'RESTORED';
+    }
+    return group.status==='RELEASED'?'ALREADY_RELEASED':group.status==='EXPIRED'?'ALREADY_EXPIRED':'ALREADY_RESTORED';
   }
   async expireBatch(batchSize = 100): Promise<number> {
     return this.transaction(async (client) => {
       const requests = await client.query<{ order_id: string }>(`SELECT r.order_id FROM inventory_reservation_requests r
         WHERE EXISTS (SELECT 1 FROM inventory_reservations i WHERE i.order_id = r.order_id
-          AND i.status = 'RESERVED' AND i.expires_at <= clock_timestamp())
+          AND i.status = 'RESERVED' AND NOT i.checkout_hold AND i.expires_at <= clock_timestamp())
         ORDER BY r.order_id LIMIT $1 FOR UPDATE OF r SKIP LOCKED`, [batchSize]);
       if (requests.rows.length === 0) return 0;
       const allRows = await this.rows(client, requests.rows.map((row) => row.order_id));

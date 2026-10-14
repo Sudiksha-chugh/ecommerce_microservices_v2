@@ -1,3 +1,4 @@
+import '@ecommerce/observability/bootstrap';
 import { readFile } from 'node:fs/promises';
 import { loadCartEnvironment } from '@ecommerce/config';
 import { createTokenVerifier } from '@ecommerce/security';

@@ -1,0 +1,258 @@
+{
+  "phase": 17,
+  "status": "INCOMPLETE",
+  "source": {
+    "branch": "backend",
+    "head": "e501bc4b9a6ba1e346aa64d9d43da1609c5f455c",
+    "uncommitted": true,
+    "startingVerifiedCommit": "f5a3e805424f0cdbb56112fecd95b4bf7906151f"
+  },
+  "static": {
+    "typecheck": "passed",
+    "syntax": "passed",
+    "compiledPreload": "passed",
+    "portableHarness": {
+      "success": true,
+      "numTotalTests": 35,
+      "numPassedTests": 35,
+      "numFailedTests": 0,
+      "numPendingTests": 0,
+      "numFailedTestSuites": 0
+    },
+    "stackConfiguration": {
+      "project": "commerce-v2-observability-static-5b0813b638fd",
+      "passed": true,
+      "checks": [
+        "opt-in Compose parses",
+        {
+          "name": "collector",
+          "image": "otel/opentelemetry-collector-contrib:0.162.0",
+          "passed": true,
+          "output": ""
+        },
+        {
+          "name": "prometheus",
+          "image": "prom/prometheus:v3.13.4",
+          "passed": true,
+          "output": "Checking /etc/config.yaml\n SUCCESS: /etc/config.yaml is valid prometheus config file syntax"
+        },
+        {
+          "name": "dashboard-structure",
+          "file": "dependencies.json",
+          "panels": 2
+        },
+        {
+          "name": "dashboard-structure",
+          "file": "http-performance.json",
+          "panels": 3
+        },
+        {
+          "name": "dashboard-structure",
+          "file": "inventory-compensation.json",
+          "panels": 1
+        },
+        {
+          "name": "dashboard-structure",
+          "file": "orders-payments.json",
+          "panels": 1
+        },
+        {
+          "name": "dashboard-structure",
+          "file": "rabbitmq.json",
+          "panels": 3
+        },
+        {
+          "name": "dashboard-structure",
+          "file": "search-performance.json",
+          "panels": 3
+        },
+        {
+          "name": "dashboard-structure",
+          "file": "service-overview.json",
+          "panels": 2
+        }
+      ],
+      "cleanup": true
+    }
+  },
+  "unit": {
+    "success": true,
+    "numTotalTests": 23,
+    "numPassedTests": 23,
+    "numFailedTests": 0,
+    "numPendingTests": 0,
+    "numFailedTestSuites": 0
+  },
+  "live": {
+    "status": "setup_failed",
+    "plannedProofTests": 5,
+    "executedProofTests": 0,
+    "attempts": [
+      {
+        "project": "commerce-v2-observability-1490a912046f",
+        "started": "2026-10-14T18:06:50.721Z",
+        "passed": false,
+        "cleanup": true,
+        "error": "fetch failed",
+        "cause": null
+      },
+      {
+        "project": "commerce-v2-observability-72da82782111",
+        "started": "2026-10-14T18:10:11.724Z",
+        "passed": false,
+        "cleanup": true,
+        "error": "fetch failed",
+        "cause": "UND_ERR_SOCKET"
+      },
+      {
+        "project": "commerce-v2-observability-8ed90a48b1b9",
+        "started": "2026-10-14T19:10:26.561Z",
+        "passed": false,
+        "cleanup": true,
+        "error": "fetch failed",
+        "cause": "UND_ERR_SOCKET"
+      },
+      {
+        "project": "commerce-v2-observability-09724882461b",
+        "started": "2026-10-14T19:23:08.797Z",
+        "passed": false,
+        "cleanup": true,
+        "error": "The operation was aborted due to timeout",
+        "cause": null
+      }
+    ]
+  },
+  "regression": {
+    "status": "failed",
+    "attempts": [
+      {
+        "success": false,
+        "numTotalTests": 970,
+        "numPassedTests": 957,
+        "numFailedTests": 13,
+        "numPendingTests": 0,
+        "numFailedTestSuites": 14
+      },
+      {
+        "success": false,
+        "numTotalTests": 970,
+        "numPassedTests": 936,
+        "numFailedTests": 6,
+        "numPendingTests": 28,
+        "numFailedTestSuites": 10
+      }
+    ],
+    "ownedCleanup": true,
+    "certifiesFinalSource": false,
+    "note": "The initial run overlapped audit corrections; a closed-SDK lifecycle guard was added after iteration 2 began, and one HTTP parentage unit case was subsequently added. Final-source certification is outstanding. Original business assertions and deadlines were unchanged."
+  },
+  "performance": {
+    "method": "three alternating fresh-process comparisons; 200 warmups, 2000 HTTP requests at concurrency 5, 1000 awaited event operations; unreachable collector; default 10% sampling; local CPU/peak sampled memory only",
+    "results": [
+      {
+        "enabled": false,
+        "requests": 2000,
+        "httpP50Ms": 0.9925000000000637,
+        "httpP95Ms": 3.5682090000000244,
+        "httpP99Ms": 5.93404200000009,
+        "throughputPerSecond": 3637.221967843,
+        "cpuCorePercent": 124.85128126817881,
+        "peakRssBytes": 198197248,
+        "peakHeapBytes": 61721576,
+        "eventP50Ms": 0.0010839999999916472,
+        "eventP95Ms": 0.002375000000029104
+      },
+      {
+        "enabled": true,
+        "requests": 2000,
+        "httpP50Ms": 1.084916000000021,
+        "httpP95Ms": 3.755042000000003,
+        "httpP99Ms": 5.945375000000013,
+        "throughputPerSecond": 3580.9174719862094,
+        "cpuCorePercent": 130.37601282468353,
+        "peakRssBytes": 207077376,
+        "peakHeapBytes": 64218768,
+        "eventP50Ms": 0.003167000000075859,
+        "eventP95Ms": 0.009915999999975611
+      },
+      {
+        "enabled": false,
+        "requests": 2000,
+        "httpP50Ms": 0.8103330000000142,
+        "httpP95Ms": 3.0650000000000546,
+        "httpP99Ms": 4.489083000000051,
+        "throughputPerSecond": 4560.798439645043,
+        "cpuCorePercent": 134.53511649241543,
+        "peakRssBytes": 202817536,
+        "peakHeapBytes": 60004648,
+        "eventP50Ms": 0.002124999999978172,
+        "eventP95Ms": 0.004124999999930878
+      },
+      {
+        "enabled": true,
+        "requests": 2000,
+        "httpP50Ms": 1.0706669999999576,
+        "httpP95Ms": 4.172124999999937,
+        "httpP99Ms": 7.532041000000049,
+        "throughputPerSecond": 3391.678685928009,
+        "cpuCorePercent": 131.47791550819642,
+        "peakRssBytes": 209387520,
+        "peakHeapBytes": 60996056,
+        "eventP50Ms": 0.006125000000110958,
+        "eventP95Ms": 0.010958000000073298
+      },
+      {
+        "enabled": false,
+        "requests": 2000,
+        "httpP50Ms": 0.71387500000003,
+        "httpP95Ms": 2.661292000000003,
+        "httpP99Ms": 4.992624999999975,
+        "throughputPerSecond": 4984.543242937603,
+        "cpuCorePercent": 140.57707926327205,
+        "peakRssBytes": 202571776,
+        "peakHeapBytes": 58609208,
+        "eventP50Ms": 0.00204200000007404,
+        "eventP95Ms": 0.004416999999989457
+      },
+      {
+        "enabled": true,
+        "requests": 2000,
+        "httpP50Ms": 0.6307090000000244,
+        "httpP95Ms": 3.5265829999999596,
+        "httpP99Ms": 5.408541000000014,
+        "throughputPerSecond": 4374.509405605331,
+        "cpuCorePercent": 146.48307215233788,
+        "peakRssBytes": 200720384,
+        "peakHeapBytes": 61475704,
+        "eventP50Ms": 0.0060829999999896245,
+        "eventP95Ms": 0.010874999999941792
+      }
+    ]
+  },
+  "preservation": {
+    "missingOriginalFiles": [],
+    "intentionalEditedOriginalFiles": 69,
+    "protectedFiles": 21,
+    "changedProtectedFiles": [],
+    "gitIndexUnchanged": true,
+    "branch": "backend",
+    "head": "e501bc4b9a6ba1e346aa64d9d43da1609c5f455c"
+  },
+  "unexecutedRequiredChecks": [
+    "Final-source full regression with zero failures/skips",
+    "Actual Gateway/Orders/RabbitMQ/Payments/Inventory trace retrieval",
+    "Real PostgreSQL/Redis/Elasticsearch trace retrieval",
+    "Collector ingestion and recovery",
+    "Prometheus data retrieval and live PromQL",
+    "Grafana datasource health and live dashboard provisioning",
+    "Committed business flow and ACK/retry/DLQ preservation during four backend outages",
+    "Real broker performance comparison (the measured async fixture is a microbenchmark)"
+  ],
+  "git": {
+    "committed": false,
+    "pushed": false,
+    "mainModified": false,
+    "branchChanged": false,
+    "phase18Started": false
+  }
+}
