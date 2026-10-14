@@ -121,6 +121,13 @@ describe('partial startup cleanup',()=>{
 });
 
 describe('portable source snapshot',()=>{
+ it('retains the Redis Lua runtime asset and loads it from an extracted snapshot',async()=>{
+  const execute=promisify(execFile),directory=await mkdtemp(join(tmpdir(),project+'-'));disposals.push(()=>rm(directory,{recursive:true,force:true}));
+  const source=join(directory,'repo'),target=join(directory,'extracted'),asset='packages/rate-limiting/src/scripts/token-bucket.lua';await mkdir(join(source,'packages/rate-limiting/src/scripts'),{recursive:true});await mkdir(join(source,'scripts'));await mkdir(target);await execute('git',['init','--quiet',source]);
+  const lua=await readFile(new URL('../'+asset,import.meta.url),'utf8');await writeFile(join(source,asset),lua);
+  await writeFile(join(source,'scripts/load.mjs'),"import {readFileSync} from 'node:fs';process.stdout.write(readFileSync(new URL('../"+asset+"',import.meta.url),'utf8'));\n");
+  const output=join(directory,'source.tar.gz');const result=await snapshot(source,output);await execute('tar',['-xzf',output,'-C',target]);expect(result.files).toBe(2);expect(await verifySnapshot(target)).toBe(result.identity);expect((await execute(process.execPath,[join(target,'scripts/load.mjs')])).stdout).toBe(lua);
+ });
  it('copies uncommitted source exactly, omits env files, rejects overwrite and detects tampering',async()=>{
   const execute=promisify(execFile),directory=await mkdtemp(join(tmpdir(),project+'-'));
   disposals.push(()=>rm(directory,{recursive:true,force:true}));const source=join(directory,'repo'),target=join(directory,'extracted');await mkdir(source);await mkdir(target);

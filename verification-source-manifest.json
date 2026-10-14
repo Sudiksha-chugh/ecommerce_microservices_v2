@@ -1,5 +1,5 @@
 {
-  "identity": "4cb30a11a0bf5b5e789f98a0c7c9a1487cffcfcfcede00380bf3473620924f3d",
+  "identity": "ef33c79326da1e7598d926d015d6d31a1eca2fec44c9708b1f01ed362a71b077",
   "files": [
     {
       "path": ".dockerignore",
@@ -1146,6 +1146,10 @@
       "sha256": "8b5d2ef188366ac56f533746e8e4567a7630a296448d11067c8a54a2d0f0be53"
     },
     {
+      "path": "packages/rate-limiting/src/scripts/token-bucket.lua",
+      "sha256": "327715e5262e98ef2db0dd3d1293620057dfb0f890a6c96025eb06448045cefb"
+    },
+    {
       "path": "packages/rate-limiting/test/fixture.ts",
       "sha256": "7213b10d8e4f0d45d87f3a1966d9b1380d6e1c4308c3029934856f12e7fc1c06"
     },
@@ -1219,11 +1223,11 @@
     },
     {
       "path": "scripts/verification-harness.test.mjs",
-      "sha256": "c64a9a0b76a8af1ae9891c99ced0d68bb21e5616dcbe3816855b6d9653e0bc85"
+      "sha256": "58708a3b937db6b349b02cd5412354fdc7fd965bf41505410d4116c6d7e4192f"
     },
     {
       "path": "scripts/verification-snapshot.mjs",
-      "sha256": "4b2460d2a8a5c6102094f10c50ebdb711eff7c26e49d0c00218d38c3a8647a4c"
+      "sha256": "877dacb421bb29478dd71af62dfd3632509473ad96454217cdfc02349937e80d"
     },
     {
       "path": "scripts/verify-phase16.mjs",

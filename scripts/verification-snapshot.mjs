@@ -22,7 +22,7 @@ export function snapshotPathAllowed(path){
  if(path.split('/').some(part=>/^\.?(?:secrets?|credentials?|private[-_]?keys?)(?:\.|$)/i.test(part)))return false;
  if(path.split('/').some(part=>['.git','node_modules','data','dumps','coverage','verification-evidence'].includes(part)))return false;
  if(path.split('/').some(part=>part.startsWith('.env')&&!part.endsWith('.example')))return false;
- return ['package.json','package-lock.json','tsconfig.json','tsconfig.base.json','vitest.config.ts','vitest.harness.config.mjs','.dockerignore','.gitignore'].includes(path)||/^\.env\.[\w-]+\.example$/.test(path)||path==='.env.example'||/^compose[\w.-]*\.ya?ml$/.test(path)||/^(apps|packages|scripts|test|infrastructure)\/.+\.(?:ts|mjs|json|sql|sh|py|yaml|yml|example)$/.test(path)||/^infrastructure\/docker\/[\w.-]+Dockerfile(?:\.dockerignore)?$/.test(path)||/^\.github\/workflows\/[\w.-]+\.ya?ml$/.test(path);
+ return ['package.json','package-lock.json','tsconfig.json','tsconfig.base.json','vitest.config.ts','vitest.harness.config.mjs','.dockerignore','.gitignore'].includes(path)||/^\.env\.[\w-]+\.example$/.test(path)||path==='.env.example'||/^compose[\w.-]*\.ya?ml$/.test(path)||/^(apps|packages|scripts|test|infrastructure)\/.+\.(?:ts|mjs|json|sql|lua|sh|py|yaml|yml|example)$/.test(path)||/^infrastructure\/docker\/[\w.-]+Dockerfile(?:\.dockerignore)?$/.test(path)||/^\.github\/workflows\/[\w.-]+\.ya?ml$/.test(path);
 }
 export async function verifySnapshot(root){
  const manifest=JSON.parse(await readFile(join(root,'verification-source-manifest.json'),'utf8'));
