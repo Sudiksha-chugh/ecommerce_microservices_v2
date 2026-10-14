@@ -1,0 +1,32 @@
+# Merge with the real optional profile in a unique generated project only.
+services:
+  search-db:
+    ports: !override ["127.0.0.1::5432"]
+    volumes: !reset []
+    tmpfs: [/var/lib/postgresql/data]
+  search-elasticsearch:
+    ports: !override ["127.0.0.1::9200"]
+    volumes: !reset []
+    tmpfs: ["/usr/share/elasticsearch/data:uid=1000,gid=0,mode=0770"]
+    mem_limit: 768m
+    cpus: 2
+    environment:
+      xpack.ml.enabled: "false"
+      xpack.watcher.enabled: "false"
+      xpack.profiling.enabled: "false"
+      xpack.apm_data.enabled: "false"
+      ingest.geoip.downloader.enabled: "false"
+      node.roles: '[master,data,ingest]'
+      node.processors: '2'
+      node.store.allow_mmap: "false"
+      ES_JAVA_OPTS: -Xms256m -Xmx256m -XX:TieredStopAtLevel=1
+  rabbitmq:
+    profiles: [search]
+    ports: !override ["127.0.0.1::5672", "127.0.0.1::15672"]
+    volumes: !reset []
+    user: "999:999"
+    tmpfs: ["/var/lib/rabbitmq:uid=999,gid=999,mode=0700"]
+  search-service:
+    ports: !override ["127.0.0.1::4008"]
+    volumes: !override
+      - ${SEARCH_SMOKE_PUBLIC_KEY:?Generated smoke public key required}:/run/keys/auth-public.pem:ro

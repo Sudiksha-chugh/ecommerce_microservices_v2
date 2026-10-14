@@ -1,3 +1,4 @@
+import {testEnvironmentFile} from '../../../test/environment.js';
 import { createJwtFixture } from '../../../test/jwt-fixture.js';
 import { randomUUID } from 'node:crypto';
 import { existsSync } from 'node:fs';
@@ -11,7 +12,7 @@ import { ProductRepository } from '../src/product-repository.js';
 import { migrate } from '../src/db/migrate.js';
 import { seed } from '../src/db/seed.js';
 
-if (existsSync('.env')) loadEnvFile('.env');
+if (existsSync(testEnvironmentFile('.env'))) loadEnvFile(testEnvironmentFile('.env'));
 const environment = z.object({
   PGHOST: z.string().min(1).default('127.0.0.1'),
   PGPORT: z.coerce.number().int().min(1).max(65535).default(5432),
@@ -103,7 +104,9 @@ describe('Catalog with real PostgreSQL', () => {
   it('runs migrations and seeds repeatedly without duplication', async () => {
     await migrate(pool);
     await seed(pool);
-    expect((await pool.query('SELECT * FROM schema_migrations')).rowCount).toBe(2);
+    expect((await pool.query('SELECT name FROM schema_migrations ORDER BY name')).rows.map(row => row.name)).toEqual([
+      '001-products.sql', '002-product-safe-prices.sql', '003-outbox.sql', '004-search-source.sql',
+    ]);
     expect((await pool.query('SELECT * FROM products')).rowCount).toBe(3);
   });
 

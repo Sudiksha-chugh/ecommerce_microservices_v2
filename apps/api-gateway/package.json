@@ -10,6 +10,8 @@
   "dependencies": {
     "@ecommerce/config": "0.1.0",
     "@ecommerce/contracts": "0.1.0",
-    "express": "^5.1.0"
+    "express": "^5.1.0",
+    "@ecommerce/rate-limiting": "0.1.0",
+    "@ecommerce/security": "0.1.0"
   }
 }

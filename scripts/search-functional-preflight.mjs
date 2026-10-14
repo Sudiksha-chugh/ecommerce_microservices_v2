@@ -1,0 +1,10 @@
+import { Elasticsearch } from '../apps/search-service/src/elasticsearch.ts';
+import { functionalSearchReady } from '../apps/search-service/test/functional-ready.ts';
+import { setupDiagnostics } from '../apps/search-service/test/setup-diagnostics.ts';
+if (!process.env.INTEGRATION_ENV_DIR || !/^commerce-v2-stabilization-[a-f0-9]{12}$/.test(process.env.INTEGRATION_OWNED_PROJECT ?? '')) throw new Error('Functional preflight requires owned runner stores');
+const port = Number(process.env.INTEGRATION_OWNED_ELASTIC_PORT);
+if (!Number.isInteger(port) || port < 1 || port > 65535) throw new Error('Missing owned Elasticsearch host port');
+const alias = 'commerce_v2_products_probe_' + process.env.INTEGRATION_OWNED_PROJECT.split('-').at(-1);
+const diagnostics = setupDiagnostics(() => ({}));
+const elastic = new Elasticsearch(`http://127.0.0.1:${port}`, alias, 2000);
+await diagnostics.stage('ELASTIC_FUNCTIONAL_PREFLIGHT', 'elasticsearch', () => functionalSearchReady(elastic, Number(process.env.INTEGRATION_COLD_BUDGET_MS), diagnostics.emit));

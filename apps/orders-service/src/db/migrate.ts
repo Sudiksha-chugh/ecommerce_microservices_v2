@@ -4,10 +4,14 @@ import type { Pool } from 'pg';
 
 export async function migrate(pool: Pool) {
   const client = await pool.connect();
+  let broken = false;
+  const onClientError = () => { broken = true; };
+  client.on('error', onClientError);
   try {
     await client.query('BEGIN');
     // Serialize runners, including creation of the tracking table.
-    await client.query('SELECT pg_advisory_xact_lock($1)', [30074003]);
+    await client.query(`SELECT pg_advisory_xact_lock(CASE WHEN current_schema()='public' THEN $1::bigint
+      ELSE hashtextextended(current_schema(),$1::bigint) END)`, [30074003]);
     await client.query(`CREATE TABLE IF NOT EXISTS schema_migrations (
       name TEXT PRIMARY KEY, checksum TEXT NOT NULL,
       applied_at TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP
@@ -28,9 +32,10 @@ export async function migrate(pool: Pool) {
     }
     await client.query('COMMIT');
   } catch (error) {
-    await client.query('ROLLBACK');
+    try { await client.query('ROLLBACK'); } catch { broken = true; }
     throw error;
   } finally {
-    client.release();
+    client.release(broken);
+    client.off('error', onClientError);
   }
 }

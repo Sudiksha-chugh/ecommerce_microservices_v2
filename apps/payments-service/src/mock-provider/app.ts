@@ -1,3 +1,4 @@
+import {installRefundRoutes} from './refunds.js';
 import express from 'express';
 import { randomUUID } from 'node:crypto';
 import type { Pool } from 'pg';
@@ -27,6 +28,7 @@ export function createMockProvider(pool: Pool,scenario: () => Scenario,delayMs =
   const id = uuid.safeParse(req.params.requestId); if (!id.success) { res.status(400).json({error:'Invalid request ID'}); return; }
   const row = (await pool.query('SELECT * FROM mock_charges WHERE request_id=$1',[id.data])).rows[0]; res.json(row ? view(row) : {status:'UNKNOWN'});
  });
+ installRefundRoutes(app,pool,scenario,delayMs);
  app.use(((error: unknown,_req,res,_next) => { console.error('Mock provider request failed'); res.status(500).json({error:'Provider unavailable'}); }) as express.ErrorRequestHandler);
  return app;
 }

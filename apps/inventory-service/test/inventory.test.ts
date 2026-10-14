@@ -1,3 +1,4 @@
+import {testEnvironmentFile} from '../../../test/environment.js';
 import { randomUUID } from 'node:crypto';
 import { loadEnvFile } from 'node:process';
 import { createServer, type Server } from 'node:http';
@@ -13,7 +14,7 @@ import { InventoryService } from '../src/inventory-service.js';
 import { CatalogClient } from '../src/catalog-client.js';
 import { migrate } from '../src/db/migrate.js';
 import { startExpirationWorker } from '../src/expiration-worker.js';
-loadEnvFile('.env.inventory');
+loadEnvFile(testEnvironmentFile('.env.inventory'));
 const env = z.object({ INVENTORY_TEST_PASSWORD: z.string().min(1), INVENTORY_PGHOST: z.string().default('127.0.0.1'), INVENTORY_PGPORT: z.coerce.number().default(5432) }).parse(process.env);
 // Development credentials and database are never used by this suite.
 const config = { host: env.INVENTORY_PGHOST, port: env.INVENTORY_PGPORT, database: 'inventory_test_db', user: 'inventory_test_user', password: env.INVENTORY_TEST_PASSWORD, max: 12, connectionTimeoutMillis: 2000, statement_timeout: 5000 };
@@ -158,7 +159,18 @@ describe('Database-driven expiration and workers', () => {
   it('supports multiple concurrent workers without double release', async () => {
     await put(a, 20).expect(200); const bodies = Array.from({ length: 10 }, () => input(1));
     for (const body of bodies) { await reserve(body).expect(201); await due(body.orderId); }
-    const counts = await Promise.all(Array.from({ length: 5 }, () => repository.expireBatch(2))); expect(counts.reduce((sum, count) => sum + count, 0)).toBe(10); expect(await stock()).toMatchObject({ totalStock: 20, reservedStock: 0 });
+    // SKIP LOCKED may return a short batch when a competing transaction commits
+    // after this statement's snapshot. Real workers poll again; exercise that
+    // lifecycle while retaining the exact total and stock invariants.
+    const counts = await Promise.all(Array.from({ length: 5 }, async () => {
+      let total = 0;
+      for (let attempt = 0; attempt < 10; attempt++) {
+        const count = await repository.expireBatch(2); total += count;
+        if (count === 0) return total;
+      }
+      throw new Error('Expiration worker failed to drain its bounded batches');
+    }));
+    expect(counts.reduce((sum, count) => sum + count, 0)).toBe(10); expect(await stock()).toMatchObject({ totalStock: 20, reservedStock: 0 });
   });
   it.each(['confirm', 'release'] as const)('handles expiration versus %s safely', async (action) => {
     await put().expect(200); const body = input(); await reserve(body).expect(201); await due(body.orderId);
@@ -224,6 +236,6 @@ describe('Database safeguards and rollback', () => {
     finally { await pool.query('DROP TRIGGER fail_expiry ON inventory'); await pool.query('DROP FUNCTION fail_expiry()'); }
     expect(await repository.expireBatch()).toBe(1); expect((await stock()).reservedStock).toBe(0);
   });
-  it('tracks repeatable migrations', async () => { await migrate(pool); expect((await pool.query('SELECT * FROM schema_migrations')).rowCount).toBe(1); });
+  it('tracks repeatable migrations', async () => { await migrate(pool); expect((await pool.query('SELECT * FROM schema_migrations')).rowCount).toBe(4); });
   it.each(['inventory_db', 'catalog_db', 'auth_db', 'orders_db', 'catalog_test_db', 'auth_test_db', 'orders_test_db'])('test role cannot connect to %s', async (database) => { const forbidden = new Pool({ ...config, database }); try { await expect(forbidden.query('SELECT 1')).rejects.toMatchObject({ code: '42501' }); } finally { await forbidden.end(); } });
 });

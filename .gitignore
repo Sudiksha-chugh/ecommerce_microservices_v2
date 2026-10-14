@@ -14,3 +14,18 @@ coverage/
 !.env.cart.example
 !.env.orders.example
 !.env.inventory.example
+
+!.env.payments.example
+!.env.mock-provider.example
+
+!.env.messaging.example
+
+.env.checkout
+!.env.checkout.example
+
+!.env.notifications.example
+
+!.env.search.example
+
+# Local dedicated verification evidence (never development data).
+verification-evidence/

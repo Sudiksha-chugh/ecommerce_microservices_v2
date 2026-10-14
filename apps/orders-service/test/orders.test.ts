@@ -1,3 +1,4 @@
+import {testEnvironmentFile} from '../../../test/environment.js';
 import { randomUUID } from 'node:crypto';
 import { existsSync } from 'node:fs';
 import { loadEnvFile } from 'node:process';
@@ -14,7 +15,7 @@ import { OrderService } from '../src/order-service.js';
 import { CartClient, CatalogClient } from '../src/http-clients.js';
 import { migrate } from '../src/db/migrate.js';
 
-if (existsSync('.env.orders')) loadEnvFile('.env.orders');
+if (existsSync(testEnvironmentFile('.env.orders'))) loadEnvFile(testEnvironmentFile('.env.orders'));
 const environment = z.object({
   ORDERS_PGHOST: z.string().min(1).default('127.0.0.1'),
   ORDERS_PGPORT: z.coerce.number().int().min(1).max(65535).default(5432),
@@ -164,6 +165,9 @@ describe('Authoritative order snapshots and exact money', () => {
     expect(cartHeaders).toEqual([authorization]); expect(cartMethods).toEqual(['GET']);
     expect(carts.get(userId)).toEqual(before);
     expect(await counts()).toEqual({ orders: 1, items: 1 });
+    const outbox = await pool.query('SELECT * FROM outbox_events WHERE aggregate_id=$1', [response.body.id]);
+    expect(outbox.rowCount).toBe(1);
+    expect(outbox.rows[0].envelope.payload.totalAmountPaise).toBe(response.body.totalAmountInPaise);
   });
   it('creates multiple items with correct totals and deterministic snapshot ordering', async () => {
     carts.set(userId, { items: [{ productId: secondProductId, quantity: 3 }, { productId, quantity: 2 }] });
@@ -338,6 +342,7 @@ describe('Transactions, database constraints and failures', () => {
       VALUES ($1, $2, $3, $4, $5, $6)`, [created.body.id, productId, 'Duplicate', '100', 1, '100'])).rejects.toMatchObject({ code: '23505' });
     await expect(pool.query(`INSERT INTO order_items (order_id, product_id, product_name, unit_price_paise, quantity, line_total_paise)
       VALUES ($1, $2, $3, $4, $5, $6)`, [randomUUID(), productId, 'Orphan', '100', 1, '100'])).rejects.toMatchObject({ code: '23503' });
+    await pool.query('DELETE FROM outbox_events WHERE aggregate_id=$1', [created.body.id]);
     await pool.query('DELETE FROM orders WHERE id = $1', [created.body.id]);
     expect(await counts()).toEqual({ orders: 0, items: 0 });
   });
@@ -353,7 +358,7 @@ describe('Transactions, database constraints and failures', () => {
     }
   });
   it('runs migrations repeatedly without reapplying them', async () => {
-    await migrate(pool); expect((await pool.query('SELECT * FROM schema_migrations')).rowCount).toBe(1);
+    await migrate(pool); expect((await pool.query('SELECT * FROM schema_migrations')).rowCount).toBe(4);
   });
   it.each(['orders_db', 'catalog_db', 'auth_db', 'catalog_test_db', 'auth_test_db'])('test role cannot connect to %s', async (database) => {
     const forbidden = new Pool({ ...config, database });
