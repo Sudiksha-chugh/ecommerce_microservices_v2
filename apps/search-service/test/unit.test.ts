@@ -1,5 +1,5 @@
-import { randomUUID } from 'node:crypto';
-import { describe, expect, it } from 'vitest';
+import { randomUUID, randomBytes } from 'node:crypto';
+import { describe, expect, it, vi } from 'vitest';
 import { productProjectionSchema, validateEvent, signProducerEvent, verifyProducerEvent } from '@ecommerce/messaging';
 import { internalHeaders, verifyInternalRequest } from '@ecommerce/security';
 import { loadSearchEnvironment } from '../src/config.js';
@@ -9,6 +9,11 @@ import { selectRoutePolicies, parsePolicyOverrides } from '@ecommerce/rate-limit
 const document={id:randomUUID(),productVersion:1,name:'Wireless headphones',description:'Bluetooth music',priceInPaise:249900,createdAt:new Date().toISOString(),updatedAt:new Date().toISOString(),deleted:false};
 const event={eventId:randomUUID(),eventType:'catalog.product.created',eventVersion:1,occurredAt:new Date().toISOString(),producer:'catalog-service',correlationId:randomUUID(),causationId:null,payload:{productId:document.id,productVersion:1,changeSequence:1,product:document}};
 const key='test-scoped-search-key-xxxxxxxxxxxxxxxxx';
+vi.mock('node:crypto',async importOriginal=>{
+ const actual=await importOriginal<typeof import('node:crypto')>();
+ return {...actual,randomBytes:vi.fn(actual.randomBytes)};
+});
+const tamperCursor=(cursor:string)=>(cursor[0]==='A'?'B':'A')+cursor.slice(1);
 describe('product projection contracts',()=>{
  it('accepts a complete projection and preserves integer money',()=>{expect(productProjectionSchema.parse({...document,priceInPaise:Number.MAX_SAFE_INTEGER}).priceInPaise).toBe(Number.MAX_SAFE_INTEGER);expect(validateEvent(event).producer).toBe('catalog-service');});
  it.each([{customerEmail:'private@example.test'},{category:'invented'},{stock:5},{signature:'injected'}])('rejects extra projection fields %o',extra=>expect(()=>productProjectionSchema.parse({...document,...extra})).toThrow());
@@ -36,7 +41,13 @@ describe('query validation and safe DSL',()=>{
 describe('opaque authenticated cursors',()=>{
  const codec=new CursorCodec(key);const query={...querySchema.parse({q:'music',sort:'price_asc'}),limit:2};
  it('round-trips a cursor bound to query and expiration',()=>{const after:[number,string]=[100,randomUUID()];const cursor=codec.encode(query,after,100000);expect(codec.decode({...query,cursor},100001)).toEqual(after);expect(cursor).not.toContain(after[1]);});
- it.each(['tampered','expired','query','limit','malformed'])('rejects %s cursor',kind=>{let cursor=codec.encode(query,[100,randomUUID()],100000);if(kind==='tampered')cursor='A'+cursor.slice(1);if(kind==='malformed')cursor='!';expect(()=>codec.decode({...query,cursor,...(kind==='query'?{q:'changed'}:{}),...(kind==='limit'?{limit:3}:{})},kind==='expired'?160001:100001)).toThrow();});
+ it.each(['tampered','expired','query','limit','malformed'])('rejects %s cursor',kind=>{let cursor=codec.encode(query,[100,randomUUID()],100000);if(kind==='tampered'){const original=cursor;cursor=tamperCursor(cursor);expect(cursor).not.toBe(original);}if(kind==='malformed')cursor='!';expect(()=>codec.decode({...query,cursor,...(kind==='query'?{q:'changed'}:{}),...(kind==='limit'?{limit:3}:{})},kind==='expired'?160001:100001)).toThrow();});
+ it.each([0,4])('rejects a changed cursor with initial IV byte %s',byte=>{
+  const iv=Buffer.alloc(12);iv[0]=byte;vi.mocked(randomBytes).mockImplementationOnce(()=>iv);
+  const after:[number,string]=[100,randomUUID()],original=codec.encode(query,after,100000);
+  expect(original[0]).toBe(byte===0?'A':'B');expect(codec.decode({...query,cursor:original},100001)).toEqual(after);
+  const cursor=tamperCursor(original);expect(cursor).not.toBe(original);expect(()=>codec.decode({...query,cursor},100001)).toThrow();
+ });
 });
 describe('opt-in and service trust boundaries',()=>{
  it('defaults all Search flags off',()=>{const config=loadSearchEnvironment({});expect([config.SEARCH_ENABLED,config.SEARCH_INDEXING_ENABLED,config.SEARCH_REBUILD_ENABLED]).toEqual([false,false,false]);});

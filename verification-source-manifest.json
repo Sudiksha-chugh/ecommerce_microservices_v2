@@ -1,5 +1,5 @@
 {
-  "identity": "ef33c79326da1e7598d926d015d6d31a1eca2fec44c9708b1f01ed362a71b077",
+  "identity": "e4c195627c715fcad9244f445e5e4ea6e9501dd0399e24c5dfbf23f5cc1a59c1",
   "files": [
     {
       "path": ".dockerignore",
@@ -847,7 +847,7 @@
     },
     {
       "path": "apps/search-service/test/unit.test.ts",
-      "sha256": "a310ac21a6e18ce2b301141694888f2eec159039d89063be98cc97f9279e0aa5"
+      "sha256": "ebbcc5c8d775e0caf9244bd4fa71b94eeec7e1b83c00fc2823f99a99bf971e47"
     },
     {
       "path": "apps/search-service/tsconfig.json",
