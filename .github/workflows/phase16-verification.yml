@@ -23,8 +23,6 @@ jobs:
     env:
       PHASE16_SOURCE_IDENTITY: ${{ inputs.source_identity }}
       PHASE16_EXPECTED_COMMIT: ${{ inputs.expected_commit }}
-      PHASE16_EVIDENCE_DIR: ${{ runner.temp }}/phase16-evidence
-      PHASE16_SANITIZED_DIR: ${{ runner.temp }}/phase16-sanitized
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
@@ -37,9 +35,14 @@ jobs:
       - name: Install locked dependencies
         run: npm ci --ignore-scripts
       - name: Verify authorized source and ordered gates
+        env:
+          PHASE16_EVIDENCE_DIR: ${{ runner.temp }}/phase16-evidence
         run: node scripts/verify-phase16.mjs
       - name: Sanitize retained evidence
         if: always()
+        env:
+          PHASE16_EVIDENCE_DIR: ${{ runner.temp }}/phase16-evidence
+          PHASE16_SANITIZED_DIR: ${{ runner.temp }}/phase16-sanitized
         run: node scripts/verify-phase16.mjs --sanitize-only
       - name: Retain independent evidence on success or failure
         if: always()
