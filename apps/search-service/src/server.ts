@@ -1,3 +1,5 @@
+import '@ecommerce/observability/bootstrap';
+import {instrumentPg} from '@ecommerce/observability';
 import type {ServerResponse} from 'node:http';
 import { readFile } from 'node:fs/promises';
 import { Pool } from 'pg';
@@ -13,7 +15,7 @@ import { RebuildCoordinator } from './rebuild.js';
 import { createApp } from './app.js';
 const env=loadSearchEnvironment();const active=env.SEARCH_ENABLED||env.SEARCH_INDEXING_ENABLED||env.SEARCH_REBUILD_ENABLED;
 const verify=active?await createTokenVerifier(await readFile(env.JWT_PUBLIC_KEY_FILE!,'utf8'),{issuer:env.JWT_ISSUER!,audience:env.JWT_AUDIENCE!}):async()=>{throw new InvalidTokenError();};
-const pool=new Pool({connectionString:env.SEARCH_DATABASE_URL,max:10,connectionTimeoutMillis:2000,statement_timeout:5000});pool.on('error',()=>console.warn(JSON.stringify({component:'search',outcome:'database_unavailable'})));
+const pool=instrumentPg(new Pool({connectionString:env.SEARCH_DATABASE_URL,max:10,connectionTimeoutMillis:2000,statement_timeout:5000}));pool.on('error',()=>console.warn(JSON.stringify({component:'search',outcome:'database_unavailable'})));
 const elastic=new Elasticsearch(env.SEARCH_ELASTICSEARCH_URL,env.SEARCH_INDEX_ALIAS,env.SEARCH_REQUEST_TIMEOUT_MS,env.SEARCH_ELASTICSEARCH_API_KEY);
 const repository=new SearchRepository(pool,env.SEARCH_INDEX_ALIAS);const catalog=new CatalogClient(env.SEARCH_CATALOG_URL,env.SEARCH_LOOKUP_KEY??'',env.SEARCH_REQUEST_TIMEOUT_MS);
 const projector=new Projector(repository,elastic);const coordinator=new RebuildCoordinator(repository,projector,catalog);

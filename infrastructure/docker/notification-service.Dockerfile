@@ -5,4 +5,4 @@ COPY apps ./apps
 COPY packages ./packages
 RUN npm ci --ignore-scripts
 WORKDIR /app/apps/notification-service
-CMD ["node", "--import", "tsx", "src/server.ts"]
+CMD ["node", "--import", "tsx", "--import", "/app/packages/observability/bootstrap.mjs", "src/server.ts"]

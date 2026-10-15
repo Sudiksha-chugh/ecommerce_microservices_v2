@@ -1,3 +1,4 @@
+import '@ecommerce/observability/bootstrap';
 import {readFile} from 'node:fs/promises';
 import {createTokenVerifier} from '@ecommerce/security';
 import {bootstrapMessaging} from '@ecommerce/messaging';

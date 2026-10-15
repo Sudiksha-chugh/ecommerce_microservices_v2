@@ -1,3 +1,5 @@
+import {markOperationError,enabled} from '@ecommerce/observability';
+import {operation,startOperation,SpanKind,extract,requestKey,messageHeaders,messagingMetric,correlation,withEventContext,context} from '@ecommerce/observability';
 import amqp,{type ChannelModel,type ConfirmChannel,type Channel,type ConsumeMessage,type Options} from 'amqplib';
 import { randomUUID } from 'node:crypto';
 import { z } from 'zod';
@@ -21,7 +23,7 @@ export class Messaging {
  register(queue:Spec['name'],handler:EventHandler){if(this.started)throw new Error('Register consumers before start');const spec=queueSpecs.find((s) => s.name===queue);if(!spec||!this.services.includes(spec.owner)||(this.config.queues&&!this.config.queues.includes(queue))||this.registrations.has(queue))throw new Error('Invalid or duplicate consumer registration');this.registrations.set(queue,{spec,handler});}
  start(){if(this.started)return;this.started=true;this.connectingTask=this.connect();}
  private classifyConnectionError(error:unknown){if(typeof error==='object'&&error!==null){const value=error as {code?:unknown;message?:unknown};if(new Set<unknown>([403,406,530,'ACCESS_REFUSED','PRECONDITION_FAILED']).has(value.code)||typeof value.message==='string'&&/ACCESS_REFUSED|PRECONDITION_FAILED|NOT_ALLOWED/.test(value.message))this.lastFailure='CONFIGURATION';}}
- private emit(outcome:string,extra:Record<string,unknown>={}){try {this.log({component:'messaging',outcome,...extra});}catch {/* Logging must not affect message disposition. */}}
+ private emit(outcome:string,extra:Record<string,unknown>={}){try {this.log({component:'messaging',outcome,...extra,...correlation()});}catch {/* Logging must not affect message disposition. */}}
  private schedule(){if(this.stopped||this.timer!==undefined)return;const delay=backoff(this.attempt++,this.config.reconnectBaseMs,this.config.reconnectMaxMs);this.timer=setTimeout(() => {this.timer=undefined;if(this.connecting){this.schedule();return;}this.connectingTask=this.connect();},delay);this.timer.unref();}
  private invalidate(session:Session){if(this.session!==session)return;this.session=undefined;session.controller.abort();session.release();for(const pending of this.pending.values()){clearTimeout(pending.timer);pending.reject(new MessagingUnavailableError(this.lastFailure));}this.pending.clear();this.emit('connection_lost');if(Date.now()-session.started>30000)this.attempt=0;void session.connection.close().catch(() => {});this.schedule();}
  private async connect(){if(this.stopped||this.connecting||this.session)return;this.connecting=true;let connection:ChannelModel|undefined;let setupTimer:ReturnType<typeof setTimeout>|undefined;
@@ -51,7 +53,11 @@ export class Messaging {
   }catch(error) {this.classifyConnectionError(error);const failed=this.session;if(failed&&failed.connection===connection){failed.controller.abort();failed.release();this.session=undefined;}if(connection)await connection.close().catch(() => {});this.emit('connection_failed');this.schedule();}
   finally {clearTimeout(setupTimer);this.openingConnection=undefined;this.connecting=false;}
  }
- private send(session:Session,exchange:string,key:string,bytes:Buffer,properties:Options.Publish):Promise<void>{
+ private async send(session:Session,exchange:string,key:string,bytes:Buffer,properties:Options.Publish):Promise<void>{
+  const start=performance.now();let failed=false;
+  try{await operation('rabbitmq publish',{'messaging.system':'rabbitmq','messaging.operation.name':'publish'},()=>this.sendConfirmed(session,exchange,key,bytes,{...properties,headers:messageHeaders(properties.headers)}),SpanKind.PRODUCER);}catch(error){failed=true;throw error;}finally{messagingMetric('publish',failed?'error':'success',(performance.now()-start)/1000);}
+ }
+ private sendConfirmed(session:Session,exchange:string,key:string,bytes:Buffer,properties:Options.Publish):Promise<void>{
   if(this.session!==session||!session.ready||this.stopped||this.pending.size>=this.config.maxPending)return Promise.reject(new MessagingUnavailableError(this.lastFailure));
   const id=randomUUID();return new Promise<void>((resolve,reject) => {
    const timer=setTimeout(() => {this.invalidate(session);},this.config.confirmTimeoutMs);
@@ -62,9 +68,14 @@ export class Messaging {
    });}catch {this.pending.delete(id);clearTimeout(timer);reject(new MessagingUnavailableError(this.lastFailure));this.invalidate(session);}
   });
  }
- async publish(event:Event){event=validateEvent(event);const bytes=serialize(event);if(bytes.length>100000)throw new PoisonMessageError('MESSAGE_TOO_LARGE');const session=this.session;if(!session)throw new MessagingUnavailableError(this.lastFailure);await this.send(session,this.config.namespace?`${this.config.namespace}.commerce.events`:'commerce.events',routingKey(event),bytes,{contentType:'application/json',messageId:event.eventId,correlationId:event.correlationId,type:routingKey(event),timestamp:Math.max(0,Math.floor(Date.parse(event.occurredAt)/1000))});this.counters.published++;this.emit('published',{eventId:event.eventId,eventType:event.eventType,eventVersion:event.eventVersion,correlationId:event.correlationId});}
+ publish(event:Event){return withEventContext(event.eventId,()=>this.publishEvent(event));}
+ private async publishEvent(event:Event){event=validateEvent(event);const bytes=serialize(event);if(bytes.length>100000)throw new PoisonMessageError('MESSAGE_TOO_LARGE');const session=this.session;if(!session)throw new MessagingUnavailableError(this.lastFailure);await this.send(session,this.config.namespace?`${this.config.namespace}.commerce.events`:'commerce.events',routingKey(event),bytes,{contentType:'application/json',messageId:event.eventId,correlationId:event.correlationId,type:routingKey(event),timestamp:Math.max(0,Math.floor(Date.parse(event.occurredAt)/1000))});this.counters.published++;this.emit('published',{eventId:event.eventId,eventType:event.eventType,eventVersion:event.eventVersion,correlationId:event.correlationId});}
  async replay(queue:Spec['name'],event:Event){event=validateEvent(event);const spec=queueSpecs.find((value) => value.name===queue);if(!spec||!this.services.includes(spec.owner))throw new Error('Invalid replay queue');const bytes=serialize(event);const session=this.session;if(!session)throw new MessagingUnavailableError(this.lastFailure);await this.send(session,names(this.config.namespace,spec).handoff,`${spec.name}.deliver`,bytes,{contentType:'application/json',messageId:event.eventId,correlationId:event.correlationId,type:routingKey(event),headers:{'retry-count':0,'manual-replay':true}});}
- private async consume(session:Session,channel:Channel,message:ConsumeMessage,spec:Spec,consumer:string,handler:EventHandler){
+ private consume(session:Session,channel:Channel,message:ConsumeMessage,spec:Spec,consumer:string,handler:EventHandler){
+  const headers=message.properties.headers??{},id=headers['x-request-id'];const parent=extract(headers).setValue(requestKey,typeof id==='string'&&/^[a-zA-Z0-9_-]{1,64}$/.test(id)?id:undefined);
+  return operation('rabbitmq process',{'messaging.system':'rabbitmq','messaging.operation.name':'process','messaging.destination.name':spec.name},()=>this.consumeMessage(session,channel,message,spec,consumer,handler),SpanKind.CONSUMER,parent);
+ }
+ private async consumeMessage(session:Session,channel:Channel,message:ConsumeMessage,spec:Spec,consumer:string,handler:EventHandler){
   await session.gate;if(this.stopped||this.session!==session||session.controller.signal.aborted)return;
   const began=Date.now();let event:Event|undefined;let count=0;const metadata=() => ({eventId:event?.eventId,eventType:event?.eventType,eventVersion:event?.eventVersion,correlationId:event?.correlationId,queue:names(this.config.namespace,spec).queue,consumer,retryCount:count,processingDurationMs:Date.now()-began});
   try {
@@ -75,14 +86,14 @@ export class Messaging {
    try {await Promise.race([handler(event,{retryCount:count,redelivered:message.fields.redelivered,signal:controller.signal}),interrupted]);}
    finally {clearTimeout(timer);session.controller.signal.removeEventListener('abort',abort);}
 
-   if(this.session===session&&!session.controller.signal.aborted){channel.ack(message);this.counters.consumed++;this.emit('acknowledged',metadata());}
-  }catch(error){
-   this.counters.failed++;const code=classification(error),retry=retryable(error)&&count<this.config.retryDelays.length;
+   if(this.session===session&&!session.controller.signal.aborted){channel.ack(message);this.counters.consumed++;messagingMetric('process','success',(Date.now()-began)/1000);this.emit('acknowledged',metadata());}
+  }catch(error){markOperationError();
+   this.counters.failed++;messagingMetric('process','error',(Date.now()-began)/1000);const code=classification(error),retry=retryable(error)&&count<this.config.retryDelays.length;
    if(this.session!==session||session.controller.signal.aborted)return;
    const target=retry?`${spec.name}.retry.${count+1}`:`${spec.name}.dead`;
    // Copy body exactly, never assign a new logical event ID or trust unbounded headers.
-   try {await this.send(session,names(this.config.namespace,spec).handoff,target,message.content,{contentType:message.properties.contentType??'application/json',...(event?{messageId:event.eventId,correlationId:event.correlationId,type:routingKey(event)}:{}),headers:{'retry-count':retry?count+1:count,'failure-classification':code,'source-queue':names(this.config.namespace,spec).queue}});
-    if(this.session===session&&!session.controller.signal.aborted){channel.ack(message);if(retry)this.counters.retried++;else this.counters.deadLettered++;this.emit(retry?'retry_handoff':'dead_letter_handoff',{...metadata(),failureClassification:code});}
+   try {await this.send(session,names(this.config.namespace,spec).handoff,target,message.content,{contentType:message.properties.contentType??'application/json',...(event?{messageId:event.eventId,correlationId:event.correlationId,type:routingKey(event)}:{}),headers:{...(enabled()?message.properties.headers:{}),'retry-count':retry?count+1:count,'failure-classification':code,'source-queue':names(this.config.namespace,spec).queue}});
+    if(this.session===session&&!session.controller.signal.aborted){channel.ack(message);if(retry)this.counters.retried++;else this.counters.deadLettered++;messagingMetric(retry?'retry':'dead_letter','success');this.emit(retry?'retry_handoff':'dead_letter_handoff',{...metadata(),failureClassification:code});}
    }catch {this.emit('handoff_failed',metadata());this.invalidate(session);}
   }
  }

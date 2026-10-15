@@ -55,9 +55,9 @@
     "orders:outbox:requeue": "npm run outbox:requeue --workspace=@ecommerce/orders-service",
     "test:event-persistence": "vitest run packages/event-persistence/test",
     "test:checkout": "vitest run apps/orders-service/test/checkout.test.ts --maxWorkers=1",
-    "dev:checkout:orders": "tsx --env-file=.env.orders --env-file=.env.checkout apps/orders-service/src/server.ts",
-    "dev:checkout:inventory": "tsx --env-file=.env.inventory --env-file=.env.checkout apps/inventory-service/src/server.ts",
-    "dev:checkout:payments": "tsx --env-file=.env.payments --env-file=.env.checkout apps/payments-service/src/server.ts",
+    "dev:checkout:orders": "tsx --env-file=.env.orders --env-file=.env.checkout --import ./packages/observability/bootstrap.mjs apps/orders-service/src/server.ts",
+    "dev:checkout:inventory": "tsx --env-file=.env.inventory --env-file=.env.checkout --import ./packages/observability/bootstrap.mjs apps/inventory-service/src/server.ts",
+    "dev:checkout:payments": "tsx --env-file=.env.payments --env-file=.env.checkout --import ./packages/observability/bootstrap.mjs apps/payments-service/src/server.ts",
     "test:refunds": "vitest run apps/orders-service/test/refund-compensation.test.ts --maxWorkers=1",
     "test:cancellation": "vitest run apps/orders-service/test/refund-compensation.test.ts --maxWorkers=1",
     "dev:notifications": "npm run dev --workspace=@ecommerce/notification-service",
@@ -77,7 +77,9 @@
     "search:smoke": "node --import tsx scripts/search-compose-smoke.mjs",
     "search:restart-check": "node --import tsx scripts/search-restart-check.mjs",
     "test:harness": "vitest run --config vitest.harness.config.mjs",
-    "verify:phase16": "node scripts/verify-phase16.mjs"
+    "verify:phase16": "node scripts/verify-phase16.mjs",
+    "test:observability": "vitest run packages/observability/test",
+    "verify:observability": "node scripts/observability-runner.mjs"
   },
   "devDependencies": {
     "@types/express": "^5.0.0",

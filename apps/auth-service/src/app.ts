@@ -1,3 +1,4 @@
+import {httpTelemetry} from '@ecommerce/observability';
 import {verifyInternalRequest} from '@ecommerce/security';
 import {z} from 'zod';
 import type {PublicUser} from '@ecommerce/contracts';
@@ -7,7 +8,7 @@ import { loginSchema, registrationSchema } from './user-validation.js';
 import { errorHandler } from './middleware/error-handler.js';
 
 export function createApp(auth: AuthService,internal?:{key:string;lookup:(id:string)=>Promise<PublicUser|undefined>}) {
-  const app = express();
+  const app = express();app.use(httpTelemetry('auth-service'));
   app.disable('x-powered-by');
   app.get('/internal/users/:id/contact',async(req,res)=>{
     res.set('Cache-Control','no-store');

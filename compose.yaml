@@ -97,6 +97,10 @@ services:
     ports:
       - "127.0.0.1:${NOTIFICATION_PORT:-4007}:4007"
     environment:
+      OTEL_ENABLED: ${OTEL_ENABLED:-false}
+      OTEL_SERVICE_NAME: notification-service
+      OTEL_EXPORTER_OTLP_ENDPOINT: ${OTEL_CONTAINER_OTLP_ENDPOINT:-http://otel-collector:4318}
+      OTEL_TRACES_SAMPLER_ARG: ${OTEL_TRACES_SAMPLER_ARG:-0.1}
       NOTIFICATION_HOST: 0.0.0.0
       NOTIFICATION_PORT: 4007
       DATABASE_URL: ${NOTIFICATION_DOCKER_DATABASE_URL:-postgresql://notifications_user:unconfigured@notifications-db:5432/notifications_db}
@@ -159,6 +163,10 @@ services:
       search-elasticsearch: {condition: service_started}
     ports: ["127.0.0.1:${SEARCH_PORT:-4008}:4008"]
     environment:
+      OTEL_ENABLED: ${OTEL_ENABLED:-false}
+      OTEL_SERVICE_NAME: search-service
+      OTEL_EXPORTER_OTLP_ENDPOINT: ${OTEL_CONTAINER_OTLP_ENDPOINT:-http://otel-collector:4318}
+      OTEL_TRACES_SAMPLER_ARG: ${OTEL_TRACES_SAMPLER_ARG:-0.1}
       SEARCH_HOST: 0.0.0.0
       SEARCH_PORT: 4008
       SEARCH_ENABLED: ${SEARCH_ENABLED:-false}

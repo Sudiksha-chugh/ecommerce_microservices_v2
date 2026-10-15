@@ -1,3 +1,4 @@
+import {dependencyOperation} from '@ecommerce/observability';
 import { productProjectionSchema, type ProductProjection } from '@ecommerce/messaging';
 import { mappings } from './mappings.js';
 export class SearchUnavailableError extends Error {constructor(readonly code='ELASTICSEARCH_UNAVAILABLE'){super('Search temporarily unavailable');}}
@@ -5,7 +6,8 @@ export class IndexMissingError extends SearchUnavailableError {}
 export class InvalidProjectionError extends Error {}
 export class Elasticsearch {
  constructor(readonly origin:string,readonly alias:string,readonly timeoutMs=2000,private readonly apiKey?:string){}
- async request<T=Record<string,unknown>>(method:string,path:string,body?:unknown,accepted:number[]=[]):Promise<T>{
+ async request<T=Record<string,unknown>>(method:string,path:string,body?:unknown,accepted:number[]=[]):Promise<T>{return dependencyOperation('elasticsearch',method,()=>this.requestRaw<T>(method,path,body,accepted));}
+ private async requestRaw<T>(method:string,path:string,body?:unknown,accepted:number[]=[]):Promise<T>{
   try{
    const response=await fetch(this.origin+path,{method,signal:AbortSignal.timeout(this.timeoutMs),headers:{'Content-Type':'application/json',...(this.apiKey?{Authorization:`ApiKey ${this.apiKey}`}:{})},...(body===undefined?{}:{body:JSON.stringify(body)})});
    const text=await response.text();

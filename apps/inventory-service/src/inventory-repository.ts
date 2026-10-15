@@ -1,3 +1,4 @@
+import {committed,rolledBack} from '@ecommerce/observability';
 import { createHash } from 'node:crypto';
 import type { Pool, PoolClient } from 'pg';
 import type { InventoryStock, ReservationGroup, ReservationStatus } from '@ecommerce/contracts';
@@ -18,12 +19,12 @@ export class InventoryRepository {
  const onClientError = () => { discard = true; }; client.on('error', onClientError);
     try {
       await client.query('BEGIN'); const result = await operation(client);
-      await client.query('COMMIT'); return result;
+      await client.query('COMMIT');committed(client); return result;
     } catch (error) {
-      try { await client.query('ROLLBACK'); } catch { discard = true; }
+      try { await client.query('ROLLBACK');rolledBack(client); } catch { discard = true; }
       if (!discard && error instanceof InventoryError) throw error;
       throw new InventoryDatabaseError();
-    } finally { client.release(discard); client.off('error', onClientError); }
+    } finally { rolledBack(client);client.release(discard); client.off('error', onClientError); }
   }
   private async lockRequest(client: PoolClient, orderId: string) {
     const row = (await client.query<{ request_fingerprint: string }>(

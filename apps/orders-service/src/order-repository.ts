@@ -1,3 +1,4 @@
+import {observeBusiness} from '@ecommerce/observability';
 import type {SagaKeys} from '@ecommerce/messaging';
 import {startSaga} from './saga/repository.js';
 import { insertOutbox, createEvent } from '@ecommerce/event-persistence';
@@ -93,7 +94,7 @@ export class OrderRepository {
         await startSaga(client,row.id,userId,snapshot.items.map(({productId,quantity})=>({productId,quantity})),checkoutKeys);
       }
       order = { ...summary(row), items: snapshot.items };
-      await client.query('COMMIT');
+      await client.query('COMMIT');observeBusiness('order_created','success');
     } catch (error) {
       try { await client.query('ROLLBACK'); } catch { discard = true; }
       if (!discard && isKeyConflict(error)) conflict = true;

@@ -1,3 +1,4 @@
+import {observeBusiness,rebuildDuration,correlation} from '@ecommerce/observability';
 import { transaction } from '@ecommerce/event-persistence';
 import { CatalogClient } from './catalog-client.js';
 import { SearchRepository, type Job } from './repository.js';
@@ -13,7 +14,7 @@ export class RebuildCoordinator {
    const due=(await client.query<{due:boolean}>('SELECT next_attempt_at<=clock_timestamp() AS due FROM search_jobs WHERE id=$1',[job.id])).rows[0]?.due;
    if(!due||job.status==='PAUSED'||job.status==='COMPLETE')return false;
    try{await this.advance(job);return true;}
-   catch(error){console.warn(JSON.stringify({component:'search-rebuild',rebuildId:job.id,rebuildStatus:job.status,indexName:job.index_name,errorCode:typeof error==='object'&&error!==null&&'code' in error&&/^[A-Z0-9_]{1,30}$/.test(String(error.code))?String(error.code):error instanceof SearchUnavailableError?'DEPENDENCY_UNAVAILABLE':'OPERATION_FAILED'}));await client.query("UPDATE search_jobs SET retries=retries+1,last_error='DEPENDENCY_UNAVAILABLE',next_attempt_at=clock_timestamp()+LEAST(30000,1000*power(2,LEAST(retries,5)))::integer*interval '1 millisecond',paused_from=CASE WHEN retries>=9 THEN status ELSE paused_from END,status=CASE WHEN retries>=9 THEN 'PAUSED' ELSE status END WHERE id=$1",[job.id]);return false;}
+   catch(error){console.warn(JSON.stringify({component:'search-rebuild',...correlation(),rebuildId:job.id,rebuildStatus:job.status,indexName:job.index_name,errorCode:typeof error==='object'&&error!==null&&'code' in error&&/^[A-Z0-9_]{1,30}$/.test(String(error.code))?String(error.code):error instanceof SearchUnavailableError?'DEPENDENCY_UNAVAILABLE':'OPERATION_FAILED'}));await client.query("UPDATE search_jobs SET retries=retries+1,last_error='DEPENDENCY_UNAVAILABLE',next_attempt_at=clock_timestamp()+LEAST(30000,1000*power(2,LEAST(retries,5)))::integer*interval '1 millisecond',paused_from=CASE WHEN retries>=9 THEN status ELSE paused_from END,status=CASE WHEN retries>=9 THEN 'PAUSED' ELSE status END WHERE id=$1",[job.id]);return false;}
   }finally{if(locked)await client.query('SELECT pg_advisory_unlock(8401602)').catch(()=>{});client.release();}
  }
  private async advance(job:Job){const {pool}=this.repository;const elastic=this.projector.elastic;
@@ -64,6 +65,7 @@ export class RebuildCoordinator {
     await client.query("UPDATE search_jobs SET status='COMPLETE',completed_at=clock_timestamp(),last_error=NULL WHERE id=$1",[job.id]);
    });
    this.projector.metrics.values.search_rebuild_duration_seconds=Number((await pool.query('SELECT extract(epoch from completed_at-created_at) AS duration FROM search_jobs WHERE id=$1',[job.id])).rows[0].duration);
+   rebuildDuration(this.projector.metrics.values.search_rebuild_duration_seconds,job.kind);observeBusiness(job.kind==='RECONCILE'?'search_reconciliation':'search_rebuild',Number(job.unresolved)>0?'error':'success');
   }
  }
  private async compare(job:Job,document:Parameters<Projector['write']>[0]){

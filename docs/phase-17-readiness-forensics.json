@@ -1,0 +1,103 @@
+[
+  {
+    "attempt": "live",
+    "project": "commerce-v2-observability-1490a912046f",
+    "started": "2026-10-14T18:06:50.721Z",
+    "checks": [],
+    "passed": false,
+    "cleanup": true,
+    "error": "fetch failed",
+    "exactFailedOperation": "not retained by old runner; checks are sequential Collector was not probed; first failed Tempo/Prometheus/Grafana operation cannot be recovered with certainty",
+    "elapsedMs": "not retained",
+    "stateAndHealth": "not retained before owned containers were removed",
+    "resourceUsage": "not retained per attempt",
+    "storeReadiness": "business-store child never launched",
+    "relevantLogLines": [
+      "tempo-1  | ts=2026-10-14T18:06:52Z level=info msg=\"Starting HTTP server\" component=tempo endpoint=[::]:4318",
+      "prometheus-1  | time=2026-10-14T18:07:21.588Z level=INFO source=main.go:896 msg=\"Starting Prometheus Server\" mode=server version=\"(version=3.13.4, branch=HEAD, revision=007a9e9ba628f815ce83e1ba9f29b97981996c3c)\"",
+      "prometheus-1  | time=2026-10-14T18:07:34.239Z level=INFO source=main.go:1447 msg=\"Server is ready to receive web requests.\"",
+      "grafana-1     | Getting secret GF_SECURITY_ADMIN_PASSWORD from /run/secrets/grafana_password"
+    ],
+    "causeClassification": "query-backend readiness failure; root cause unknown"
+  },
+  {
+    "attempt": "live-second",
+    "project": "commerce-v2-observability-72da82782111",
+    "started": "2026-10-14T18:10:11.724Z",
+    "checks": [],
+    "passed": false,
+    "cleanup": true,
+    "error": "fetch failed",
+    "cause": "UND_ERR_SOCKET",
+    "exactFailedOperation": "not retained by old runner; checks are sequential Collector was not probed; first failed Tempo/Prometheus/Grafana operation cannot be recovered with certainty",
+    "elapsedMs": "not retained",
+    "stateAndHealth": "not retained before owned containers were removed",
+    "resourceUsage": "not retained per attempt",
+    "storeReadiness": "business-store child never launched",
+    "relevantLogLines": [
+      "grafana-1  | Getting secret GF_SECURITY_ADMIN_PASSWORD from /run/secrets/grafana_password",
+      "tempo-1    | ts=2026-10-14T18:10:51Z level=info msg=\"Starting HTTP server\" component=tempo endpoint=[::]:4318",
+      "prometheus-1  | time=2026-10-14T18:10:16.785Z level=INFO source=main.go:896 msg=\"Starting Prometheus Server\" mode=server version=\"(version=3.13.4, branch=HEAD, revision=007a9e9ba628f815ce83e1ba9f29b97981996c3c)\"",
+      "prometheus-1  | time=2026-10-14T18:10:50.186Z level=INFO source=main.go:1447 msg=\"Server is ready to receive web requests.\""
+    ],
+    "causeClassification": "query-backend readiness failure; root cause unknown"
+  },
+  {
+    "attempt": "live-final",
+    "project": "commerce-v2-observability-8ed90a48b1b9",
+    "started": "2026-10-14T19:10:26.561Z",
+    "checks": [],
+    "passed": false,
+    "cleanup": true,
+    "error": "fetch failed",
+    "cause": "UND_ERR_SOCKET",
+    "exactFailedOperation": "not retained by old runner; checks are sequential Collector was not probed; first failed Tempo/Prometheus/Grafana operation cannot be recovered with certainty",
+    "elapsedMs": "not retained",
+    "stateAndHealth": "not retained before owned containers were removed",
+    "resourceUsage": "not retained per attempt",
+    "storeReadiness": "business-store child never launched",
+    "relevantLogLines": [
+      "grafana-1  | Getting secret GF_SECURITY_ADMIN_PASSWORD from /run/secrets/grafana_password",
+      "prometheus-1  | time=2026-10-14T19:10:31.751Z level=INFO source=main.go:896 msg=\"Starting Prometheus Server\" mode=server version=\"(version=3.13.4, branch=HEAD, revision=007a9e9ba628f815ce83e1ba9f29b97981996c3c)\"",
+      "tempo-1       | ts=2026-10-14T19:12:02Z level=info msg=\"Starting HTTP server\" component=tempo endpoint=[::]:4318"
+    ],
+    "causeClassification": "query-backend readiness failure; root cause unknown"
+  },
+  {
+    "attempt": "live-final-config",
+    "project": "commerce-v2-observability-09724882461b",
+    "started": "2026-10-14T19:23:08.797Z",
+    "checks": [],
+    "passed": false,
+    "cleanup": true,
+    "error": "The operation was aborted due to timeout",
+    "exactFailedOperation": "not retained by old runner; checks are sequential Collector was not probed; first failed Tempo/Prometheus/Grafana operation cannot be recovered with certainty",
+    "elapsedMs": "not retained",
+    "stateAndHealth": "not retained before owned containers were removed",
+    "resourceUsage": "not retained per attempt",
+    "storeReadiness": "business-store child never launched",
+    "relevantLogLines": [
+      "prometheus-1  | time=2026-10-14T19:23:11.123Z level=INFO source=main.go:896 msg=\"Starting Prometheus Server\" mode=server version=\"(version=3.13.4, branch=HEAD, revision=007a9e9ba628f815ce83e1ba9f29b97981996c3c)\"",
+      "grafana-1     | Getting secret GF_SECURITY_ADMIN_PASSWORD from /run/secrets/grafana_password",
+      "tempo-1       | ts=2026-10-14T19:24:44Z level=info msg=\"Starting HTTP server\" component=tempo endpoint=[::]:4318",
+      "tempo-1       | level=error ts=2026-10-14T19:25:02.60370817Z caller=frontend_processor.go:76 msg=\"error contacting frontend\" address=127.0.0.1:9095 err=\"rpc error: code = Unavailable desc = connection error: desc = \\\"transport: Error while dialing: dial tcp 127.0.0.1:9095: i/o timeout\\\"\"",
+      "tempo-1       | level=error ts=2026-10-14T19:25:02.691239836Z caller=frontend_processor.go:76 msg=\"error contacting frontend\" address=127.0.0.1:9095 err=\"rpc error: code = Unavailable desc = connection error: desc = \\\"transport: Error while dialing: dial tcp 127.0.0.1:9095: i/o timeout\\\"\"",
+      "tempo-1       | level=error ts=2026-10-14T19:25:02.691424378Z caller=frontend_processor.go:76 msg=\"error contacting frontend\" address=127.0.0.1:9095 err=\"rpc error: code = Unavailable desc = connection error: desc = \\\"transport: Error while dialing: dial tcp 127.0.0.1:9095: i/o timeout\\\"\"",
+      "tempo-1       | level=error ts=2026-10-14T19:25:02.69180292Z caller=frontend_processor.go:76 msg=\"error contacting frontend\" address=127.0.0.1:9095 err=\"rpc error: code = Unavailable desc = connection error: desc = \\\"transport: Error while dialing: dial tcp 127.0.0.1:9095: i/o timeout\\\"\"",
+      "tempo-1       | level=error ts=2026-10-14T19:25:02.691908253Z caller=frontend_processor.go:76 msg=\"error contacting frontend\" address=127.0.0.1:9095 err=\"rpc error: code = Unavailable desc = connection error: desc = \\\"transport: Error while dialing: dial tcp 127.0.0.1:9095: i/o timeout\\\"\"",
+      "tempo-1       | level=error ts=2026-10-14T19:25:02.69202092Z caller=frontend_processor.go:76 msg=\"error contacting frontend\" address=127.0.0.1:9095 err=\"rpc error: code = Unavailable desc = connection error: desc = \\\"transport: Error while dialing: dial tcp 127.0.0.1:9095: i/o timeout\\\"\"",
+      "tempo-1       | level=error ts=2026-10-14T19:25:02.692095586Z caller=frontend_processor.go:76 msg=\"error contacting frontend\" address=127.0.0.1:9095 err=\"rpc error: code = Unavailable desc = connection error: desc = \\\"transport: Error while dialing: dial tcp 127.0.0.1:9095: i/o timeout\\\"\"",
+      "tempo-1       | level=error ts=2026-10-14T19:25:02.708360336Z caller=frontend_processor.go:76 msg=\"error contacting frontend\" address=127.0.0.1:9095 err=\"rpc error: code = Unavailable desc = connection error: desc = \\\"transport: Error while dialing: dial tcp 127.0.0.1:9095: i/o timeout\\\"\"",
+      "tempo-1       | level=error ts=2026-10-14T19:25:14.637271717Z caller=frontend_processor.go:76 msg=\"error contacting frontend\" address=127.0.0.1:9095 err=\"rpc error: code = Unavailable desc = connection error: desc = \\\"transport: Error while dialing: dial tcp 127.0.0.1:9095: i/o timeout\\\"\"",
+      "tempo-1       | level=error ts=2026-10-14T19:25:02.632783628Z caller=frontend_processor.go:76 msg=\"error contacting frontend\" address=127.0.0.1:9095 err=\"rpc error: code = Unavailable desc = connection error: desc = \\\"transport: Error while dialing: dial tcp 127.0.0.1:9095: i/o timeout\\\"\"",
+      "tempo-1       | level=error ts=2026-10-14T19:25:14.648775925Z caller=frontend_processor.go:76 msg=\"error contacting frontend\" address=127.0.0.1:9095 err=\"rpc error: code = Unavailable desc = connection error: desc = \\\"transport: Error while dialing: dial tcp 127.0.0.1:9095: i/o timeout\\\"\"",
+      "tempo-1       | level=error ts=2026-10-14T19:25:09.805693673Z caller=frontend_processor.go:76 msg=\"error contacting frontend\" address=127.0.0.1:9095 err=\"rpc error: code = Unavailable desc = connection error: desc = \\\"transport: Error while dialing: dial tcp 127.0.0.1:9095: i/o timeout\\\"\"",
+      "tempo-1       | level=error ts=2026-10-14T19:25:14.79382205Z caller=frontend_processor.go:76 msg=\"error contacting frontend\" address=127.0.0.1:9095 err=\"rpc error: code = Unavailable desc = connection error: desc = \\\"transport: Error while dialing: dial tcp 127.0.0.1:9095: i/o timeout\\\"\"",
+      "tempo-1       | level=error ts=2026-10-14T19:25:16.025964426Z caller=frontend_processor.go:76 msg=\"error contacting frontend\" address=127.0.0.1:9095 err=\"rpc error: code = Unavailable desc = connection error: desc = \\\"transport: Error while dialing: dial tcp 127.0.0.1:9095: i/o timeout\\\"\"",
+      "tempo-1       | level=error ts=2026-10-14T19:25:16.322658676Z caller=frontend_processor.go:76 msg=\"error contacting frontend\" address=127.0.0.1:9095 err=\"rpc error: code = Unavailable desc = connection error: desc = \\\"transport: Error while dialing: dial tcp 127.0.0.1:9095: i/o timeout\\\"\"",
+      "tempo-1       | level=error ts=2026-10-14T19:25:15.824884343Z caller=frontend_processor.go:76 msg=\"error contacting frontend\" address=127.0.0.1:9095 err=\"rpc error: code = Unavailable desc = connection error: desc = \\\"transport: Error while dialing: dial tcp 127.0.0.1:9095: i/o timeout\\\"\"",
+      "tempo-1       | level=error ts=2026-10-14T19:25:03.576798462Z caller=frontend_processor.go:76 msg=\"error contacting frontend\" address=127.0.0.1:9095 err=\"rpc error: code = Unavailable desc = connection error: desc = \\\"transport: Error while dialing: dial tcp 127.0.0.1:9095: i/o timeout\\\"\""
+    ],
+    "causeClassification": "query-backend readiness failure; root cause unknown; Tempo self-loopback frontend i/o timeouts present"
+  }
+]

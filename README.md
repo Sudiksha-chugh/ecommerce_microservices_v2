@@ -1,6 +1,6 @@
 # ecommerce-microservices-v2
 
-Phase 9: Payments owns payment intents, durable attempts, and reconciliation in `payments_db`. Its durable mock provider owns a separate database. Inventory owns stock and atomic, expiring reservations in `inventory_db`. Orders creates and persists owner-scoped order snapshots in `orders_db`. Catalog owns product CRUD and `catalog_db`; Auth owns registration, login, RS256 access tokens, and `auth_db`; Cart owns Redis-backed authenticated carts. Gateway forwards HTTP requests and never connects to PostgreSQL. Public product reads remain unchanged; product writes require an admin JWT. Remaining services are placeholders.
+Phase 11: Orders uses an atomic transactional outbox; Inventory and Payments support opt-in transactional receipt inboxes. Shared RabbitMQ infrastructure and versioned event contracts are available; Orders publication runs through an independent outbox worker. Payments owns payment intents, durable attempts, and reconciliation in `payments_db`. Its durable mock provider owns a separate database. Inventory owns stock and atomic, expiring reservations in `inventory_db`. Orders creates and persists owner-scoped order snapshots in `orders_db`. Catalog owns product CRUD and `catalog_db`; Auth owns registration, login, RS256 access tokens, and `auth_db`; Cart owns Redis-backed authenticated carts. Gateway forwards HTTP requests and never connects to PostgreSQL. Public product reads remain unchanged; product writes require an admin JWT. Remaining services are placeholders.
 
 ## Requirements and setup
 
@@ -17,6 +17,7 @@ cp .env.orders.example .env.orders
 cp .env.inventory.example .env.inventory
 cp .env.payments.example .env.payments
 cp .env.mock-provider.example .env.mock-provider
+cp .env.messaging.example .env.messaging
 ```
 
 Set non-empty `PGPASSWORD` and `CATALOG_TEST_PASSWORD` in `.env`, and independent `AUTH_PGPASSWORD` and `AUTH_TEST_PASSWORD` in `.env.auth`, and `ORDERS_PGPASSWORD` and `ORDERS_TEST_PASSWORD` in `.env.orders`. Set independent `INVENTORY_PGPASSWORD` and `INVENTORY_TEST_PASSWORD` in `.env.inventory`. Set `PAYMENTS_PGPASSWORD` / `PAYMENTS_TEST_PASSWORD` in `.env.payments` and `MOCK_PGPASSWORD` / `MOCK_TEST_PASSWORD` in `.env.mock-provider` independently. Passwords have no defaults. All local environment files are ignored by Git. Auth loads only `.env.auth`; Cart loads only `.env.cart`; Orders loads only `.env.orders`; Inventory loads only `.env.inventory`; Catalog and Gateway load `.env`. Keep private-key settings and Auth credentials out of `.env`. Compose creates separate development and test databases and roles; test roles cannot connect to development databases.
@@ -402,7 +403,7 @@ npm run typecheck
 npm test
 ```
 
-All Compose scripts now load `.env`, `.env.auth`, `.env.orders`, `.env.inventory`, `.env.payments`, and `.env.mock-provider`; copy/configure each example before starting infrastructure. Provisioning preserves existing roles/databases and volumes, does not reset passwords, and denies test roles access to development databases. Payments migrations are checksum-tracked and explicitly applied. The provider schema is version controlled and initialized explicitly; neither server synchronizes schemas at startup.
+All Compose scripts now load `.env`, `.env.auth`, `.env.orders`, `.env.inventory`, `.env.payments`, and `.env.mock-provider`, plus `.env.messaging`; copy/configure each example before starting infrastructure. Provisioning preserves existing roles/databases and volumes, does not reset passwords, and denies test roles access to development databases. Payments migrations are checksum-tracked and explicitly applied. The provider schema is version controlled and initialized explicitly; neither server synchronizes schemas at startup.
 
 Payments configuration in `.env.payments`: owning `PAYMENTS_PGDATABASE=payments_db`, `PAYMENTS_PGUSER=payments_user`, required password, host/port defaults 127.0.0.1/5432, `PAYMENTS_HOST=127.0.0.1`, `PAYMENTS_PORT=4004`. Pool maximum defaults to 10 (`PAYMENTS_PGPOOL_MAX`, maximum 50); connection/query deadlines default to 2000 ms (`PAYMENTS_PGCONNECT_TIMEOUT_MS`, `PAYMENTS_PGQUERY_TIMEOUT_MS`), idle timeout 10 seconds. JWT issuer/audience/public-key path must match Auth; no private key is loaded. `MOCK_PROVIDER_URL=http://127.0.0.1:4006`, `PROVIDER_REQUEST_TIMEOUT_MS=2000`, `PAYMENT_LEASE_MS=10000` (must exceed the provider deadline), `RECONCILIATION_INTERVAL_MS=5000`, `RECONCILIATION_BATCH_SIZE=10`, `SHUTDOWN_TIMEOUT_MS=10000`. Gateway `.env` uses `PAYMENTS_SERVICE_URL=http://127.0.0.1:4004` and `PAYMENTS_REQUEST_TIMEOUT_MS=10000`.
 
@@ -435,6 +436,115 @@ Errors: 400 invalid input, 401 missing/invalid JWT, 403 customer write attempts,
 
 Tests require `PAYMENTS_TEST_PASSWORD` and `MOCK_TEST_PASSWORD`, use distinct hardcoded restricted test databases, validate connected identities, and create/drop random schemas. They never mutate development payments or provider operations. Coverage includes unit/state/validation tests, creation/processing/reconciliation races, independent JWT/ownership checks, provider scenarios, real PostgreSQL rollback/constraints, and an actual process killed after a provider commit then restarted twice to verify one durable charge. See [ADR 007](docs/adr/007-payments-and-reconciliation.md).
 
+## RabbitMQ messaging (Phase 10)
+
+`@ecommerce/messaging` provides versioned schemas, confirm publishing, manual-ACK consumers, delayed retry/DLQ handling, connection recovery, counters, and structured metadata logs. No checkout workflow runs. Orders/Inventory/Payments retain their existing database transactions and HTTP APIs; no handler reserves stock or charges money from a message. Transactional outbox/inbox is implemented below; orchestration remains Phase 12.
+
+```sh
+cp .env.messaging.example .env.messaging
+# Set five independent non-empty passwords: admin, Orders, Inventory, Payments, test.
+npm run rabbitmq:up
+npm run rabbitmq:provision
+npm run test:messaging
+npm run messaging:demo
+npm run typecheck
+npm test
+```
+
+Compose commands now also load `.env.messaging`. RabbitMQ 4.2 with management runs on localhost AMQP 5673 and UI 15673 because the suggested 5672/15672 ports are already occupied locally. Configure `RABBITMQ_AMQP_PORT` / `RABBITMQ_MANAGEMENT_PORT` if needed; existing broker listeners are untouched. Data persists in `commerce_rabbitmq_data`; never use volume deletion to upgrade. `rabbitmq:up` starts only the new broker. The UI is http://127.0.0.1:15673. The dedicated hostname stabilizes persisted broker identity. Health uses rabbitmq-diagnostics and restart policy is unless-stopped.
+
+`.env.messaging` holds non-guest admin/service/test credentials and `RABBITMQ_VHOST=commerce`. Default admin credentials apply only when initializing a fresh RabbitMQ volume; changing Compose environment does not reset a persisted admin password. Provisioning is repeatable, updates only the named application users/permissions, and does not remove queues/messages. Service users `commerce_orders`, `commerce_inventory`, `commerce_payments` are restricted to their queues/handoff exchanges; topic permissions permit publishing only their event family and binding only the relevant upstream families. `commerce_test` has a separate `commerce_test` vhost with permissions restricted to `test_<namespace>.*` resources. Do not use admin credentials in services. Local ignored environment files keep secrets outside version control; nonlocal deployments must use TLS (`amqps`), secret mounts/stores, and restricted networks. No AMQP route is added to Gateway.
+
+Durable topic exchange `commerce.events` binds:
+
+- `inventory.order-created.v1` ← `order.created.v1`.
+- `payments.order-created.v1` ← `order.created.v1`.
+- `orders.inventory-events.v1` ← `inventory.*.v1`.
+- `orders.payment-events.v1` ← `payment.*.v1`.
+
+Each queue has three durable quorum retry queues suffixed `.retry.1`, `.retry.2`, `.retry.3`, and a DLQ replacing `.v1` with `.dlq`. Owners have durable direct `commerce.<owner>.handoff` exchanges. TTL retry queues wait 5s/30s/120s then dead-letter back to their original queue with at-least-once quorum dead-lettering. Queues use reject-publish overflow and a 10000-message cap. Local single-node quorum persistence is not a highly available cluster.
+
+Every event carries eventId, eventType, eventVersion, occurredAt, producer, correlationId, causationId, payload. eventId identifies the logical event; correlationId groups a workflow; causationId identifies the predecessor or is null. Example convention: eventType `order.created`, eventVersion 1, routing key `order.created.v1`. [All eight contracts and required fields](docs/event-contracts.md) are independent of database models. Payloads contain UUIDs, safe integer paise, enum reasons, and ISO timestamps; no provider secrets or contact details.
+
+Publishing validates first, sets persistent/mandatory, and waits for a confirm callback. Returns, negative confirmations, timeout, or connection loss fail the call; there is no automatic unbounded buffering. Defaults: 100 pending confirms, 5s confirm deadline, 2s connection timeout, and a 30s topology/setup deadline. Confirmation is broker acceptance, not consumer success. If confirmation is lost, retry using the same eventId; duplication remains possible. Recovery closes the manager’s shared connection, so other in-flight publications can also become uncertain during a consumer handoff failure.
+
+Consumers validate JSON, envelope, supported version/payload/producer, and intended queue route. Prefetch defaults to 5 and is configurable. Handler work is bounded by a configurable 30-second deadline; timeout aborts context and follows the finite retry policy. ACK happens only after handler success. Temporary exceptions hand off to the next retry queue; poison inputs, permanent failures, and exhaustion hand off to DLQ. Retry headers must be numeric integers 0–3; unchanged message bodies preserve identity/payload/correlation. Handoff is confirm-published before ACKing the original. On handoff failure, the connection closes and the original remains unacknowledged for recovery. No immediate nack/requeue loop exists. Reconnect uses jittered exponential backoff (250ms base, 30s cap), redeclares topology and reinstalls one consumer per registration. Current channel generations fence stale ACKs. Handler context contains an abort signal; future side effects must add inbox idempotency/fencing.
+
+Orders/Inventory/Payments load optional settings from their existing individual environment files:
+
+```sh
+MESSAGING_ENABLED=false
+MESSAGING_DIAGNOSTIC_CONSUMERS=false
+MESSAGING_URL=amqp://commerce_orders:<url-encoded-password>@127.0.0.1:5673/commerce
+MESSAGING_PREFETCH=5
+```
+
+Use the matching service username/password for Inventory/Payments. Enable messaging to declare its topology and maintain a publisher adapter. Set diagnostic consumers true only when intentionally testing: they validate/log/ACK events without business work, so leave them off for events intended for future workflows. `/health` remains unchanged liveness; direct `/ready` returns 200 with messaging disabled/ready, or 503 while reconnecting. No readiness endpoint is exposed through Gateway. `bootstrapMessaging()` returns testable `publish`, `readiness`, and `stop` adapters; business handlers never invoke publish in this phase. The isolated demo publishes representative Order/Inventory/Payment events, consumes four routed deliveries, then deletes only its own test namespace.
+
+Logs record eventId/type/version/correlationId, queue, consumer, retryCount, duration, outcome/classification; payloads, credentials, and arbitrary error text are omitted. In-memory counters track published/consumed/failed/retried/dead-lettered/reconnection attempts; they are diagnostic and reset on process restart. Shutdown cancels consumers and bounds draining; unfinished deliveries are requeued by channel closure.
+
+DLQ replay is manual and finite. Diagnose/fix the handler first and inspect the quarantined envelope securely. Set the owning service's `MESSAGING_URL` in your terminal, then run `npm run messaging:replay -- inventory inventory.order-created.v1` (or the corresponding owner/queue). The command gets one DLQ message without ACK, validates it, confirm-publishes to the original queue with the same eventId/correlationId and a deliberately reset retry budget, then ACKs the DLQ copy. Failure leaves it quarantined; unsupported/malformed records cannot be replayed blindly. A materially corrected event needs a new eventId with causation linking the original. Never run an automatic endless DLQ replay loop.
+
+Real-broker tests use unique namespaces in the test vhost, accelerated broker TTLs, and diagnostic handlers only. They do not consume/purge development queues. Failure tests interrupt an isolated TCP proxy, not another project's broker. Tests cover contracts, routing, persistent confirms, manual ACK timing, duplicate delivery, retry delays/exhaustion, poison DLQs, handoff failures, connection recovery, consumer counts, graceful shutdown, and a killed consumer before ACK. Payment crash/reconciliation and Inventory concurrency suites remain in `npm test`.
+
+Delivery is at least once. Confirm-loss and handoff-before-ACK crashes can duplicate events. Phase 11 supplies durable outbox publication and local transactional inbox deduplication; no atomic PostgreSQL+broker network commit is claimed. See [ADR 008](docs/adr/008-rabbitmq-messaging-delivery-guarantees.md).
+
+## Transactional outbox and inbox (Phase 11)
+
+Orders creates its order, persisted item snapshots, and required `order.created.v1` outbox event in one PostgreSQL transaction. Event amounts/items come from persisted data. An outbox failure rolls back the order; order failure rolls back the event. Idempotent HTTP retries return the same order and create no extra event. RabbitMQ availability does not participate in the order request. Historical orders are preserved without backfilling events.
+
+```sh
+npm run orders:migrate
+npm run inventory:migrate
+npm run payments:migrate
+# Configure the owning service's MESSAGING_URL using its restricted RabbitMQ credentials.
+npm run start:orders
+npm run orders:outbox # separate terminal/process; independently deployable
+npm run typecheck
+npm test
+npm run test:messaging
+npm run test:event-persistence
+```
+
+Apply the new additive migrations before starting updated processes. No database reset, volume removal, new database, or permission relaxation is needed. Orders migration `002-outbox.sql` creates the outbox and a local order FK/unique order/type/version constraint. Inventory/Payments `002-inbox.sql` create separate inbox tables in each existing owned database. Never edit applied migrations. Production migration locking retains its existing public-schema key; independent test schemas use scoped locks. Vitest bounds concurrent integration files to avoid exhausting local PostgreSQL connections, while race tests still run real concurrent operations. Shared templates are in `packages/event-persistence/src/migrations`; future services install their own version-controlled copies, not a shared events database.
+
+`outbox_events` stores the logical event UUID, complete original envelope, producer/occurredAt, payload/routing/version, correlation/causation, PENDING / PROCESSING / PUBLISHED / NEEDS_ATTENTION status, current and lifetime attempts, next retry, worker/claim token/lease, publication time, safe error code, failure count and operator requeue count. Constraints match envelope identity/metadata, require a complete processing lease, and require published_at only for PUBLISHED. Partial indexes support eligible scheduling, expired leases and publication audit. The Orders FK prevents orphan events and protects order deletion while its audit record exists.
+
+The separate Orders worker uses short committed `FOR UPDATE SKIP LOCKED` claims, then validates/publishes without a database transaction open across RabbitMQ I/O. Random UUID worker IDs and per-claim tokens fence stale completion/failure writes after lease takeover. A stale worker can still publish, so duplicates are expected. Publisher confirmation precedes marking PUBLISHED. If confirmation succeeds but the process dies or the database result is uncertain, expired durable leases allow safe republishing of the original eventId/occurredAt/correlation/causation.
+
+Worker environment in `.env.orders`: `OUTBOX_BATCH_SIZE=10` (1–100), `OUTBOX_POLL_INTERVAL_MS=1000` (50–60000), `OUTBOX_LEASE_MS=30000` (100–300000; standalone entry point requires more than its 5s confirm deadline), `OUTBOX_MAX_ATTEMPTS=6` (initial claim plus five retries), `OUTBOX_RETRY_BASE_MS=5000`, `OUTBOX_RETRY_CAP_MS=900000`, `OUTBOX_SHUTDOWN_TIMEOUT_MS=10000`. Retry ceilings default to 5s/30s/120s/300s/900s; the base scales them, the cap bounds them, and standalone jitter uses 80–100% of each ceiling. Database time governs leases/scheduling; injectable clocks govern timings and tests. Batches publish with bounded concurrency. Workers stop claiming on shutdown, bound draining, release work not yet sent when safe, and leave uncertain work to lease expiry. Supervise the worker as a separate process; app imports never start it.
+
+Transient broker failure schedules a retained pending retry. Invalid contracts, unroutable mandatory events and known permanent broker configuration failures require immediate operator review. Exhausted attempts/crash leases enter NEEDS_ATTENTION. Database failures after confirmation retain an uncertain recoverable claim; do not assume failure means nothing committed.
+
+After diagnosing/fixing the cause, requeue exactly one review event with:
+
+```sh
+npm run orders:outbox:requeue -- <event-uuid>
+```
+
+The authenticated operator needs the Orders database role; this is a CLI, not a customer endpoint. The command validates the saved event, acts only on NEEDS_ATTENTION, preserves its envelope/eventId/time, resets its finite attempt budget, and retains lifetime counters/requeue audit. It cannot reset active leases or published events. Do not blindly loop requeue. Correcting an event's meaning requires a new logical event and causation, not mutating a previously processed event ID. No automatic cleanup discards audit records.
+
+Inbox tables use `(consumer_name,event_id)` as the primary key, with event type/version, correlationId/causationId, processing timestamp and normalized full-envelope fingerprint. `InboxProcessor.process` receives the owning Pool and an effect callback; it inserts the inbox row and performs local SQL effects on the same client/transaction. Uniqueness serializes concurrent duplicates. Committed duplicates skip effects; changed contents for the same logical ID are rejected permanently. Any handler/database failure rolls back the receipt/effect. Commit uncertainty is resolved on retry by the durable receipt. The existing RabbitMQ framework ACKs only after this promise commits successfully.
+
+For receipt-only Inventory/Payments integration, configure each owning environment:
+
+```sh
+MESSAGING_ENABLED=true
+MESSAGING_DIAGNOSTIC_CONSUMERS=false
+INBOX_ENABLED=true
+# MESSAGING_URL uses commerce_inventory or commerce_payments credentials respectively.
+```
+
+Their versioned handlers use logical consumer names `inventory.order-created.receipt.v1` and `payments.order-created.receipt.v1`. They record transactional receipts only: no reservations, payment intents, charges, or order-status changes. Distinct future business consumer names avoid treating a diagnostic receipt as a completed checkout action. Isolated test handlers use dedicated test effect tables to prove atomicity; no development stock/payment rows are used. Inbox callbacks must perform only local database work on the provided transaction, must not commit/release the client, and should honor cancellation. External provider calls belong to durable orchestration, never the inbox transaction.
+
+The internal `createEvent` factory creates a new child eventId, copies the parent's correlationId, and sets causationId to its eventId. All retries preserve original IDs and time. No public arbitrary-publication endpoint or client price override is introduced. Existing JWTs, topic permissions and domain database boundaries remain unchanged.
+
+Structured logs contain eventId/type, correlation/causation, workerId/claimToken, attempts, publication/processing durations, safe outcome/classification. `OutboxRepository.stats()` returns pending/published/review counts, persisted failures, expired leases and oldest pending age. Active PostgreSQL transaction clients have explicit error listeners; failed connections are discarded and rollback/retry remains safe. Inbox counters track processed/duplicates/failures; counters/logs never contain payloads, prices, customer contact details or provider secrets. Counters are diagnostic, not a monitoring stack.
+
+`test:event-persistence` uses real PostgreSQL test databases, random schemas, a separate RabbitMQ test vhost and unique namespaces. It checks atomic order/outbox commit/rollback, deferred commit failure, idempotency, lease contention/fencing, review/requeue, confirm-before-mark, no SQL locks during publishing, receipt/effect rollback, concurrent duplicates, and identity propagation. Real child processes are killed before/after order commit, after publication confirmation, and before/after inbox commit; recovery preserves one committed local effect. Broker outage and RabbitMQ retry integration are covered without resetting development data. Existing Inventory concurrency, Orders idempotency and Payments reconciliation/crash suites remain part of `npm test`.
+
+Guarantees: no lost event from a successful supported order transaction, recoverable confirmed-but-unmarked publication, and one committed local effect per immutable event/logical consumer while inbox state is retained. Delivery itself is at least once. Retention, operator access, worker supervision and PostgreSQL/RabbitMQ availability remain operational responsibilities. A long database outage can exhaust RabbitMQ's finite consumer retries into DLQ; manually replay after recovery. Checkout orchestration remains Phase 12. See [ADR 009](docs/adr/009-transactional-outbox-inbox.md).
+
 ## Layout and scope
 
 - `apps/api-gateway`: HTTP forwarding, health, timeouts, and tests.
@@ -444,10 +554,50 @@ Tests require `PAYMENTS_TEST_PASSWORD` and `MOCK_TEST_PASSWORD`, use distinct ha
 - `apps/payments-service`: payment intents, attempts, leases, reconciliation worker, public-key authorization, migrations, and an independently persisted mock provider.
 - `apps/inventory-service`: stock, reservations, PostgreSQL transactions, Catalog HTTP client, public-key admin authorization, expiration worker, migrations, and tests.
 - `apps/orders-service`: authenticated order creation/history, snapshot business logic, PostgreSQL transactions, migrations, and tests.
+- `packages/event-persistence`: reusable service-owned outbox/inbox SQL, transactions, claims/fencing, independent publishing worker, receipt handlers and crash tests.
+- `packages/messaging`: versioned contracts, RabbitMQ topology, recovery, publishing/consuming, retries, DLQs, diagnostics, and real-broker tests.
 - `packages/security`: shared public-key JWT verification; no signing or private-key access.
 - `packages/config`: Zod environment validation.
 - `packages/contracts`: shared JSON types.
 - `compose.yaml` and `infrastructure/docker`: local PostgreSQL and Redis.
 - `docs/adr/002-postgresql-access.md`: raw SQL decision.
 
-OAuth, Auth0, refresh tokens, password reset, email verification, RabbitMQ, real payment gateways, ORM, Kubernetes, and remaining service implementations are outside this phase. Checkout orchestration, transactional outbox, and refunds are deferred. Work stops at Phase 9.
+OAuth, Auth0, refresh tokens, password reset, email verification, real payment gateways, ORM, Kubernetes, and remaining service implementations are outside this phase. Checkout orchestration, refunds are deferred. Work stops at Phase 11.
+
+## Phase 12 — durable distributed checkout
+
+Opt-in asynchronous checkout is orchestrated by Orders with persisted Saga state, transactional inbox/outbox, protected Inventory reservations, Payments reconciliation and fenced recovery workers. Customer routes are `POST /checkout`, `GET /checkout/:orderId/status` and a restricted `POST /checkout/:orderId/retry`. Existing `/orders` remains compatible.
+
+See [checkout architecture, state transitions, security and local testing](docs/checkout-saga.md) and [ADR 010: Durable Orchestrated Checkout Saga](docs/adr/010-durable-orchestrated-checkout-saga.md). Configure `.env.checkout` using `.env.checkout.example`; service-specific RabbitMQ roles and three distinct signing secrets are required. Saga activation defaults to disabled. Unknown payments retain inventory; refunds are deferred to Phase 13.
+
+## Phase 13 — durable refunds and cancellation
+
+Refunds now reserve captured-payment capacity, support authorized full/partial operations, reuse stable provider IDs, and recover ambiguous outcomes through lookup. Cancellation extends the Orders checkout Saga, waits for verified refunds and applies idempotent Inventory release/restoration. Paid-but-unfulfilled automatic compensation requires durable impossible-fulfillment evidence.
+
+`REFUNDS_ENABLED` defaults to false; checkout remains independently opt-in. No development migrations are applied automatically. See [refund and compensation architecture, APIs, invariants and testing](docs/refund-compensation.md), [ADR 011](docs/adr/011-durable-refunds-and-distributed-compensation.md), and the [Phase 13 implementation report](docs/phase-13-report.md). Run `npm run test:refunds` for the isolated integration suite.
+
+## Phase 14 — event-driven email notifications
+
+The new `apps/notification-service` consumes definitive order/payment/refund outcomes, commits deduplicated intents, renders versioned templates and delivers through a durable mock provider with fenced retry/reconciliation workers. Order creation never sends a successful checkout confirmation. Admin operational APIs expose sanitized status, attempts, safe retry and metrics.
+
+Notification consumer/worker flags default off; existing checkout/refund opt-ins are unchanged. New Compose services use the optional `notifications` profile, application port 4007 and a separate database volume/port 5440. No development migrations run automatically. See [architecture, mappings, privacy, recovery and setup](docs/notification-service.md), [ADR 012](docs/adr/012-event-driven-notification-delivery.md), and the [Phase 14 report](docs/phase-14-report.md).
+
+For isolated verification: `npm run notifications:test:up`, `npm run test:notifications`, then `npm run notifications:test:down`. The provider abstraction distinguishes intent deduplication from external delivery idempotency; arbitrary email providers are not promised exactly-once delivery.
+
+### Phase 14.1 integration stabilization
+
+Use Node.js 24 and `npm test -- --silent` with the established isolated test databases/vhost for the verified full regression. `npm run test:isolated -- --silent` provides an experimental fully containerized alternative; its local VM limitations are documented in the report. Run `npm run notifications:smoke` to build and exercise the optional Notification profile with isolated resources. These commands preserve development databases and default feature flags. Results and remaining limits are in [the stabilization report](docs/phase-14-stabilization-report.md).
+
+## Phase 15 — distributed Redis rate limiting
+
+The Gateway can enforce atomic Redis token buckets across instances, composing global principal limits with stricter login/registration, checkout/cancellation and financial/admin policies. It reuses the shared JWT verifier, defaults to no trusted proxies, and preserves raw forwarding and business idempotency. Public reads default to fail open on Redis errors; sensitive operations return 503 when enforcement is unavailable and 429 only on a valid denial.
+
+`RATE_LIMIT_ENABLED=false` remains the default. Configure the validated settings in `.env.example`, matching JWT public key/issuer/audience and explicit proxy CIDRs before opting in. Existing Redis host port 6380, Cart keys and business feature opt-ins are preserved. `npm run test:rate-limiting` automatically creates/removes only disposable Redis on a random loopback port; Docker and Node.js 24 are required. `/ready` reports disabled/ready/degraded; process-local metrics are available through the Gateway app, without an unauthenticated endpoint. See [architecture and operations](docs/distributed-rate-limiting.md), [ADR 013](docs/adr/013-distributed-redis-rate-limiting.md), and [Phase 15 verification](docs/phase-15-report.md). Redis Cluster and Prometheus/Grafana deployment are deferred.
+
+## Phase 16 — event-driven Elasticsearch product search
+
+The optional Search service projects signed Catalog events into a rebuildable Elasticsearch index with atomic external versions and permanent deletion tombstones. Catalog remains authoritative; public results receive a current existence check. Bounded full-text/fuzzy queries, integer-price/date filters, allowlisted sorts and encrypted search_after cursors are available at an explicitly enabled Gateway `/search/products` route.
+
+Search/public indexing/rebuild and Catalog export/publication flags default off. The `search` Compose profile uses separate volumes and ports 4008/5441/9210, preserving existing infrastructure. No development migration or feature activation is automatic. Rebuilds persist snapshot/catch-up progress, dual-write candidate generations, verify and atomically switch aliases; admin rollback catches up retained generations before activation. Search uses Phase 15's existing Redis policy implementation.
+
+Use Node.js 24 and `npm run test:search` for isolated real Elasticsearch/PG/RabbitMQ tests; `npm run search:smoke` builds/tests the actual optional profile with disposable resources. See [architecture/setup/operational boundaries](docs/event-driven-search.md), [ADR 014](docs/adr/014-event-driven-elasticsearch-search-projection.md) and [Phase 16 verification](docs/phase-16-report.md). No frontend or stock/status/category model is introduced.

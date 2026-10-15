@@ -1,3 +1,4 @@
+import {httpTelemetry} from '@ecommerce/observability';
 import type {RefundService} from './refund-service.js';
 import {refundView} from './refund-repository.js';
 import {z} from 'zod';
@@ -8,7 +9,7 @@ import type { PaymentService } from './payment-service.js';
 import { PaymentError } from './errors.js';
 import { emptyBody, intentSchema, keySchema, uuid } from './validation.js';
 export function createApp(payments: PaymentService,verify: TokenVerifier, messagingReadiness: () => string = () => 'disabled',refunds?:RefundService) {
- const app = express(); app.disable('x-powered-by'); app.get('/health',(_req,res) => res.json({ status:'ok',service:'payments-service' }));
+ const app = express();app.use(httpTelemetry('payments-service')); app.disable('x-powered-by'); app.get('/health',(_req,res) => res.json({ status:'ok',service:'payments-service' }));
  app.get('/ready',(_req,res) => { const messaging=messagingReadiness();res.status(['disabled','ready'].includes(messaging)?200:503).json({messaging}); });
  const auth: RequestHandler = async (req,res,next) => { try { res.locals.identity = await verify(req.headers.authorization); next(); } catch { res.set('WWW-Authenticate','Bearer').status(401).json({error:{message:'Unauthorized'}}); } };
  const admin: RequestHandler = (_req,res,next) => { if ((res.locals.identity as Identity).role !== 'admin') { res.status(403).json({error:{message:'Forbidden'}}); return; } next(); };

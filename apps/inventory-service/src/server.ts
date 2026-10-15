@@ -1,3 +1,4 @@
+import '@ecommerce/observability/bootstrap';
 import {compensationHandler} from './compensation-consumer.js';
 import {inventoryCheckoutHandler} from './checkout-consumer.js';
 import {sagaKeys} from '@ecommerce/messaging';

@@ -1,0 +1,952 @@
+{
+  "runtime": "Node.js 24.21.0; host darwin-arm64 and isolated Linux arm64",
+  "runs": [
+    {
+      "run": "baseline",
+      "started": 1791914615046,
+      "passed": 800,
+      "failed": 0,
+      "unexecutedOrSkipped": 0,
+      "total": 800,
+      "success": true,
+      "failedTests": [],
+      "suiteErrors": []
+    },
+    {
+      "run": "search-1",
+      "started": 1791916013428,
+      "passed": 48,
+      "failed": 0,
+      "unexecutedOrSkipped": 67,
+      "total": 115,
+      "success": false,
+      "failedTests": [],
+      "suiteErrors": [
+        "Hook timed out in 120000ms.\nIf this is a long-running hook, pass a timeout value as the last argument or configure it globally with \"hookTimeout\"."
+      ]
+    },
+    {
+      "run": "unit-2",
+      "started": 1791917105112,
+      "passed": 48,
+      "failed": 0,
+      "unexecutedOrSkipped": 0,
+      "total": 48,
+      "success": true,
+      "failedTests": [],
+      "suiteErrors": []
+    },
+    {
+      "run": "search-2",
+      "started": 1791917774038,
+      "passed": 48,
+      "failed": 0,
+      "unexecutedOrSkipped": 67,
+      "total": 115,
+      "success": false,
+      "failedTests": [],
+      "suiteErrors": [
+        "Search temporarily unavailable"
+      ]
+    },
+    {
+      "run": "search-3",
+      "started": 1791918298181,
+      "passed": 48,
+      "failed": 0,
+      "unexecutedOrSkipped": 67,
+      "total": 115,
+      "success": false,
+      "failedTests": [],
+      "suiteErrors": [
+        "Search temporarily unavailable"
+      ]
+    },
+    {
+      "run": "search-4",
+      "started": 1791918914379,
+      "passed": 112,
+      "failed": 3,
+      "unexecutedOrSkipped": 0,
+      "total": 115,
+      "success": false,
+      "failedTests": [
+        {
+          "name": "Catalog transactional source and version contracts constraint failure cannot commit an orphan outbox row or version increment",
+          "evidence": "Error: Search temporarily unavailable\n    at RebuildCoordinator.runToCompletion (/Users/sudikshachugh/Desktop/ecommerce-microservices-v2/apps/search-service/src/rebuild.ts:77:185)\n    at process.processTicksAndRejections (node:internal/process/task_queues:104:5)\n    at Object.rebuild (/Users/sudikshachugh/Desktop/ecommerce-microservices-v2/apps/search-service/test/fixture.ts:61:114)\n    at /Users/sudikshachugh/Desktop/ecommerce-microservices-v2/apps/search-service/test/integration.test.ts:29:2"
+        },
+        {
+          "name": "projection, duplicate and stale-event protection indexes product create",
+          "evidence": "Error: Search temporarily unavailable\n    at RebuildCoordinator.runToCompletion (/Users/sudikshachugh/Desktop/ecommerce-microservices-v2/apps/search-service/src/rebuild.ts:77:185)\n    at process.processTicksAndRejections (node:internal/process/task_queues:104:5)\n    at Object.rebuild (/Users/sudikshachugh/Desktop/ecommerce-microservices-v2/apps/search-service/test/fixture.ts:61:114)\n    at /Users/sudikshachugh/Desktop/ecommerce-microservices-v2/apps/search-service/test/integration.test.ts:29:2"
+        },
+        {
+          "name": "authorization, opt-in Gateway and telemetry uses the existing atomic Redis SEARCH policy when enabled",
+          "evidence": "Error: Test timed out in 5000ms.\nIf this is a long-running test, pass a timeout value as the last argument or configure it globally with \"testTimeout\".\n    at task (file:///Users/sudikshachugh/Desktop/ecommerce-microservices-v2/node_modules/vitest/dist/chunks/run.BTlFXlnv.js:2681:43)\n    at Object.<anonymous> (file:///Users/sudikshachugh/Desktop/ecommerce-microservices-v2/node_modules/vitest/dist/chunks/run.BTlFXlnv.js:2698:16)\n    at Object.<anonymous> (file:///Users/sudikshachugh/Desktop/ecomm"
+        }
+      ],
+      "suiteErrors": []
+    },
+    {
+      "run": "search-5",
+      "started": 1791919552129,
+      "passed": 48,
+      "failed": 0,
+      "unexecutedOrSkipped": 70,
+      "total": 118,
+      "success": false,
+      "failedTests": [],
+      "suiteErrors": [
+        "Hook timed out in 120000ms.\nIf this is a long-running hook, pass a timeout value as the last argument or configure it globally with \"hookTimeout\"."
+      ]
+    },
+    {
+      "run": "search-6",
+      "started": 1791920520975,
+      "passed": 48,
+      "failed": 0,
+      "unexecutedOrSkipped": 70,
+      "total": 118,
+      "success": false,
+      "failedTests": [],
+      "suiteErrors": [
+        "Hook timed out in 120000ms.\nIf this is a long-running hook, pass a timeout value as the last argument or configure it globally with \"hookTimeout\"."
+      ]
+    },
+    {
+      "run": "search-7",
+      "started": 1791920898434,
+      "passed": 112,
+      "failed": 6,
+      "unexecutedOrSkipped": 0,
+      "total": 118,
+      "success": false,
+      "failedTests": [
+        {
+          "name": "projection, duplicate and stale-event protection deduplicates repeated update events without duplicate products",
+          "evidence": "Error: Test timed out in 5000ms.\nIf this is a long-running test, pass a timeout value as the last argument or configure it globally with \"testTimeout\".\n    at task (file:///Users/sudikshachugh/Desktop/ecommerce-microservices-v2/node_modules/vitest/dist/chunks/run.BTlFXlnv.js:2681:43)\n    at Object.<anonymous> (file:///Users/sudikshachugh/Desktop/ecommerce-microservices-v2/node_modules/vitest/dist/chunks/run.BTlFXlnv.js:2698:16)\n    at Object.<anonymous> (file:///Users/sudikshachugh/Desktop/ecomm"
+        },
+        {
+          "name": "projection, duplicate and stale-event protection SIGKILL at before-index recovers via real RabbitMQ redelivery",
+          "evidence": "Error: Test timed out in 5000ms.\nIf this is a long-running test, pass a timeout value as the last argument or configure it globally with \"testTimeout\".\n    at task (file:///Users/sudikshachugh/Desktop/ecommerce-microservices-v2/node_modules/vitest/dist/chunks/run.BTlFXlnv.js:2681:43)\n    at Object.<anonymous> (file:///Users/sudikshachugh/Desktop/ecommerce-microservices-v2/node_modules/vitest/dist/chunks/run.BTlFXlnv.js:2698:16)\n    at Object.<anonymous> (file:///Users/sudikshachugh/Desktop/ecomm"
+        },
+        {
+          "name": "projection, duplicate and stale-event protection SIGKILL at after-index recovers via real RabbitMQ redelivery",
+          "evidence": "Error: Test timed out in 5000ms.\nIf this is a long-running test, pass a timeout value as the last argument or configure it globally with \"testTimeout\".\n    at task (file:///Users/sudikshachugh/Desktop/ecommerce-microservices-v2/node_modules/vitest/dist/chunks/run.BTlFXlnv.js:2681:43)\n    at Object.<anonymous> (file:///Users/sudikshachugh/Desktop/ecommerce-microservices-v2/node_modules/vitest/dist/chunks/run.BTlFXlnv.js:2698:16)\n    at Object.<anonymous> (file:///Users/sudikshachugh/Desktop/ecomm"
+        },
+        {
+          "name": "projection, duplicate and stale-event protection SIGKILL at before-ack recovers via real RabbitMQ redelivery",
+          "evidence": "Error: Test timed out in 5000ms.\nIf this is a long-running test, pass a timeout value as the last argument or configure it globally with \"testTimeout\".\n    at task (file:///Users/sudikshachugh/Desktop/ecommerce-microservices-v2/node_modules/vitest/dist/chunks/run.BTlFXlnv.js:2681:43)\n    at Object.<anonymous> (file:///Users/sudikshachugh/Desktop/ecommerce-microservices-v2/node_modules/vitest/dist/chunks/run.BTlFXlnv.js:2698:16)\n    at Object.<anonymous> (file:///Users/sudikshachugh/Desktop/ecomm"
+        },
+        {
+          "name": "operator rollback, cleanup and unexpected projection audits catches up a retained index before an authenticated rollback and retains its replacement",
+          "evidence": "Error: Test timed out in 5000ms.\nIf this is a long-running test, pass a timeout value as the last argument or configure it globally with \"testTimeout\".\n    at task (file:///Users/sudikshachugh/Desktop/ecommerce-microservices-v2/node_modules/vitest/dist/chunks/run.BTlFXlnv.js:2681:43)\n    at Object.<anonymous> (file:///Users/sudikshachugh/Desktop/ecommerce-microservices-v2/node_modules/vitest/dist/chunks/run.BTlFXlnv.js:2698:16)\n    at Object.<anonymous> (file:///Users/sudikshachugh/Desktop/ecomm"
+        },
+        {
+          "name": "operator rollback, cleanup and unexpected projection audits allows explicit admin cleanup only for an owned retained generation",
+          "evidence": "Error: Test timed out in 5000ms.\nIf this is a long-running test, pass a timeout value as the last argument or configure it globally with \"testTimeout\".\n    at task (file:///Users/sudikshachugh/Desktop/ecommerce-microservices-v2/node_modules/vitest/dist/chunks/run.BTlFXlnv.js:2681:43)\n    at Object.<anonymous> (file:///Users/sudikshachugh/Desktop/ecommerce-microservices-v2/node_modules/vitest/dist/chunks/run.BTlFXlnv.js:2698:16)\n    at Object.<anonymous> (file:///Users/sudikshachugh/Desktop/ecomm"
+        }
+      ],
+      "suiteErrors": []
+    },
+    {
+      "run": "search-8",
+      "started": 1791921445025,
+      "passed": 124,
+      "failed": 1,
+      "unexecutedOrSkipped": 0,
+      "total": 125,
+      "success": false,
+      "failedTests": [
+        {
+          "name": "isolated multi-service Search integration real Elasticsearch and broker failure injection real Elasticsearch mapping rejection is permanent, not retried forever",
+          "evidence": "Error: expected Error to have property \"constructor.name\" with value 'InvalidProjectionError'\n    at _Assertion.__VITEST_REJECTS__ (file:///Users/sudikshachugh/Desktop/ecommerce-microservices-v2/node_modules/vitest/dist/chunks/index.C4tKZ0yW.js:2463:33)\n    at _Assertion.propertyGetter (file:///Users/sudikshachugh/Desktop/ecommerce-microservices-v2/node_modules/chai/index.js:1607:27)\n    at Reflect.get (<anonymous>)\n    at Object.proxyGetter [as get] (file:///Users/sudikshachugh/Desktop/ecommerc"
+        }
+      ],
+      "suiteErrors": []
+    },
+    {
+      "run": "search-9",
+      "started": 1791921957877,
+      "passed": 122,
+      "failed": 4,
+      "unexecutedOrSkipped": 0,
+      "total": 126,
+      "success": false,
+      "failedTests": [
+        {
+          "name": "isolated multi-service Search integration real Elasticsearch search API sorts price_desc stably",
+          "evidence": "Error: Search temporarily unavailable\n    at Elasticsearch.request (/Users/sudikshachugh/Desktop/ecommerce-microservices-v2/apps/search-service/src/elasticsearch.ts:19:119)\n    at process.processTicksAndRejections (node:internal/process/task_queues:104:5)\n    at /Users/sudikshachugh/Desktop/ecommerce-microservices-v2/apps/search-service/test/integration.test.ts:37:64"
+        },
+        {
+          "name": "isolated multi-service Search integration rebuild and reconciliation under concurrent writes SIGKILL before-alias resumes durable rebuild and retains old index",
+          "evidence": "Error: Isolated search readiness/assertion deadline exceeded\n    at until (/Users/sudikshachugh/Desktop/ecommerce-microservices-v2/apps/search-service/test/fixture.ts:81:211)\n    at Object.wait (/Users/sudikshachugh/Desktop/ecommerce-microservices-v2/apps/search-service/test/integration.test.ts:52:52)\n    at /Users/sudikshachugh/Desktop/ecommerce-microservices-v2/apps/search-service/test/integration.test.ts:97:268\n    at async file:///Users/sudikshachugh/Desktop/ecommerce-microservices-v2/node_m"
+        },
+        {
+          "name": "isolated multi-service Search integration real Elasticsearch and broker failure injection lost Elasticsearch reply times out within the command budget and recovers without rollback or duplicate documents",
+          "evidence": "Error: Search temporarily unavailable\n    at Elasticsearch.request (/Users/sudikshachugh/Desktop/ecommerce-microservices-v2/apps/search-service/src/elasticsearch.ts:19:119)\n    at process.processTicksAndRejections (node:internal/process/task_queues:104:5)\n    at Elasticsearch.put (/Users/sudikshachugh/Desktop/ecommerce-microservices-v2/apps/search-service/src/elasticsearch.ts:28:3)\n    at Projector.write (/Users/sudikshachugh/Desktop/ecommerce-microservices-v2/apps/search-service/src/projector.t"
+        },
+        {
+          "name": "isolated multi-service Search integration least-privilege Search credentials cannot configure or read another service queue",
+          "evidence": "Error: expected { id: 1310760, channel: 1, \u2026(1) } to match object { code: 403 }\n(7 matching properties omitted from actual)\n    at _Assertion.__VITEST_REJECTS__ (file:///Users/sudikshachugh/Desktop/ecommerce-microservices-v2/node_modules/vitest/dist/chunks/index.C4tKZ0yW.js:2463:33)\n    at _Assertion.propertyGetter (file:///Users/sudikshachugh/Desktop/ecommerce-microservices-v2/node_modules/chai/index.js:1607:27)\n    at Reflect.get (<anonymous>)\n    at Object.proxyGetter [as get] (file:///Users/"
+        }
+      ],
+      "suiteErrors": []
+    },
+    {
+      "run": "search-10",
+      "started": 1791923547048,
+      "passed": 49,
+      "failed": 0,
+      "unexecutedOrSkipped": 77,
+      "total": 126,
+      "success": false,
+      "failedTests": [],
+      "suiteErrors": []
+    },
+    {
+      "run": "search-11",
+      "started": 1791924033714,
+      "passed": 126,
+      "failed": 0,
+      "unexecutedOrSkipped": 0,
+      "total": 126,
+      "success": true,
+      "failedTests": [],
+      "suiteErrors": []
+    },
+    {
+      "run": "full-1",
+      "started": 1791924175076,
+      "passed": 824,
+      "failed": 25,
+      "unexecutedOrSkipped": 77,
+      "total": 926,
+      "success": false,
+      "failedTests": [
+        {
+          "name": "Catalog with real PostgreSQL runs migrations and seeds repeatedly without duplication",
+          "evidence": "AssertionError: expected 4 to be 2 // Object.is equality\n    at /Users/sudikshachugh/Desktop/ecommerce-microservices-v2/apps/catalog-service/test/products.test.ts:107:76\n    at process.processTicksAndRejections (node:internal/process/task_queues:104:5)\n    at async file:///Users/sudikshachugh/Desktop/ecommerce-microservices-v2/node_modules/vitest/dist/chunks/run.BTlFXlnv.js:2783:20"
+        },
+        {
+          "name": "Database-driven expiration and workers supports multiple concurrent workers without double release",
+          "evidence": "AssertionError: expected 9 to be 10 // Object.is equality\n    at /Users/sudikshachugh/Desktop/ecommerce-microservices-v2/apps/inventory-service/test/inventory.test.ts:162:153\n    at process.processTicksAndRejections (node:internal/process/task_queues:104:5)\n    at async file:///Users/sudikshachugh/Desktop/ecommerce-microservices-v2/node_modules/vitest/dist/chunks/run.BTlFXlnv.js:2783:20"
+        },
+        {
+          "name": "Real PostgreSQL + RabbitMQ outbox/inbox publishes the persisted Orders envelope into Inventory and Payments receipt-only inboxes",
+          "evidence": "Error: Invalid or duplicate consumer registration\n    at Messaging.register (/Users/sudikshachugh/Desktop/ecommerce-microservices-v2/packages/messaging/src/connection.ts:21:311)\n    at /Users/sudikshachugh/Desktop/ecommerce-microservices-v2/packages/event-persistence/test/rabbitmq-integration.test.ts:39:289\n    at file:///Users/sudikshachugh/Desktop/ecommerce-microservices-v2/node_modules/vitest/dist/chunks/run.BTlFXlnv.js:1628:35\n    at file:///Users/sudikshachugh/Desktop/ecommerce-microservice"
+        },
+        {
+          "name": "Real PostgreSQL + RabbitMQ outbox/inbox preserves committed events while RabbitMQ is unavailable and publishes after recovery",
+          "evidence": "IllegalOperationError: Channel closed\n    at ConfirmChannel.<anonymous> (/Users/sudikshachugh/Desktop/ecommerce-microservices-v2/node_modules/amqplib/lib/channel.js:373:11)\n    at ConfirmChannel._rpc (/Users/sudikshachugh/Desktop/ecommerce-microservices-v2/node_modules/amqplib/lib/channel.js:149:10)\n    at /Users/sudikshachugh/Desktop/ecommerce-microservices-v2/node_modules/amqplib/lib/channel_model.js:63:19\n    at node:internal/util:492:21\n    at new Promise (<anonymous>)\n    at node:internal/u"
+        },
+        {
+          "name": "Real RabbitMQ durability and routing persists a confirmed event and routes only to explicit consumers",
+          "evidence": "Error: Test timed out in 30000ms.\nIf this is a long-running test, pass a timeout value as the last argument or configure it globally with \"testTimeout\".\n    at task (file:///Users/sudikshachugh/Desktop/ecommerce-microservices-v2/node_modules/vitest/dist/chunks/run.BTlFXlnv.js:2681:43)\n    at Object.<anonymous> (file:///Users/sudikshachugh/Desktop/ecommerce-microservices-v2/node_modules/vitest/dist/chunks/run.BTlFXlnv.js:2698:16)\n    at Object.<anonymous> (file:///Users/sudikshachugh/Desktop/ecom"
+        },
+        {
+          "name": "Real RabbitMQ durability and routing handles a real broker negative confirm when an isolated queue is full",
+          "evidence": "Error: Isolated broker-management operation failed\n    at management (/Users/sudikshachugh/Desktop/ecommerce-microservices-v2/packages/messaging/test/rabbitmq.test.ts:17:24)\n    at process.processTicksAndRejections (node:internal/process/task_queues:104:5)\n    at __vite_ssr_import_7__.vi.waitFor.timeout (/Users/sudikshachugh/Desktop/ecommerce-microservices-v2/packages/messaging/test/rabbitmq.test.ts:47:45)\nIllegalOperationError: Channel closed\n    at ConfirmChannel.<anonymous> (/Users/sudikshach"
+        },
+        {
+          "name": "Real RabbitMQ durability and routing detects mandatory unroutable messages even when the broker confirms receipt",
+          "evidence": "Error: Operation failed: QueuePurge; 404 (NOT-FOUND) with message \"NOT_FOUND - no queue 'test_c1f887cbfaf74d95abef27a7256d2977.search.product-events.v1' in vhost 'commerce_test'\"\n    at reply (/Users/sudikshachugh/Desktop/ecommerce-microservices-v2/node_modules/amqplib/lib/channel.js:141:31)\n    at ConfirmChannel.accept (/Users/sudikshachugh/Desktop/ecommerce-microservices-v2/node_modules/amqplib/lib/channel.js:319:9)\n    at Connection.mainAccept [as accept] (/Users/sudikshachugh/Desktop/ecommer"
+        },
+        {
+          "name": "Real RabbitMQ durability and routing ACKs only after handler success and allows duplicate logical delivery",
+          "evidence": "Error: Operation failed: QueuePurge; 404 (NOT-FOUND) with message \"NOT_FOUND - no queue 'test_c1f887cbfaf74d95abef27a7256d2977.search.product-events.v1' in vhost 'commerce_test'\"\n    at reply (/Users/sudikshachugh/Desktop/ecommerce-microservices-v2/node_modules/amqplib/lib/channel.js:141:31)\n    at ConfirmChannel.accept (/Users/sudikshachugh/Desktop/ecommerce-microservices-v2/node_modules/amqplib/lib/channel.js:319:9)\n    at Connection.mainAccept [as accept] (/Users/sudikshachugh/Desktop/ecommer"
+        },
+        {
+          "name": "Real RabbitMQ durability and routing preserves event/correlation/payload while retrying with broker delays",
+          "evidence": "Error: Test timed out in 30000ms.\nIf this is a long-running test, pass a timeout value as the last argument or configure it globally with \"testTimeout\".\n    at task (file:///Users/sudikshachugh/Desktop/ecommerce-microservices-v2/node_modules/vitest/dist/chunks/run.BTlFXlnv.js:2681:43)\n    at Object.<anonymous> (file:///Users/sudikshachugh/Desktop/ecommerce-microservices-v2/node_modules/vitest/dist/chunks/run.BTlFXlnv.js:2698:16)\n    at Object.<anonymous> (file:///Users/sudikshachugh/Desktop/ecom"
+        },
+        {
+          "name": "Real RabbitMQ durability and routing exhausts three retries and confirms DLQ handoff",
+          "evidence": "Error: Test timed out in 30000ms.\nIf this is a long-running test, pass a timeout value as the last argument or configure it globally with \"testTimeout\".\n    at task (file:///Users/sudikshachugh/Desktop/ecommerce-microservices-v2/node_modules/vitest/dist/chunks/run.BTlFXlnv.js:2681:43)\n    at Object.<anonymous> (file:///Users/sudikshachugh/Desktop/ecommerce-microservices-v2/node_modules/vitest/dist/chunks/run.BTlFXlnv.js:2698:16)\n    at Object.<anonymous> (file:///Users/sudikshachugh/Desktop/ecom"
+        },
+        {
+          "name": "Real RabbitMQ durability and routing dead-letters poison input {",
+          "evidence": "IllegalOperationError: Channel closed\n    at ConfirmChannel.<anonymous> (/Users/sudikshachugh/Desktop/ecommerce-microservices-v2/node_modules/amqplib/lib/channel.js:373:11)\n    at ConfirmChannel.publish (/Users/sudikshachugh/Desktop/ecommerce-microservices-v2/node_modules/amqplib/lib/channel_model.js:158:17)\n    at ConfirmChannel.publish (/Users/sudikshachugh/Desktop/ecommerce-microservices-v2/node_modules/amqplib/lib/channel_model.js:273:18)\n    at /Users/sudikshachugh/Desktop/ecommerce-microse"
+        },
+        {
+          "name": "Real RabbitMQ durability and routing dead-letters poison input {\"eventId\":\"3350af8f-b8bb-4af3-b8fc-df71ecf122b1\",\"eventType\":\"order.created\",\"eventVersion\":2,\"occurredAt\":\"2026-10-13T20:46:16.500Z\",\"producer\":\"orders-service\",\"correlationId\":\"d790d969-6dad-4904-8a4a-8066d3eac8cd\",\"causationId\":null,\"payload\":{\"orderId\":\"3feb881e-7570-40fe-99b8-4832f5174f76\",\"userId\":\"06abfb80-37a7-4161-b754-82e247e49fdc\",\"totalAmountPaise\":50000,\"currency\":\"INR\",\"items\":[{\"productId\":\"4592f8b2-7739-44ab-9755-210d57f26f8a\",\"quantity\":2}],\"createdAt\":\"2026-10-13T20:46:16.501Z\"}}",
+          "evidence": "Error: Test timed out in 30000ms.\nIf this is a long-running test, pass a timeout value as the last argument or configure it globally with \"testTimeout\".\n    at task (file:///Users/sudikshachugh/Desktop/ecommerce-microservices-v2/node_modules/vitest/dist/chunks/run.BTlFXlnv.js:2681:43)\n    at Object.<anonymous> (file:///Users/sudikshachugh/Desktop/ecommerce-microservices-v2/node_modules/vitest/dist/chunks/run.BTlFXlnv.js:2698:16)\n    at Object.<anonymous> (file:///Users/sudikshachugh/Desktop/ecom"
+        },
+        {
+          "name": "Real RabbitMQ durability and routing dead-letters poison input {\"eventId\":\"ad702a2f-9d7b-4194-9971-3443f19df8c9\",\"eventType\":\"order.created\",\"eventVersion\":1,\"occurredAt\":\"2026-10-13T20:46:16.502Z\",\"producer\":\"orders-service\",\"correlationId\":\"1a658acc-f846-4f45-b400-c3300b57c2b2\",\"causationId\":null,\"payload\":{}}",
+          "evidence": "IllegalOperationError: Channel closed\n    at ConfirmChannel.<anonymous> (/Users/sudikshachugh/Desktop/ecommerce-microservices-v2/node_modules/amqplib/lib/channel.js:373:11)\n    at ConfirmChannel.publish (/Users/sudikshachugh/Desktop/ecommerce-microservices-v2/node_modules/amqplib/lib/channel_model.js:158:17)\n    at ConfirmChannel.publish (/Users/sudikshachugh/Desktop/ecommerce-microservices-v2/node_modules/amqplib/lib/channel_model.js:273:18)\n    at /Users/sudikshachugh/Desktop/ecommerce-microse"
+        },
+        {
+          "name": "Real RabbitMQ durability and routing rejects invalid retry headers and permanent handler failures without retry",
+          "evidence": "Error: Test timed out in 30000ms.\nIf this is a long-running test, pass a timeout value as the last argument or configure it globally with \"testTimeout\".\n    at task (file:///Users/sudikshachugh/Desktop/ecommerce-microservices-v2/node_modules/vitest/dist/chunks/run.BTlFXlnv.js:2681:43)\n    at Object.<anonymous> (file:///Users/sudikshachugh/Desktop/ecommerce-microservices-v2/node_modules/vitest/dist/chunks/run.BTlFXlnv.js:2698:16)\n    at Object.<anonymous> (file:///Users/sudikshachugh/Desktop/ecom"
+        },
+        {
+          "name": "Real RabbitMQ durability and routing bounds a stuck handler, aborts its context, and hands off permanently after finite attempts",
+          "evidence": "Error: Test timed out in 30000ms.\nIf this is a long-running test, pass a timeout value as the last argument or configure it globally with \"testTimeout\".\n    at task (file:///Users/sudikshachugh/Desktop/ecommerce-microservices-v2/node_modules/vitest/dist/chunks/run.BTlFXlnv.js:2681:43)\n    at Object.<anonymous> (file:///Users/sudikshachugh/Desktop/ecommerce-microservices-v2/node_modules/vitest/dist/chunks/run.BTlFXlnv.js:2698:16)\n    at Object.<anonymous> (file:///Users/sudikshachugh/Desktop/ecom"
+        },
+        {
+          "name": "Real RabbitMQ durability and routing replays one valid DLQ event only after explicit operator action",
+          "evidence": "Error: Test timed out in 30000ms.\nIf this is a long-running test, pass a timeout value as the last argument or configure it globally with \"testTimeout\".\n    at task (file:///Users/sudikshachugh/Desktop/ecommerce-microservices-v2/node_modules/vitest/dist/chunks/run.BTlFXlnv.js:2681:43)\n    at Object.<anonymous> (file:///Users/sudikshachugh/Desktop/ecommerce-microservices-v2/node_modules/vitest/dist/chunks/run.BTlFXlnv.js:2698:16)\n    at Object.<anonymous> (file:///Users/sudikshachugh/Desktop/ecom"
+        },
+        {
+          "name": "Connection, channel and handoff recovery fails fast when unavailable at startup and reconnects with bounded delays",
+          "evidence": "IllegalOperationError: Channel closed\n    at ConfirmChannel.<anonymous> (/Users/sudikshachugh/Desktop/ecommerce-microservices-v2/node_modules/amqplib/lib/channel.js:373:11)\n    at ConfirmChannel._rpc (/Users/sudikshachugh/Desktop/ecommerce-microservices-v2/node_modules/amqplib/lib/channel.js:149:10)\n    at /Users/sudikshachugh/Desktop/ecommerce-microservices-v2/node_modules/amqplib/lib/channel_model.js:63:19\n    at node:internal/util:492:21\n    at new Promise (<anonymous>)\n    at node:internal/u"
+        },
+        {
+          "name": "Connection, channel and handoff recovery bounds in-memory pending publications while confirms are blocked",
+          "evidence": "Error: Operation failed: QueuePurge; 404 (NOT-FOUND) with message \"NOT_FOUND - no queue 'test_c1f887cbfaf74d95abef27a7256d2977.search.product-events.v1' in vhost 'commerce_test'\"\n    at reply (/Users/sudikshachugh/Desktop/ecommerce-microservices-v2/node_modules/amqplib/lib/channel.js:141:31)\n    at ConfirmChannel.accept (/Users/sudikshachugh/Desktop/ecommerce-microservices-v2/node_modules/amqplib/lib/channel.js:319:9)\n    at Connection.mainAccept [as accept] (/Users/sudikshachugh/Desktop/ecommer"
+        },
+        {
+          "name": "Connection, channel and handoff recovery recovers a broker-link interruption without duplicate active consumers",
+          "evidence": "AssertionError: expected 3 to be 1 // Object.is equality\n    at /Users/sudikshachugh/Desktop/ecommerce-microservices-v2/packages/messaging/test/rabbitmq.test.ts:67:250\n    at Timeout.checkCallback (file:///Users/sudikshachugh/Desktop/ecommerce-microservices-v2/node_modules/vitest/dist/chunks/index.C4tKZ0yW.js:7163:20)\n    at listOnTimeout (node:internal/timers:685:17)\n    at process.processTimers (node:internal/timers:618:7)\nError: Operation failed: QueuePurge; 404 (NOT-FOUND) with message \"NOT_"
+        },
+        {
+          "name": "Connection, channel and handoff recovery does not ACK when retry handoff is unroutable",
+          "evidence": "AssertionError: expected false to be true // Object.is equality\n    at /Users/sudikshachugh/Desktop/ecommerce-microservices-v2/packages/messaging/test/rabbitmq.test.ts:71:163\n    at Timeout.checkCallback (file:///Users/sudikshachugh/Desktop/ecommerce-microservices-v2/node_modules/vitest/dist/chunks/index.C4tKZ0yW.js:7163:20)\n    at listOnTimeout (node:internal/timers:685:17)\n    at process.processTimers (node:internal/timers:618:7)\nError: Operation failed: QueuePurge; 404 (NOT-FOUND) with messag"
+        },
+        {
+          "name": "Connection, channel and handoff recovery does not ACK when dead handoff is unroutable",
+          "evidence": "AssertionError: expected false to be true // Object.is equality\n    at /Users/sudikshachugh/Desktop/ecommerce-microservices-v2/packages/messaging/test/rabbitmq.test.ts:71:163\n    at Timeout.checkCallback (file:///Users/sudikshachugh/Desktop/ecommerce-microservices-v2/node_modules/vitest/dist/chunks/index.C4tKZ0yW.js:7163:20)\n    at listOnTimeout (node:internal/timers:685:17)\n    at process.processTimers (node:internal/timers:618:7)\nError: Operation failed: QueuePurge; 404 (NOT-FOUND) with messag"
+        },
+        {
+          "name": "Connection, channel and handoff recovery fails an interrupted in-flight publication and recovers without a stale publisher",
+          "evidence": "Error: Test timed out in 30000ms.\nIf this is a long-running test, pass a timeout value as the last argument or configure it globally with \"testTimeout\".\n    at task (file:///Users/sudikshachugh/Desktop/ecommerce-microservices-v2/node_modules/vitest/dist/chunks/run.BTlFXlnv.js:2681:43)\n    at Object.<anonymous> (file:///Users/sudikshachugh/Desktop/ecommerce-microservices-v2/node_modules/vitest/dist/chunks/run.BTlFXlnv.js:2698:16)\n    at Object.<anonymous> (file:///Users/sudikshachugh/Desktop/ecom"
+        },
+        {
+          "name": "Connection, channel and handoff recovery recovers from consumer cancellation and re-registers exactly once",
+          "evidence": "IllegalOperationError: Channel closed\n    at ConfirmChannel.<anonymous> (/Users/sudikshachugh/Desktop/ecommerce-microservices-v2/node_modules/amqplib/lib/channel.js:373:11)\n    at ConfirmChannel._rpc (/Users/sudikshachugh/Desktop/ecommerce-microservices-v2/node_modules/amqplib/lib/channel.js:149:10)\n    at /Users/sudikshachugh/Desktop/ecommerce-microservices-v2/node_modules/amqplib/lib/channel_model.js:63:19\n    at node:internal/util:492:21\n    at new Promise (<anonymous>)\n    at node:internal/u"
+        },
+        {
+          "name": "Connection, channel and handoff recovery returns an unacknowledged delivery after shutdown deadline and does not ACK on stale channels",
+          "evidence": "Error: Test timed out in 30000ms.\nIf this is a long-running test, pass a timeout value as the last argument or configure it globally with \"testTimeout\".\n    at task (file:///Users/sudikshachugh/Desktop/ecommerce-microservices-v2/node_modules/vitest/dist/chunks/run.BTlFXlnv.js:2681:43)\n    at Object.<anonymous> (file:///Users/sudikshachugh/Desktop/ecommerce-microservices-v2/node_modules/vitest/dist/chunks/run.BTlFXlnv.js:2698:16)\n    at Object.<anonymous> (file:///Users/sudikshachugh/Desktop/ecom"
+        },
+        {
+          "name": "Connection, channel and handoff recovery recovers after a real consumer process crashes before ACK",
+          "evidence": "Error: Crash consumer startup timeout\n    at Timeout._onTimeout (/Users/sudikshachugh/Desktop/ecommerce-microservices-v2/packages/messaging/test/rabbitmq.test.ts:83:137)\n    at listOnTimeout (node:internal/timers:685:17)\n    at process.processTimers (node:internal/timers:618:7)\nIllegalOperationError: Channel closed\n    at ConfirmChannel.<anonymous> (/Users/sudikshachugh/Desktop/ecommerce-microservices-v2/node_modules/amqplib/lib/channel.js:373:11)\n    at ConfirmChannel._rpc (/Users/sudikshachugh"
+        }
+      ],
+      "suiteErrors": []
+    },
+    {
+      "run": "compatibility",
+      "started": 1791926351816,
+      "passed": 232,
+      "failed": 6,
+      "unexecutedOrSkipped": 0,
+      "total": 238,
+      "success": false,
+      "failedTests": [
+        {
+          "name": "Database-driven expiration and workers expires whole groups and leaves nonexpired groups untouched",
+          "evidence": "Error: Test timed out in 5000ms.\nIf this is a long-running test, pass a timeout value as the last argument or configure it globally with \"testTimeout\".\n    at task (file:///Users/sudikshachugh/Desktop/ecommerce-microservices-v2/node_modules/vitest/dist/chunks/run.BTlFXlnv.js:2681:43)\n    at Object.<anonymous> (file:///Users/sudikshachugh/Desktop/ecommerce-microservices-v2/node_modules/vitest/dist/chunks/run.BTlFXlnv.js:2698:16)\n    at Object.<anonymous> (file:///Users/sudikshachugh/Desktop/ecomm"
+        },
+        {
+          "name": "Database-driven expiration and workers supports multiple concurrent workers without double release",
+          "evidence": "Error: Test timed out in 5000ms.\nIf this is a long-running test, pass a timeout value as the last argument or configure it globally with \"testTimeout\".\n    at task (file:///Users/sudikshachugh/Desktop/ecommerce-microservices-v2/node_modules/vitest/dist/chunks/run.BTlFXlnv.js:2681:43)\n    at Object.<anonymous> (file:///Users/sudikshachugh/Desktop/ecommerce-microservices-v2/node_modules/vitest/dist/chunks/run.BTlFXlnv.js:2698:16)\n    at Object.<anonymous> (file:///Users/sudikshachugh/Desktop/ecomm"
+        },
+        {
+          "name": "Database-driven expiration and workers handles expiration versus confirm safely",
+          "evidence": "Error: Test timed out in 5000ms.\nIf this is a long-running test, pass a timeout value as the last argument or configure it globally with \"testTimeout\".\n    at task (file:///Users/sudikshachugh/Desktop/ecommerce-microservices-v2/node_modules/vitest/dist/chunks/run.BTlFXlnv.js:2681:43)\n    at Object.<anonymous> (file:///Users/sudikshachugh/Desktop/ecommerce-microservices-v2/node_modules/vitest/dist/chunks/run.BTlFXlnv.js:2698:16)\n    at Object.<anonymous> (file:///Users/sudikshachugh/Desktop/ecomm"
+        },
+        {
+          "name": "Database safeguards and rollback enforces reservation quantity, status, uniqueness and local foreign keys",
+          "evidence": "Error: Test timed out in 5000ms.\nIf this is a long-running test, pass a timeout value as the last argument or configure it globally with \"testTimeout\".\n    at task (file:///Users/sudikshachugh/Desktop/ecommerce-microservices-v2/node_modules/vitest/dist/chunks/run.BTlFXlnv.js:2681:43)\n    at Object.<anonymous> (file:///Users/sudikshachugh/Desktop/ecommerce-microservices-v2/node_modules/vitest/dist/chunks/run.BTlFXlnv.js:2698:16)\n    at Object.<anonymous> (file:///Users/sudikshachugh/Desktop/ecomm"
+        },
+        {
+          "name": "Database safeguards and rollback rolls back stock and fingerprint on a failed reservation insert",
+          "evidence": "error: deadlock detected\n    at /Users/sudikshachugh/Desktop/ecommerce-microservices-v2/node_modules/pg-pool/index.js:45:11\n    at process.processTicksAndRejections (node:internal/process/task_queues:104:5)\n    at /Users/sudikshachugh/Desktop/ecommerce-microservices-v2/apps/inventory-service/test/inventory.test.ts:48:74"
+        },
+        {
+          "name": "Outbox claims, fencing and recovery schedules a database-backed retry without losing the envelope",
+          "evidence": "AssertionError: expected 1791926740150 to be greater than 1791926740366\n    at /Users/sudikshachugh/Desktop/ecommerce-microservices-v2/packages/event-persistence/test/persistence.test.ts:37:488\n    at process.processTicksAndRejections (node:internal/process/task_queues:104:5)\n    at async file:///Users/sudikshachugh/Desktop/ecommerce-microservices-v2/node_modules/vitest/dist/chunks/run.BTlFXlnv.js:2783:20"
+        }
+      ],
+      "suiteErrors": []
+    },
+    {
+      "run": "search-12",
+      "started": 1791926366059,
+      "passed": 0,
+      "failed": 0,
+      "unexecutedOrSkipped": 77,
+      "total": 77,
+      "success": false,
+      "failedTests": [],
+      "suiteErrors": []
+    },
+    {
+      "run": "search-13",
+      "started": 1791926518518,
+      "passed": 77,
+      "failed": 0,
+      "unexecutedOrSkipped": 0,
+      "total": 77,
+      "success": true,
+      "failedTests": [],
+      "suiteErrors": []
+    },
+    {
+      "run": "full-2",
+      "started": 1791927158298,
+      "passed": 697,
+      "failed": 8,
+      "unexecutedOrSkipped": 221,
+      "total": 926,
+      "success": false,
+      "failedTests": [
+        {
+          "name": "Processing and persisted state machine reconciles a charge after lost-response without resubmission",
+          "evidence": "AssertionError: expected 'REQUIRES_RECONCILIATION' to be 'SUCCEEDED' // Object.is equality\n    at /Users/sudikshachugh/Desktop/ecommerce-microservices-v2/apps/payments-service/test/payments.test.ts:74:436\n    at process.processTicksAndRejections (node:internal/process/task_queues:104:5)\n    at async file:///Users/sudikshachugh/Desktop/ecommerce-microservices-v2/node_modules/vitest/dist/chunks/run.BTlFXlnv.js:2783:20"
+        },
+        {
+          "name": "Database constraints and local transaction failures enforces money, status, uniqueness, attempts, and provider IDs",
+          "evidence": "Error: Test timed out in 5000ms.\nIf this is a long-running test, pass a timeout value as the last argument or configure it globally with \"testTimeout\".\n    at task (file:///Users/sudikshachugh/Desktop/ecommerce-microservices-v2/node_modules/vitest/dist/chunks/run.BTlFXlnv.js:2681:43)\n    at Object.<anonymous> (file:///Users/sudikshachugh/Desktop/ecommerce-microservices-v2/node_modules/vitest/dist/chunks/run.BTlFXlnv.js:2698:16)\n    at Object.<anonymous> (file:///Users/sudikshachugh/Desktop/ecomm"
+        },
+        {
+          "name": "Database constraints and local transaction failures reuses the provider key independently of Payments transactions",
+          "evidence": "AssertionError: expected 2 to be 1 // Object.is equality\n    at /Users/sudikshachugh/Desktop/ecommerce-microservices-v2/apps/payments-service/test/payments.test.ts:132:295\n    at process.processTicksAndRejections (node:internal/process/task_queues:104:5)\n    at async file:///Users/sudikshachugh/Desktop/ecommerce-microservices-v2/node_modules/vitest/dist/chunks/run.BTlFXlnv.js:2783:20"
+        },
+        {
+          "name": "Database constraints and local transaction failures Payments test role cannot access auth_db",
+          "evidence": "Error: expected Error: Connection terminated due to conne\u2026 to match object { code: '42501' }\n    at _Assertion.__VITEST_REJECTS__ (file:///Users/sudikshachugh/Desktop/ecommerce-microservices-v2/node_modules/vitest/dist/chunks/index.C4tKZ0yW.js:2463:33)\n    at _Assertion.propertyGetter (file:///Users/sudikshachugh/Desktop/ecommerce-microservices-v2/node_modules/chai/index.js:1607:27)\n    at Reflect.get (<anonymous>)\n    at Object.proxyGetter [as get] (file:///Users/sudikshachugh/Desktop/ecommerce"
+        },
+        {
+          "name": "Transactions, database constraints and failures rolls back both header and first item when the second item insertion fails",
+          "evidence": "error: canceling statement due to statement timeout\n    at /Users/sudikshachugh/Desktop/ecommerce-microservices-v2/node_modules/pg-pool/index.js:45:11\n    at process.processTicksAndRejections (node:internal/process/task_queues:104:5)\n    at /Users/sudikshachugh/Desktop/ecommerce-microservices-v2/apps/orders-service/test/orders.test.ts:99:3"
+        },
+        {
+          "name": "Transactions, database constraints and failures enforces uniqueness, status, money, quantities, item consistency, foreign keys and cascade",
+          "evidence": "Error: Test timed out in 5000ms.\nIf this is a long-running test, pass a timeout value as the last argument or configure it globally with \"testTimeout\".\n    at task (file:///Users/sudikshachugh/Desktop/ecommerce-microservices-v2/node_modules/vitest/dist/chunks/run.BTlFXlnv.js:2681:43)\n    at Object.<anonymous> (file:///Users/sudikshachugh/Desktop/ecommerce-microservices-v2/node_modules/vitest/dist/chunks/run.BTlFXlnv.js:2698:16)\n    at Object.<anonymous> (file:///Users/sudikshachugh/Desktop/ecomm"
+        },
+        {
+          "name": "Outbox claims, fencing and recovery schedules a database-backed retry without losing the envelope",
+          "evidence": "AssertionError: expected 1791927833351 to be greater than 1791927833633\n    at /Users/sudikshachugh/Desktop/ecommerce-microservices-v2/packages/event-persistence/test/persistence.test.ts:37:488\n    at process.processTicksAndRejections (node:internal/process/task_queues:104:5)\n    at async file:///Users/sudikshachugh/Desktop/ecommerce-microservices-v2/node_modules/vitest/dist/chunks/run.BTlFXlnv.js:2783:20"
+        },
+        {
+          "name": "Outbox claims, fencing and recovery retains permanent publication failures for operator review",
+          "evidence": "error: canceling statement due to statement timeout\n    at /Users/sudikshachugh/Desktop/ecommerce-microservices-v2/node_modules/pg-pool/index.js:45:11\n    at process.processTicksAndRejections (node:internal/process/task_queues:104:5)\n    at /Users/sudikshachugh/Desktop/ecommerce-microservices-v2/packages/event-persistence/test/persistence.test.ts:19:76"
+        }
+      ],
+      "suiteErrors": [
+        "Connection terminated due to connection timeout",
+        "Connection terminated due to connection timeout",
+        "Connection terminated due to connection timeout"
+      ]
+    },
+    {
+      "run": "notifications-independent",
+      "started": 1791929384579,
+      "passed": 66,
+      "failed": 0,
+      "unexecutedOrSkipped": 0,
+      "total": 66,
+      "success": true,
+      "failedTests": [],
+      "suiteErrors": []
+    },
+    {
+      "run": "full-3",
+      "started": 1791929402038,
+      "passed": 833,
+      "failed": 16,
+      "unexecutedOrSkipped": 77,
+      "total": 926,
+      "success": false,
+      "failedTests": [
+        {
+          "name": "Real process crash and database disconnection recovery recovers intent before-intent-commit with exactly one persisted intent",
+          "evidence": "Error: Notification crash fixture timeout\n    at Timeout._onTimeout (/app/apps/notification-service/test/notifications.test.ts:68:623)\n    at listOnTimeout (node:internal/timers:685:17)\n    at process.processTimers (node:internal/timers:618:7)"
+        },
+        {
+          "name": "Real process crash and database disconnection recovery recovers intent after-intent-commit with exactly one persisted intent",
+          "evidence": "Error: Connection terminated due to connection timeout\n    at /app/node_modules/pg-pool/index.js:45:11\n    at process.processTicksAndRejections (node:internal/process/task_queues:104:5)\n    at /app/apps/notification-service/test/notifications.test.ts:86:2"
+        },
+        {
+          "name": "Real process crash and database disconnection recovery recovers worker after-claim without duplicate provider acceptance",
+          "evidence": "Error: Connection terminated due to connection timeout\n    at /app/node_modules/pg-pool/index.js:45:11\n    at process.processTicksAndRejections (node:internal/process/task_queues:104:5)\n    at /app/apps/notification-service/test/notifications.test.ts:86:2"
+        },
+        {
+          "name": "Real process crash and database disconnection recovery recovers worker before-provider without duplicate provider acceptance",
+          "evidence": "Error: Connection terminated due to connection timeout\n    at /app/node_modules/pg-pool/index.js:45:11\n    at process.processTicksAndRejections (node:internal/process/task_queues:104:5)\n    at /app/apps/notification-service/test/notifications.test.ts:86:2"
+        },
+        {
+          "name": "Real process crash and database disconnection recovery recovers worker after-provider without duplicate provider acceptance",
+          "evidence": "Error: Notification crash fixture timeout\n    at Timeout._onTimeout (/app/apps/notification-service/test/notifications.test.ts:68:623)\n    at listOnTimeout (node:internal/timers:685:17)\n    at process.processTimers (node:internal/timers:618:7)"
+        },
+        {
+          "name": "Real process crash and database disconnection recovery recovers worker before-result-commit without duplicate provider acceptance",
+          "evidence": "Error: Notification crash fixture timeout\n    at Timeout._onTimeout (/app/apps/notification-service/test/notifications.test.ts:68:623)\n    at listOnTimeout (node:internal/timers:685:17)\n    at process.processTimers (node:internal/timers:618:7)"
+        },
+        {
+          "name": "Real process crash and database disconnection recovery recovers worker after-result-commit without duplicate provider acceptance",
+          "evidence": "Error: Notification crash fixture timeout\n    at Timeout._onTimeout (/app/apps/notification-service/test/notifications.test.ts:68:623)\n    at listOnTimeout (node:internal/timers:685:17)\n    at process.processTimers (node:internal/timers:618:7)"
+        },
+        {
+          "name": "Real process crash and database disconnection recovery rolls back actual delivery persistence on PostgreSQL disconnect and reconciles after restart",
+          "evidence": "TypeError: Cannot read properties of undefined (reading 'status')\n    at /app/apps/notification-service/test/notifications.test.ts:131:1006\n    at process.processTicksAndRejections (node:internal/process/task_queues:104:5)\n    at async file:///app/node_modules/vitest/dist/chunks/run.BTlFXlnv.js:2783:20"
+        },
+        {
+          "name": "Real process crash and database disconnection recovery retries a temporary recipient-resolution outage without provider work inside any inbox transaction",
+          "evidence": "AssertionError: expected 'RETRY_SCHEDULED' to be 'SENT' // Object.is equality\n    at /app/apps/notification-service/test/notifications.test.ts:132:543\n    at process.processTicksAndRejections (node:internal/process/task_queues:104:5)\n    at async file:///app/node_modules/vitest/dist/chunks/run.BTlFXlnv.js:2783:20"
+        },
+        {
+          "name": "Real RabbitMQ notification delivery, DLQ and business decoupling consumes durable redelivery and leaves provider sends outside the consumer",
+          "evidence": "Error: Messaging unavailable; publication outcome may be uncertain\n    at Messaging.invalidate (/app/packages/messaging/src/connection.ts:26:226)\n    at Timeout.<anonymous> (/app/packages/messaging/src/connection.ts:56:39)\n    at listOnTimeout (node:internal/timers:685:17)\n    at process.processTimers (node:internal/timers:618:7)"
+        },
+        {
+          "name": "Real RabbitMQ notification delivery, DLQ and business decoupling recovers a real notification consumer SIGKILL after commit before ACK",
+          "evidence": "Error: write ECONNRESET\n    at afterWriteDispatched (node:internal/stream_base_commons:159:15)\n    at writeGeneric (node:internal/stream_base_commons:150:3)\n    at Socket._writeGeneric (node:net:1262:11)\n    at Socket._write (node:net:1274:8)\n    at writeOrBuffer (node:internal/streams/writable:574:12)\n    at _write (node:internal/streams/writable:503:10)\n    at Writable.write (node:internal/streams/writable:512:10)\n    at Connection.sendMethod (/app/node_modules/amqplib/lib/connection.js:485:19"
+        },
+        {
+          "name": "Real RabbitMQ notification delivery, DLQ and business decoupling keeps checkout and refunds progressing while notification consumers and delivery are unavailable",
+          "evidence": "AssertionError: {\"status\":\"reconnecting\",\"counters\":{\"published\":0,\"consumed\":0,\"failed\":0,\"retried\":0,\"deadLettered\":0,\"reconnections\":2}}: expected 'reconnecting' to be 'ready' // Object.is equality\n    at __vite_ssr_import_9__.vi.waitFor.timeout (/app/apps/notification-service/test/notifications.test.ts:137:753)\n    at Timeout.checkCallback (file:///app/node_modules/vitest/dist/chunks/index.C4tKZ0yW.js:7163:20)\n    at listOnTimeout (node:internal/timers:685:17)\n    at process.processTimers (n"
+        },
+        {
+          "name": "Real isolated RabbitMQ least-privilege notification role can consume and retry owned queues but cannot configure/publish the business exchange or read other queues",
+          "evidence": "Error: Test timed out in 60000ms.\nIf this is a long-running test, pass a timeout value as the last argument or configure it globally with \"testTimeout\".\n    at task (file:///app/node_modules/vitest/dist/chunks/run.BTlFXlnv.js:2681:43)\n    at Object.<anonymous> (file:///app/node_modules/vitest/dist/chunks/run.BTlFXlnv.js:2698:16)\n    at Object.<anonymous> (file:///app/node_modules/vitest/dist/chunks/run.BTlFXlnv.js:2471:28)\n    at chain (file:///app/node_modules/vitest/dist/chunks/run.BTlFXlnv.js"
+        },
+        {
+          "name": "Conservative policy for less capable providers does not resend an ambiguous non-idempotent operation merely because lookup currently reports non-acceptance",
+          "evidence": "AssertionError: expected { \u2026(30) } to match object { \u2026(2) }\n(33 matching properties omitted from actual)\n    at Proxy.<anonymous> (file:///app/node_modules/vitest/dist/chunks/index.C4tKZ0yW.js:2050:10)\n    at Proxy.<anonymous> (file:///app/node_modules/vitest/dist/chunks/index.C4tKZ0yW.js:1944:14)\n    at Proxy.methodWrapper (file:///app/node_modules/chai/index.js:1737:25)\n    at /app/apps/notification-service/test/notifications.test.ts:173:613\n    at process.processTicksAndRejections (node:inter"
+        },
+        {
+          "name": "Real process crashes and persistent financial recovery recovers refund-after-provider from the original durable provider operation",
+          "evidence": "Error: Test timed out in 30000ms.\nIf this is a long-running test, pass a timeout value as the last argument or configure it globally with \"testTimeout\".\n    at task (file:///app/node_modules/vitest/dist/chunks/run.BTlFXlnv.js:2681:43)\n    at Object.<anonymous> (file:///app/node_modules/vitest/dist/chunks/run.BTlFXlnv.js:2698:16)\n    at Object.<anonymous> (file:///app/node_modules/vitest/dist/chunks/run.BTlFXlnv.js:2471:28)\n    at Object.chain (file:///app/node_modules/vitest/dist/chunks/run.BTlF"
+        },
+        {
+          "name": "Node 24 Gateway process lifecycle starts degraded during outage, recovers after startup and exits cleanly on SIGTERM",
+          "evidence": "Error: Test timed out in 15000ms.\nIf this is a long-running test, pass a timeout value as the last argument or configure it globally with \"testTimeout\".\n    at task (file:///app/node_modules/vitest/dist/chunks/run.BTlFXlnv.js:2681:43)\n    at Object.<anonymous> (file:///app/node_modules/vitest/dist/chunks/run.BTlFXlnv.js:2698:16)\n    at Object.<anonymous> (file:///app/node_modules/vitest/dist/chunks/run.BTlFXlnv.js:2471:28)\n    at chain (file:///app/node_modules/vitest/dist/chunks/run.BTlFXlnv.js"
+        }
+      ],
+      "suiteErrors": []
+    },
+    {
+      "run": "full-3-repeat2",
+      "started": 1791930744557,
+      "passed": 902,
+      "failed": 24,
+      "unexecutedOrSkipped": 0,
+      "total": 926,
+      "success": false,
+      "failedTests": [
+        {
+          "name": "isolated multi-service Search integration projection, duplicate and stale-event protection SIGKILL at after-index recovers via real RabbitMQ redelivery",
+          "evidence": "Error: Isolated search readiness/assertion deadline exceeded\n    at until (/app/apps/search-service/test/fixture.ts:83:211)\n    at runNextTicks (node:internal/process/task_queues:65:5)\n    at process.processTimers (node:internal/timers:615:9)\n    at Object.wait (/app/apps/search-service/test/integration.test.ts:56:64)\n    at /app/apps/search-service/test/integration.test.ts:78:283\n    at async file:///app/node_modules/vitest/dist/chunks/run.BTlFXlnv.js:2783:20"
+        },
+        {
+          "name": "isolated multi-service Search integration projection, duplicate and stale-event protection SIGKILL at before-ack recovers via real RabbitMQ redelivery",
+          "evidence": "Error: Hook timed out in 15000ms.\nIf this is a long-running hook, pass a timeout value as the last argument or configure it globally with \"hookTimeout\".\n    at beforeEach (file:///app/node_modules/vitest/dist/chunks/run.BTlFXlnv.js:1975:42)\n    at /app/apps/search-service/test/integration.test.ts:38:1\n    at file:///app/node_modules/vitest/dist/chunks/run.BTlFXlnv.js:2763:52\n    at runWithSuite (file:///app/node_modules/vitest/dist/chunks/run.BTlFXlnv.js:3250:8)\n    at Object.collect (file:///ap"
+        },
+        {
+          "name": "isolated multi-service Search integration projection, duplicate and stale-event protection dead-letters invalid-json through real broker topology",
+          "evidence": "Error: Isolated search readiness/assertion deadline exceeded\n    at until (/app/apps/search-service/test/fixture.ts:83:211)\n    at Object.rebuild (/app/apps/search-service/test/fixture.ts:66:4)\n    at /app/apps/search-service/test/integration.test.ts:44:2"
+        },
+        {
+          "name": "isolated multi-service Search integration real Elasticsearch search API sorts price_asc stably",
+          "evidence": "Error: Search temporarily unavailable\n    at Elasticsearch.request (/app/apps/search-service/src/elasticsearch.ts:19:119)\n    at runNextTicks (node:internal/process/task_queues:65:5)\n    at process.processTimers (node:internal/timers:615:9)\n    at Elasticsearch.put (/app/apps/search-service/src/elasticsearch.ts:28:3)\n    at Projector.write (/app/apps/search-service/src/projector.ts:12:36)\n    at Projector.consume (/app/apps/search-service/src/projector.ts:23:50)\n    at apply (/app/apps/search-se"
+        },
+        {
+          "name": "isolated multi-service Search integration real Elasticsearch search API sorts price_desc stably",
+          "evidence": "Error: Hook timed out in 15000ms.\nIf this is a long-running hook, pass a timeout value as the last argument or configure it globally with \"hookTimeout\".\n    at beforeEach (file:///app/node_modules/vitest/dist/chunks/run.BTlFXlnv.js:1975:42)\n    at /app/apps/search-service/test/integration.test.ts:38:1\n    at file:///app/node_modules/vitest/dist/chunks/run.BTlFXlnv.js:2763:52\n    at runWithSuite (file:///app/node_modules/vitest/dist/chunks/run.BTlFXlnv.js:3250:8)\n    at Object.collect (file:///ap"
+        },
+        {
+          "name": "isolated multi-service Search integration real Elasticsearch search API weights name relevance above description matches",
+          "evidence": "Error: Hook timed out in 15000ms.\nIf this is a long-running hook, pass a timeout value as the last argument or configure it globally with \"hookTimeout\".\n    at beforeEach (file:///app/node_modules/vitest/dist/chunks/run.BTlFXlnv.js:1975:42)\n    at /app/apps/search-service/test/integration.test.ts:38:1\n    at file:///app/node_modules/vitest/dist/chunks/run.BTlFXlnv.js:2763:52\n    at runWithSuite (file:///app/node_modules/vitest/dist/chunks/run.BTlFXlnv.js:3250:8)\n    at Object.collect (file:///ap"
+        },
+        {
+          "name": "isolated multi-service Search integration real Elasticsearch search API sorts newest with deterministic ID ties",
+          "evidence": "Error: Isolated search readiness/assertion deadline exceeded\n    at until (/app/apps/search-service/test/fixture.ts:83:211)\n    at runNextTicks (node:internal/process/task_queues:65:5)\n    at process.processTimers (node:internal/timers:615:9)\n    at /app/apps/search-service/test/integration.test.ts:41:64"
+        },
+        {
+          "name": "isolated multi-service Search integration real Elasticsearch search API rejects unsafe public input { \u2026(1) }",
+          "evidence": "Error: Hook timed out in 15000ms.\nIf this is a long-running hook, pass a timeout value as the last argument or configure it globally with \"hookTimeout\".\n    at beforeEach (file:///app/node_modules/vitest/dist/chunks/run.BTlFXlnv.js:1975:42)\n    at /app/apps/search-service/test/integration.test.ts:38:1\n    at file:///app/node_modules/vitest/dist/chunks/run.BTlFXlnv.js:2763:52\n    at runWithSuite (file:///app/node_modules/vitest/dist/chunks/run.BTlFXlnv.js:3250:8)\n    at Object.collect (file:///ap"
+        },
+        {
+          "name": "isolated multi-service Search integration real Elasticsearch search API rejects unsafe public input { minPrice: -1 }",
+          "evidence": "Error: Hook timed out in 15000ms.\nIf this is a long-running hook, pass a timeout value as the last argument or configure it globally with \"hookTimeout\".\n    at beforeEach (file:///app/node_modules/vitest/dist/chunks/run.BTlFXlnv.js:1975:42)\n    at /app/apps/search-service/test/integration.test.ts:38:1\n    at file:///app/node_modules/vitest/dist/chunks/run.BTlFXlnv.js:2763:52\n    at runWithSuite (file:///app/node_modules/vitest/dist/chunks/run.BTlFXlnv.js:3250:8)\n    at Object.collect (file:///ap"
+        },
+        {
+          "name": "isolated multi-service Search integration real Elasticsearch search API rejects unsafe public input { minPrice: 5, maxPrice: 1 }",
+          "evidence": "Error: Isolated search readiness/assertion deadline exceeded\n    at until (/app/apps/search-service/test/fixture.ts:83:211)\n    at /app/apps/search-service/test/integration.test.ts:41:64"
+        },
+        {
+          "name": "isolated multi-service Search integration real Elasticsearch search API rejects unsafe public input { limit: 101 }",
+          "evidence": "Error: Isolated search readiness/assertion deadline exceeded\n    at until (/app/apps/search-service/test/fixture.ts:83:211)\n    at runNextTicks (node:internal/process/task_queues:65:5)\n    at process.processTimers (node:internal/timers:615:9)\n    at Object.rebuild (/app/apps/search-service/test/fixture.ts:66:4)\n    at /app/apps/search-service/test/integration.test.ts:44:2"
+        },
+        {
+          "name": "isolated multi-service Search integration real Elasticsearch search API rejects unsafe public input { category: 'invented' }",
+          "evidence": "Error: Hook timed out in 15000ms.\nIf this is a long-running hook, pass a timeout value as the last argument or configure it globally with \"hookTimeout\".\n    at beforeEach (file:///app/node_modules/vitest/dist/chunks/run.BTlFXlnv.js:1975:42)\n    at /app/apps/search-service/test/integration.test.ts:38:1\n    at file:///app/node_modules/vitest/dist/chunks/run.BTlFXlnv.js:2763:52\n    at runWithSuite (file:///app/node_modules/vitest/dist/chunks/run.BTlFXlnv.js:3250:8)\n    at Object.collect (file:///ap"
+        },
+        {
+          "name": "isolated multi-service Search integration real Elasticsearch search API rejects unsafe public input { query: '{\"match_all\":{}}' }",
+          "evidence": "Error: Hook timed out in 15000ms.\nIf this is a long-running hook, pass a timeout value as the last argument or configure it globally with \"hookTimeout\".\n    at beforeEach (file:///app/node_modules/vitest/dist/chunks/run.BTlFXlnv.js:1975:42)\n    at /app/apps/search-service/test/integration.test.ts:38:1\n    at file:///app/node_modules/vitest/dist/chunks/run.BTlFXlnv.js:2763:52\n    at runWithSuite (file:///app/node_modules/vitest/dist/chunks/run.BTlFXlnv.js:3250:8)\n    at Object.collect (file:///ap"
+        },
+        {
+          "name": "isolated multi-service Search integration real Elasticsearch search API rejects unsafe public input { cursor: 'forged' }",
+          "evidence": "Error: Hook timed out in 15000ms.\nIf this is a long-running hook, pass a timeout value as the last argument or configure it globally with \"hookTimeout\".\n    at beforeEach (file:///app/node_modules/vitest/dist/chunks/run.BTlFXlnv.js:1975:42)\n    at /app/apps/search-service/test/integration.test.ts:38:1\n    at file:///app/node_modules/vitest/dist/chunks/run.BTlFXlnv.js:2763:52\n    at runWithSuite (file:///app/node_modules/vitest/dist/chunks/run.BTlFXlnv.js:3250:8)\n    at Object.collect (file:///ap"
+        },
+        {
+          "name": "isolated multi-service Search integration real Elasticsearch search API authoritative Catalog existence suppresses deleted-but-not-yet-indexed products",
+          "evidence": "Error: Hook timed out in 15000ms.\nIf this is a long-running hook, pass a timeout value as the last argument or configure it globally with \"hookTimeout\".\n    at beforeEach (file:///app/node_modules/vitest/dist/chunks/run.BTlFXlnv.js:1975:42)\n    at /app/apps/search-service/test/integration.test.ts:38:1\n    at file:///app/node_modules/vitest/dist/chunks/run.BTlFXlnv.js:2763:52\n    at runWithSuite (file:///app/node_modules/vitest/dist/chunks/run.BTlFXlnv.js:3250:8)\n    at Object.collect (file:///ap"
+        },
+        {
+          "name": "isolated multi-service Search integration real Elasticsearch search API Catalog visibility outage fails closed rather than returning unverified products",
+          "evidence": "Error: Hook timed out in 15000ms.\nIf this is a long-running hook, pass a timeout value as the last argument or configure it globally with \"hookTimeout\".\n    at beforeEach (file:///app/node_modules/vitest/dist/chunks/run.BTlFXlnv.js:1975:42)\n    at /app/apps/search-service/test/integration.test.ts:38:1\n    at file:///app/node_modules/vitest/dist/chunks/run.BTlFXlnv.js:2763:52\n    at runWithSuite (file:///app/node_modules/vitest/dist/chunks/run.BTlFXlnv.js:3250:8)\n    at Object.collect (file:///ap"
+        },
+        {
+          "name": "isolated multi-service Search integration rebuild and reconciliation under concurrent writes fully rebuilds existing products through the private Catalog API",
+          "evidence": "Error: Connection terminated due to connection timeout\n    at /app/node_modules/pg-pool/index.js:45:11\n    at process.processTicksAndRejections (node:internal/process/task_queues:104:5)\n    at /app/apps/search-service/test/integration.test.ts:40:17"
+        },
+        {
+          "name": "isolated multi-service Search integration rebuild and reconciliation under concurrent writes concurrent update/delete/create and older snapshot replay cannot lose committed changes",
+          "evidence": "Error: Hook timed out in 15000ms.\nIf this is a long-running hook, pass a timeout value as the last argument or configure it globally with \"hookTimeout\".\n    at beforeEach (file:///app/node_modules/vitest/dist/chunks/run.BTlFXlnv.js:1975:42)\n    at /app/apps/search-service/test/integration.test.ts:38:1\n    at file:///app/node_modules/vitest/dist/chunks/run.BTlFXlnv.js:2763:52\n    at runWithSuite (file:///app/node_modules/vitest/dist/chunks/run.BTlFXlnv.js:3250:8)\n    at Object.collect (file:///ap"
+        },
+        {
+          "name": "isolated multi-service Search integration rebuild and reconciliation under concurrent writes captures committed changes through catch-up even when RabbitMQ deliveries are delayed",
+          "evidence": "Error: Hook timed out in 15000ms.\nIf this is a long-running hook, pass a timeout value as the last argument or configure it globally with \"hookTimeout\".\n    at beforeEach (file:///app/node_modules/vitest/dist/chunks/run.BTlFXlnv.js:1975:42)\n    at /app/apps/search-service/test/integration.test.ts:38:1\n    at file:///app/node_modules/vitest/dist/chunks/run.BTlFXlnv.js:2763:52\n    at runWithSuite (file:///app/node_modules/vitest/dist/chunks/run.BTlFXlnv.js:3250:8)\n    at Object.collect (file:///ap"
+        },
+        {
+          "name": "isolated multi-service Search integration rebuild and reconciliation under concurrent writes continues serving the old alias during a candidate rebuild and switches atomically",
+          "evidence": "Error: Isolated search readiness/assertion deadline exceeded\n    at until (/app/apps/search-service/test/fixture.ts:83:211)\n    at /app/apps/search-service/test/integration.test.ts:41:64"
+        },
+        {
+          "name": "isolated multi-service Search integration rebuild and reconciliation under concurrent writes export interruption leaves resumable progress and the public alias unchanged",
+          "evidence": "Error: Isolated search readiness/assertion deadline exceeded\n    at until (/app/apps/search-service/test/fixture.ts:83:211)\n    at runNextTicks (node:internal/process/task_queues:65:5)\n    at process.processTimers (node:internal/timers:615:9)\n    at Object.rebuild (/app/apps/search-service/test/fixture.ts:66:4)\n    at /app/apps/search-service/test/integration.test.ts:44:2"
+        },
+        {
+          "name": "isolated multi-service Search integration authorization, opt-in Gateway and telemetry rejects missing rebuild authorization",
+          "evidence": "Error: Connection terminated due to connection timeout\n    at /app/node_modules/pg-pool/index.js:45:11\n    at process.processTicksAndRejections (node:internal/process/task_queues:104:5)\n    at /app/apps/search-service/test/integration.test.ts:40:17"
+        },
+        {
+          "name": "isolated multi-service Search integration authorization, opt-in Gateway and telemetry rejects customer rebuild authorization",
+          "evidence": "Error: Hook timed out in 15000ms.\nIf this is a long-running hook, pass a timeout value as the last argument or configure it globally with \"hookTimeout\".\n    at beforeEach (file:///app/node_modules/vitest/dist/chunks/run.BTlFXlnv.js:1975:42)\n    at /app/apps/search-service/test/integration.test.ts:38:1\n    at file:///app/node_modules/vitest/dist/chunks/run.BTlFXlnv.js:2763:52\n    at runWithSuite (file:///app/node_modules/vitest/dist/chunks/run.BTlFXlnv.js:3250:8)\n    at Object.collect (file:///ap"
+        },
+        {
+          "name": "isolated multi-service Search integration authorization, opt-in Gateway and telemetry rejects invalid rebuild authorization",
+          "evidence": "Error: Isolated search readiness/assertion deadline exceeded\n    at until (/app/apps/search-service/test/fixture.ts:83:211)\n    at Object.rebuild (/app/apps/search-service/test/fixture.ts:66:4)\n    at /app/apps/search-service/test/integration.test.ts:44:2"
+        }
+      ],
+      "suiteErrors": []
+    },
+    {
+      "run": "search-14",
+      "started": 1791931752587,
+      "passed": 124,
+      "failed": 2,
+      "unexecutedOrSkipped": 0,
+      "total": 126,
+      "success": false,
+      "failedTests": [
+        {
+          "name": "isolated multi-service Search integration projection, duplicate and stale-event protection SIGKILL at after-index recovers via real RabbitMQ redelivery",
+          "evidence": "AssertionError: expected 1 to be +0 // Object.is equality\n    at /app/apps/search-service/test/integration.test.ts:54:161\n    at process.processTicksAndRejections (node:internal/process/task_queues:104:5)"
+        },
+        {
+          "name": "isolated multi-service Search integration operator rollback, cleanup and unexpected projection audits catches up a retained index before an authenticated rollback and retains its replacement",
+          "evidence": "Error: Search temporarily unavailable\n    at RebuildCoordinator.runToCompletion (/app/apps/search-service/src/rebuild.ts:77:185)\n    at process.processTicksAndRejections (node:internal/process/task_queues:104:5)\n    at /app/apps/search-service/test/integration.test.ts:136:3\n    at async file:///app/node_modules/vitest/dist/chunks/run.BTlFXlnv.js:2783:20"
+        }
+      ],
+      "suiteErrors": []
+    },
+    {
+      "run": "notifications-final",
+      "started": 1791931874663,
+      "passed": 66,
+      "failed": 0,
+      "unexecutedOrSkipped": 0,
+      "total": 66,
+      "success": true,
+      "failedTests": [],
+      "suiteErrors": []
+    },
+    {
+      "run": "full-4",
+      "started": 1791931893360,
+      "passed": 710,
+      "failed": 40,
+      "unexecutedOrSkipped": 176,
+      "total": 926,
+      "success": false,
+      "failedTests": [
+        {
+          "name": "Inventory stock and dependency handling initializes, reads publicly, and replaces absolute unconsumed stock",
+          "evidence": "Error: Test timed out in 5000ms.\nIf this is a long-running test, pass a timeout value as the last argument or configure it globally with \"testTimeout\".\n    at task (file:///app/node_modules/vitest/dist/chunks/run.BTlFXlnv.js:2681:43)\n    at Object.<anonymous> (file:///app/node_modules/vitest/dist/chunks/run.BTlFXlnv.js:2698:16)\n    at Object.<anonymous> (file:///app/node_modules/vitest/dist/chunks/run.BTlFXlnv.js:2471:28)\n    at chain (file:///app/node_modules/vitest/dist/chunks/run.BTlFXlnv.js:"
+        },
+        {
+          "name": "Reservation validation and idempotency rejects invalid reservation {\"orderId\":\"e1aa53be-3c18-4771-91d7-5e73e72e17a0\",\"items\":[{\"productId\":\"bad\",\"quantity\":1}]}",
+          "evidence": "Error: Test timed out in 5000ms.\nIf this is a long-running test, pass a timeout value as the last argument or configure it globally with \"testTimeout\".\n    at task (file:///app/node_modules/vitest/dist/chunks/run.BTlFXlnv.js:2681:43)\n    at Object.<anonymous> (file:///app/node_modules/vitest/dist/chunks/run.BTlFXlnv.js:2698:16)\n    at Object.<anonymous> (file:///app/node_modules/vitest/dist/chunks/run.BTlFXlnv.js:2471:28)\n    at Object.chain (file:///app/node_modules/vitest/dist/chunks/run.BTlFX"
+        },
+        {
+          "name": "Reservation validation and idempotency rejects invalid reservation {\"orderId\":\"98197a10-5c72-4a8b-bc4c-9c1665b2d362\",\"items\":[{\"productId\":\"aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaaaa\",\"quantity\":0}]}",
+          "evidence": "Error: Hook timed out in 10000ms.\nIf this is a long-running hook, pass a timeout value as the last argument or configure it globally with \"hookTimeout\".\n    at beforeEach (file:///app/node_modules/vitest/dist/chunks/run.BTlFXlnv.js:1975:42)\n    at /app/apps/inventory-service/test/inventory.test.ts:48:1\n    at async VitestModuleEvaluator._runInlinedModule (file:///app/node_modules/vitest/dist/module-evaluator.js:261:4)\n    at async VitestModuleRunner.directRequest (file:///app/node_modules/vite/d"
+        },
+        {
+          "name": "Reservation validation and idempotency rejects invalid reservation {\"orderId\":\"91ab249a-29ae-43cb-9539-8a80921171d7\",\"items\":[{\"productId\":\"aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaaaa\",\"quantity\":-1}]}",
+          "evidence": "Error: Hook timed out in 10000ms.\nIf this is a long-running hook, pass a timeout value as the last argument or configure it globally with \"hookTimeout\".\n    at beforeEach (file:///app/node_modules/vitest/dist/chunks/run.BTlFXlnv.js:1975:42)\n    at /app/apps/inventory-service/test/inventory.test.ts:48:1\n    at async VitestModuleEvaluator._runInlinedModule (file:///app/node_modules/vitest/dist/module-evaluator.js:261:4)\n    at async VitestModuleRunner.directRequest (file:///app/node_modules/vite/d"
+        },
+        {
+          "name": "Reservation validation and idempotency rejects invalid reservation {\"orderId\":\"5944e1f4-70cc-4c96-ba84-6714f0f0e2d0\",\"items\":[{\"productId\":\"aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaaaa\",\"quantity\":1.5}]}",
+          "evidence": "Error: Test timed out in 5000ms.\nIf this is a long-running test, pass a timeout value as the last argument or configure it globally with \"testTimeout\".\n    at task (file:///app/node_modules/vitest/dist/chunks/run.BTlFXlnv.js:2681:43)\n    at Object.<anonymous> (file:///app/node_modules/vitest/dist/chunks/run.BTlFXlnv.js:2698:16)\n    at Object.<anonymous> (file:///app/node_modules/vitest/dist/chunks/run.BTlFXlnv.js:2471:28)\n    at Object.chain (file:///app/node_modules/vitest/dist/chunks/run.BTlFX"
+        },
+        {
+          "name": "Reservation validation and idempotency rejects invalid reservation {\"orderId\":\"67184e0c-195a-4b50-8923-709066125a94\",\"items\":[{\"productId\":\"aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaaaa\",\"quantity\":2}],\"extra\":true}",
+          "evidence": "Error: Test timed out in 5000ms.\nIf this is a long-running test, pass a timeout value as the last argument or configure it globally with \"testTimeout\".\n    at task (file:///app/node_modules/vitest/dist/chunks/run.BTlFXlnv.js:2681:43)\n    at Object.<anonymous> (file:///app/node_modules/vitest/dist/chunks/run.BTlFXlnv.js:2698:16)\n    at Object.<anonymous> (file:///app/node_modules/vitest/dist/chunks/run.BTlFXlnv.js:2471:28)\n    at Object.chain (file:///app/node_modules/vitest/dist/chunks/run.BTlFX"
+        },
+        {
+          "name": "Reservation validation and idempotency rejects invalid reservation {\"orderId\":\"bd6634e0-289c-44f8-87e1-3853f5be3a19\",\"items\":[{\"productId\":\"aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaaaa\",\"quantity\":1,\"extra\":true}]}",
+          "evidence": "Error: Hook timed out in 10000ms.\nIf this is a long-running hook, pass a timeout value as the last argument or configure it globally with \"hookTimeout\".\n    at beforeEach (file:///app/node_modules/vitest/dist/chunks/run.BTlFXlnv.js:1975:42)\n    at /app/apps/inventory-service/test/inventory.test.ts:48:1\n    at async VitestModuleEvaluator._runInlinedModule (file:///app/node_modules/vitest/dist/module-evaluator.js:261:4)\n    at async VitestModuleRunner.directRequest (file:///app/node_modules/vite/d"
+        },
+        {
+          "name": "Reservation validation and idempotency rejects invalid reservation {\"orderId\":\"f51a927a-2356-4628-8efd-b87f8f8c00da\",\"items\":[{\"productId\":\"aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaaaa\",\"quantity\":1},{\"productId\":\"AAAAAAAA-AAAA-4AAA-8AAA-AAAAAAAAAAAA\",\"quantity\":1}]}",
+          "evidence": "Error: Hook timed out in 10000ms.\nIf this is a long-running hook, pass a timeout value as the last argument or configure it globally with \"hookTimeout\".\n    at beforeEach (file:///app/node_modules/vitest/dist/chunks/run.BTlFXlnv.js:1975:42)\n    at /app/apps/inventory-service/test/inventory.test.ts:48:1\n    at async VitestModuleEvaluator._runInlinedModule (file:///app/node_modules/vitest/dist/module-evaluator.js:261:4)\n    at async VitestModuleRunner.directRequest (file:///app/node_modules/vite/d"
+        },
+        {
+          "name": "Reservation validation and idempotency rejects malformed JSON without revealing internal details",
+          "evidence": "Error: Test timed out in 5000ms.\nIf this is a long-running test, pass a timeout value as the last argument or configure it globally with \"testTimeout\".\n    at task (file:///app/node_modules/vitest/dist/chunks/run.BTlFXlnv.js:2681:43)\n    at Object.<anonymous> (file:///app/node_modules/vitest/dist/chunks/run.BTlFXlnv.js:2698:16)\n    at Object.<anonymous> (file:///app/node_modules/vitest/dist/chunks/run.BTlFXlnv.js:2471:28)\n    at chain (file:///app/node_modules/vitest/dist/chunks/run.BTlFXlnv.js:"
+        },
+        {
+          "name": "Concurrent inventory operations allows only one contender for the last unit",
+          "evidence": "Error: Hook timed out in 10000ms.\nIf this is a long-running hook, pass a timeout value as the last argument or configure it globally with \"hookTimeout\".\n    at beforeEach (file:///app/node_modules/vitest/dist/chunks/run.BTlFXlnv.js:1975:42)\n    at /app/apps/inventory-service/test/inventory.test.ts:48:1\n    at async VitestModuleEvaluator._runInlinedModule (file:///app/node_modules/vitest/dist/module-evaluator.js:261:4)\n    at async VitestModuleRunner.directRequest (file:///app/node_modules/vite/d"
+        },
+        {
+          "name": "Concurrent inventory operations never oversells under contention",
+          "evidence": "Error: Test timed out in 5000ms.\nIf this is a long-running test, pass a timeout value as the last argument or configure it globally with \"testTimeout\".\n    at task (file:///app/node_modules/vitest/dist/chunks/run.BTlFXlnv.js:2681:43)\n    at Object.<anonymous> (file:///app/node_modules/vitest/dist/chunks/run.BTlFXlnv.js:2698:16)\n    at Object.<anonymous> (file:///app/node_modules/vitest/dist/chunks/run.BTlFXlnv.js:2471:28)\n    at chain (file:///app/node_modules/vitest/dist/chunks/run.BTlFXlnv.js:"
+        },
+        {
+          "name": "Concurrent inventory operations serializes identical concurrent requests without extending TTL",
+          "evidence": "Error: Test timed out in 5000ms.\nIf this is a long-running test, pass a timeout value as the last argument or configure it globally with \"testTimeout\".\n    at task (file:///app/node_modules/vitest/dist/chunks/run.BTlFXlnv.js:2681:43)\n    at Object.<anonymous> (file:///app/node_modules/vitest/dist/chunks/run.BTlFXlnv.js:2698:16)\n    at Object.<anonymous> (file:///app/node_modules/vitest/dist/chunks/run.BTlFXlnv.js:2471:28)\n    at chain (file:///app/node_modules/vitest/dist/chunks/run.BTlFXlnv.js:"
+        },
+        {
+          "name": "Database-driven expiration and workers expires naturally after the configured TTL without changing its database deadline",
+          "evidence": "AssertionError: expected 2 to be +0 // Object.is equality\n    at __vite_ssr_import_7__.vi.waitFor.timeout (/app/apps/inventory-service/test/inventory.test.ts:156:72)\n    at process.processTicksAndRejections (node:internal/process/task_queues:104:5)"
+        },
+        {
+          "name": "Authoritative order snapshots and exact money rejects a missing product without persisting an order",
+          "evidence": "Error: Test timed out in 5000ms.\nIf this is a long-running test, pass a timeout value as the last argument or configure it globally with \"testTimeout\".\n    at task (file:///app/node_modules/vitest/dist/chunks/run.BTlFXlnv.js:2681:43)\n    at Object.<anonymous> (file:///app/node_modules/vitest/dist/chunks/run.BTlFXlnv.js:2698:16)\n    at Object.<anonymous> (file:///app/node_modules/vitest/dist/chunks/run.BTlFXlnv.js:2471:28)\n    at chain (file:///app/node_modules/vitest/dist/chunks/run.BTlFXlnv.js:"
+        },
+        {
+          "name": "Cancellation coordinates payment, refunds and inventory in the checkout Saga keeps ambiguous payments protected during cancellation then refunds delayed success",
+          "evidence": "AssertionError: expected 'CANCELLATION_PENDING' to be 'REFUND_PENDING' // Object.is equality\n    at /app/apps/orders-service/test/refund-compensation.test.ts:113:455\n    at process.processTicksAndRejections (node:internal/process/task_queues:104:5)\n    at async file:///app/node_modules/vitest/dist/chunks/run.BTlFXlnv.js:2783:20"
+        },
+        {
+          "name": "Real process crashes and persistent financial recovery recovers Orders refund outcome committed before ACK without another compensation command",
+          "evidence": "Error: Crash fixture timed out\n    at Timeout._onTimeout (/app/apps/orders-service/test/refund-compensation.test.ts:60:102)\n    at listOnTimeout (node:internal/timers:685:17)\n    at process.processTimers (node:internal/timers:618:7)"
+        },
+        {
+          "name": "Real process crashes and persistent financial recovery recovers Inventory compensation crash before commit without double stock restoration",
+          "evidence": "Error: Connection terminated due to connection timeout\n    at /app/node_modules/pg-pool/index.js:45:11\n    at process.processTicksAndRejections (node:internal/process/task_queues:104:5)\n    at /app/apps/orders-service/test/refund-compensation.test.ts:71:80"
+        },
+        {
+          "name": "Real process crashes and persistent financial recovery recovers Inventory compensation crash after commit without double stock restoration",
+          "evidence": "Error: Internal server error\n    at InventoryRepository.put (/app/apps/inventory-service/src/inventory-repository.ts:63:79)\n    at process.processTicksAndRejections (node:internal/process/task_queues:104:5)\n    at /app/apps/orders-service/test/refund-compensation.test.ts:72:770"
+        },
+        {
+          "name": "Real process crashes and persistent financial recovery recovers cancellation committed before Orders restart and a crashed recovery claim",
+          "evidence": "Error: Test timed out in 30000ms.\nIf this is a long-running test, pass a timeout value as the last argument or configure it globally with \"testTimeout\".\n    at task (file:///app/node_modules/vitest/dist/chunks/run.BTlFXlnv.js:2681:43)\n    at Object.<anonymous> (file:///app/node_modules/vitest/dist/chunks/run.BTlFXlnv.js:2698:16)\n    at Object.<anonymous> (file:///app/node_modules/vitest/dist/chunks/run.BTlFXlnv.js:2471:28)\n    at chain (file:///app/node_modules/vitest/dist/chunks/run.BTlFXlnv.js"
+        },
+        {
+          "name": "Real process crashes and persistent financial recovery preserves a durable provider refund when PostgreSQL outcome persistence fails and recovers by lookup",
+          "evidence": "Error: Invalid event\n    at validateEvent (/app/packages/messaging/src/contracts/envelope.ts:8:76)\n    at authorizeSaga (/app/packages/messaging/src/saga-security.ts:10:77)\n    at /app/apps/inventory-service/src/checkout-consumer.ts:9:15\n    at finish (/app/apps/orders-service/test/refund-compensation.test.ts:54:31)\n    at process.processTicksAndRejections (node:internal/process/task_queues:104:5)\n    at /app/apps/orders-service/test/refund-compensation.test.ts:79:98"
+        },
+        {
+          "name": "RabbitMQ distributed refund and compensation recovers publisher outage, duplicate outcomes and consumer-before-ACK failure end to end",
+          "evidence": "Error: Test timed out in 30000ms.\nIf this is a long-running test, pass a timeout value as the last argument or configure it globally with \"testTimeout\".\n    at task (file:///app/node_modules/vitest/dist/chunks/run.BTlFXlnv.js:2681:43)\n    at Object.<anonymous> (file:///app/node_modules/vitest/dist/chunks/run.BTlFXlnv.js:2698:16)\n    at Object.<anonymous> (file:///app/node_modules/vitest/dist/chunks/run.BTlFXlnv.js:2471:28)\n    at chain (file:///app/node_modules/vitest/dist/chunks/run.BTlFXlnv.js"
+        },
+        {
+          "name": "Operator resolution and inventory lifecycle distinctions allows an operator to resolve manual refund review by lookup and resumes cancellation safely",
+          "evidence": "Error: Connection terminated due to connection timeout\n    at /app/node_modules/pg-pool/index.js:45:11\n    at process.processTicksAndRejections (node:internal/process/task_queues:104:5)\n    at /app/apps/orders-service/test/refund-compensation.test.ts:71:2"
+        },
+        {
+          "name": "Operator resolution and inventory lifecycle distinctions keeps temporary provider failure unknown until a definitive persisted lookup result exists",
+          "evidence": "Error: Connection terminated due to connection timeout\n    at /app/node_modules/pg-pool/index.js:45:11\n    at process.processTicksAndRejections (node:internal/process/task_queues:104:5)\n    at /app/apps/orders-service/test/refund-compensation.test.ts:71:80"
+        },
+        {
+          "name": "Operator resolution and inventory lifecycle distinctions rejects restoration of confirmed stock without a successful refund operation",
+          "evidence": "Error: Invalid event\n    at validateEvent (/app/packages/messaging/src/contracts/envelope.ts:8:76)\n    at authorizeSaga (/app/packages/messaging/src/saga-security.ts:10:77)\n    at /app/apps/inventory-service/src/checkout-consumer.ts:9:15\n    at finish (/app/apps/orders-service/test/refund-compensation.test.ts:54:31)\n    at process.processTicksAndRejections (node:internal/process/task_queues:104:5)\n    at /app/apps/orders-service/test/refund-compensation.test.ts:79:98"
+        },
+        {
+          "name": "Durable event consumption and recipient isolation maps actual finalized order and payment outcomes into distinct customer messages",
+          "evidence": "Error: Invalid event\n    at validateEvent (/app/packages/messaging/src/contracts/envelope.ts:8:76)\n    at authorizeSaga (/app/packages/messaging/src/saga-security.ts:10:77)\n    at /app/apps/inventory-service/src/checkout-consumer.ts:9:15\n    at checkout (/app/apps/notification-service/test/notifications.test.ts:74:8)\n    at process.processTicksAndRejections (node:internal/process/task_queues:104:5)\n    at /app/apps/notification-service/test/notifications.test.ts:96:98\n    at async file:///app/no"
+        },
+        {
+          "name": "Real process crash and database disconnection recovery recovers intent before-intent-commit with exactly one persisted intent",
+          "evidence": "Error: Notification crash fixture timeout\n    at Timeout._onTimeout (/app/apps/notification-service/test/notifications.test.ts:68:623)\n    at listOnTimeout (node:internal/timers:685:17)\n    at process.processTimers (node:internal/timers:618:7)"
+        },
+        {
+          "name": "Real process crash and database disconnection recovery recovers intent after-intent-commit with exactly one persisted intent",
+          "evidence": "Error: Test timed out in 60000ms.\nIf this is a long-running test, pass a timeout value as the last argument or configure it globally with \"testTimeout\".\n    at task (file:///app/node_modules/vitest/dist/chunks/run.BTlFXlnv.js:2681:43)\n    at Object.<anonymous> (file:///app/node_modules/vitest/dist/chunks/run.BTlFXlnv.js:2698:16)\n    at Object.<anonymous> (file:///app/node_modules/vitest/dist/chunks/run.BTlFXlnv.js:2471:28)\n    at Object.chain (file:///app/node_modules/vitest/dist/chunks/run.BTlF"
+        },
+        {
+          "name": "Real process crash and database disconnection recovery recovers worker after-claim without duplicate provider acceptance",
+          "evidence": "Error: Connection terminated due to connection timeout\n    at /app/node_modules/pg-pool/index.js:45:11\n    at process.processTicksAndRejections (node:internal/process/task_queues:104:5)\n    at /app/apps/notification-service/test/notifications.test.ts:86:130"
+        },
+        {
+          "name": "Real process crash and database disconnection recovery recovers worker before-provider without duplicate provider acceptance",
+          "evidence": "Error: Connection terminated due to connection timeout\n    at /app/node_modules/pg-pool/index.js:45:11\n    at process.processTicksAndRejections (node:internal/process/task_queues:104:5)\n    at /app/apps/notification-service/test/notifications.test.ts:86:2"
+        },
+        {
+          "name": "Real process crash and database disconnection recovery recovers worker after-provider without duplicate provider acceptance",
+          "evidence": "Error: Connection terminated due to connection timeout\n    at /app/node_modules/pg-pool/index.js:45:11\n    at process.processTicksAndRejections (node:internal/process/task_queues:104:5)\n    at /app/apps/notification-service/test/notifications.test.ts:86:2"
+        },
+        {
+          "name": "Real process crash and database disconnection recovery recovers worker before-result-commit without duplicate provider acceptance",
+          "evidence": "Error: Connection terminated due to connection timeout\n    at /app/node_modules/pg-pool/index.js:45:11\n    at process.processTicksAndRejections (node:internal/process/task_queues:104:5)\n    at /app/apps/notification-service/test/notifications.test.ts:86:2"
+        },
+        {
+          "name": "Real process crash and database disconnection recovery recovers worker after-result-commit without duplicate provider acceptance",
+          "evidence": "Error: Connection terminated due to connection timeout\n    at /app/node_modules/pg-pool/index.js:45:11\n    at process.processTicksAndRejections (node:internal/process/task_queues:104:5)\n    at /app/apps/notification-service/test/notifications.test.ts:86:190"
+        },
+        {
+          "name": "Real process crash and database disconnection recovery rolls back actual delivery persistence on PostgreSQL disconnect and reconciles after restart",
+          "evidence": "Error: Connection terminated due to connection timeout\n    at /app/node_modules/pg-pool/index.js:45:11\n    at process.processTicksAndRejections (node:internal/process/task_queues:104:5)\n    at /app/apps/notification-service/test/notifications.test.ts:87:2"
+        },
+        {
+          "name": "Real RabbitMQ notification delivery, DLQ and business decoupling recovers a real notification consumer SIGKILL after commit before ACK",
+          "evidence": "Error: Consumer startup timeout\n    at Timeout._onTimeout (/app/apps/notification-service/test/notifications.test.ts:141:648)\n    at listOnTimeout (node:internal/timers:685:17)\n    at process.processTimers (node:internal/timers:618:7)"
+        },
+        {
+          "name": "Conservative policy for less capable providers does not resend an ambiguous non-idempotent operation merely because lookup currently reports non-acceptance",
+          "evidence": "AssertionError: expected { \u2026(30) } to match object { \u2026(2) }\n(33 matching properties omitted from actual)\n    at Proxy.<anonymous> (file:///app/node_modules/vitest/dist/chunks/index.C4tKZ0yW.js:2050:10)\n    at Proxy.<anonymous> (file:///app/node_modules/vitest/dist/chunks/index.C4tKZ0yW.js:1944:14)\n    at Proxy.methodWrapper (file:///app/node_modules/chai/index.js:1737:25)\n    at /app/apps/notification-service/test/notifications.test.ts:173:613\n    at process.processTicksAndRejections (node:inter"
+        },
+        {
+          "name": "Conservative policy for less capable providers does not replay an obsolete confirmation even with an idempotent provider when status lookup is unavailable",
+          "evidence": "Error: Test timed out in 60000ms.\nIf this is a long-running test, pass a timeout value as the last argument or configure it globally with \"testTimeout\".\n    at task (file:///app/node_modules/vitest/dist/chunks/run.BTlFXlnv.js:2681:43)\n    at Object.<anonymous> (file:///app/node_modules/vitest/dist/chunks/run.BTlFXlnv.js:2698:16)\n    at Object.<anonymous> (file:///app/node_modules/vitest/dist/chunks/run.BTlFXlnv.js:2471:28)\n    at chain (file:///app/node_modules/vitest/dist/chunks/run.BTlFXlnv.js"
+        },
+        {
+          "name": "Redis outages, recovery and bounded lifecycle shutdown cancels a pending command and reconnects, completes promptly and rejects subsequent commands",
+          "evidence": "Error: Test timed out in 5000ms.\nIf this is a long-running test, pass a timeout value as the last argument or configure it globally with \"testTimeout\".\n    at task (file:///app/node_modules/vitest/dist/chunks/run.BTlFXlnv.js:2681:43)\n    at Object.<anonymous> (file:///app/node_modules/vitest/dist/chunks/run.BTlFXlnv.js:2698:16)\n    at Object.<anonymous> (file:///app/node_modules/vitest/dist/chunks/run.BTlFXlnv.js:2471:28)\n    at chain (file:///app/node_modules/vitest/dist/chunks/run.BTlFXlnv.js:"
+        },
+        {
+          "name": "Redis outages, recovery and bounded lifecycle health and readiness are unthrottled and the disabled Gateway never connects to Redis",
+          "evidence": "Error: Test timed out in 5000ms.\nIf this is a long-running test, pass a timeout value as the last argument or configure it globally with \"testTimeout\".\n    at task (file:///app/node_modules/vitest/dist/chunks/run.BTlFXlnv.js:2681:43)\n    at Object.<anonymous> (file:///app/node_modules/vitest/dist/chunks/run.BTlFXlnv.js:2698:16)\n    at Object.<anonymous> (file:///app/node_modules/vitest/dist/chunks/run.BTlFXlnv.js:2471:28)\n    at chain (file:///app/node_modules/vitest/dist/chunks/run.BTlFXlnv.js:"
+        },
+        {
+          "name": "Node 24 Gateway process lifecycle starts degraded during outage, recovers after startup and exits cleanly on SIGTERM",
+          "evidence": "Error: Test timed out in 15000ms.\nIf this is a long-running test, pass a timeout value as the last argument or configure it globally with \"testTimeout\".\n    at task (file:///app/node_modules/vitest/dist/chunks/run.BTlFXlnv.js:2681:43)\n    at Object.<anonymous> (file:///app/node_modules/vitest/dist/chunks/run.BTlFXlnv.js:2698:16)\n    at Object.<anonymous> (file:///app/node_modules/vitest/dist/chunks/run.BTlFXlnv.js:2471:28)\n    at chain (file:///app/node_modules/vitest/dist/chunks/run.BTlFXlnv.js"
+        },
+        {
+          "name": "Node 24 Gateway process lifecycle drains an in-flight slow Redis decision within the command deadline during shutdown",
+          "evidence": "Error: Gateway process readiness deadline exceeded\n    at Object.waitFor (/app/packages/rate-limiting/test/fixture.ts:125:11)\n    at /app/packages/rate-limiting/test/integration.test.ts:326:5\n    at async file:///app/node_modules/vitest/dist/chunks/run.BTlFXlnv.js:2783:20"
+        }
+      ],
+      "suiteErrors": [
+        "Hook timed out in 60000ms.\nIf this is a long-running hook, pass a timeout value as the last argument or configure it globally with \"hookTimeout\".",
+        "Hook timed out in 10000ms.\nIf this is a long-running hook, pass a timeout value as the last argument or configure it globally with \"hookTimeout\"."
+      ]
+    },
+    {
+      "run": "search-final",
+      "started": 1791945136680,
+      "passed": 49,
+      "failed": 0,
+      "unexecutedOrSkipped": 77,
+      "total": 126,
+      "success": false,
+      "failedTests": [],
+      "suiteErrors": [
+        "Integration suite status failed with empty JSON message; 77 cases unexecuted."
+      ],
+      "hostProbeQueries": 649,
+      "hostProbeFailures": 0,
+      "maxHostQueryMs": 3859.053292,
+      "maxHostTimerGapMs": 171861.562625,
+      "generatedProjectCleanedUp": true
+    }
+  ],
+  "physicalRestart": {
+    "passed": true,
+    "evidence": "restart-2.log; initial attempt interrupted after stale random-port discovery"
+  },
+  "composeSmoke": {
+    "passed": true,
+    "runtime": "v24.21.0",
+    "evidence": "smoke.log; all checks and cleanup true"
+  },
+  "files": {
+    "modifiedFromPhase16Start": [
+      ".dockerignore",
+      ".env.example",
+      ".gitignore",
+      "README.md",
+      "apps/api-gateway/src/app.ts",
+      "apps/api-gateway/src/server.ts",
+      "apps/api-gateway/src/upstream-client.ts",
+      "apps/catalog-service/package.json",
+      "apps/catalog-service/src/app.ts",
+      "apps/catalog-service/src/server.ts",
+      "apps/catalog-service/test/products.test.ts",
+      "apps/inventory-service/test/inventory.test.ts",
+      "compose.yaml",
+      "infrastructure/docker/compose.integration-test.yaml",
+      "infrastructure/docker/integration-test.Dockerfile",
+      "infrastructure/rabbitmq/provision.py",
+      "package-lock.json",
+      "package.json",
+      "packages/event-persistence/src/event.ts",
+      "packages/messaging/src/bootstrap.ts",
+      "packages/messaging/src/contracts/envelope.ts",
+      "packages/messaging/src/contracts/events.ts",
+      "packages/messaging/src/saga-security.ts",
+      "packages/messaging/src/topology.ts",
+      "packages/rate-limiting/src/policies.ts",
+      "packages/rate-limiting/test/fixture.ts",
+      "packages/rate-limiting/test/unit.test.ts",
+      "packages/security/src/internal-service.ts",
+      "scripts/integration-runner.mjs"
+    ],
+    "addedFromPhase16Start": [
+      ".env.search.example",
+      "apps/catalog-service/migrations/003-outbox.sql",
+      "apps/catalog-service/migrations/004-search-source.sql",
+      "apps/catalog-service/src/search-source.ts",
+      "apps/search-service/migrations/001-search.sql",
+      "apps/search-service/package.json",
+      "apps/search-service/src/app.ts",
+      "apps/search-service/src/catalog-client.ts",
+      "apps/search-service/src/config.ts",
+      "apps/search-service/src/elasticsearch.ts",
+      "apps/search-service/src/mappings.ts",
+      "apps/search-service/src/metrics.ts",
+      "apps/search-service/src/migrate-cli.ts",
+      "apps/search-service/src/migrate.ts",
+      "apps/search-service/src/projector.ts",
+      "apps/search-service/src/query.ts",
+      "apps/search-service/src/rebuild.ts",
+      "apps/search-service/src/repository.ts",
+      "apps/search-service/src/server.ts",
+      "apps/search-service/test/fixture.ts",
+      "apps/search-service/test/integration.test.ts",
+      "apps/search-service/test/process.ts",
+      "apps/search-service/test/unit.test.ts",
+      "apps/search-service/tsconfig.json",
+      "compose.search-test.yaml",
+      "docs/adr/014-event-driven-elasticsearch-search-projection.md",
+      "docs/event-driven-search.md",
+      "docs/phase-16-report.md",
+      "docs/phase-16-results.json",
+      "infrastructure/docker/compose.search-smoke.yaml",
+      "infrastructure/docker/search-init.sh",
+      "infrastructure/docker/search-postgres.Dockerfile",
+      "infrastructure/docker/search-service.Dockerfile",
+      "scripts/search-compose-smoke.mjs",
+      "scripts/search-restart-check.mjs"
+    ],
+    "removed": []
+  },
+  "preservation": {
+    "oldMigrationAndDocumentationFiles": 45,
+    "changedProtectedFiles": [],
+    "actualEnvironmentFiles": 8,
+    "changedActualEnvironmentFiles": []
+  },
+  "interruptedRuns": [
+    {
+      "run": "full-4-repeat2",
+      "result": "interrupted after several hours; no completed JSON report or passing counts",
+      "hostProbeQueries": 4183,
+      "hostProbeFailures": 0,
+      "maxHostQueryMs": 1027240.481833,
+      "maxHostTimerGapMs": 1026237.9045,
+      "generatedProjectCleanedUp": true
+    }
+  ]
+}

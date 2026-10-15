@@ -1,0 +1,7 @@
+import {z} from 'zod';
+const endpoint=z.url().refine(value=>{const u=new URL(value);return ['http:','https:'].includes(u.protocol)&&!u.username&&!u.password&&!u.search&&!u.hash;},'OTLP endpoint must not contain credentials/query');
+export function loadObservabilityConfig(env=process.env){
+ const enabled=z.enum(['true','false']).default('false').parse(env.OTEL_ENABLED)==='true';
+ if(!enabled)return {enabled:false};
+ return z.object({enabled:z.literal(true),serviceName:z.string().regex(/^[a-z][a-z0-9-]{0,63}$/),endpoint,sampleRatio:z.coerce.number().min(0).max(1),queueSize:z.coerce.number().int().min(1).max(2048),batchSize:z.coerce.number().int().min(1).max(512),exportTimeoutMs:z.coerce.number().int().min(10).max(2000),intervalMs:z.coerce.number().int().min(100).max(10000),shutdownMs:z.coerce.number().int().min(10).max(2000),logLevel:z.literal('error')}).refine(c=>c.batchSize<=c.queueSize,'Batch exceeds queue').parse({enabled,serviceName:env.OTEL_SERVICE_NAME??process.argv[1]?.match(/apps\/([^/]+)\//)?.[1]??'unknown-service',endpoint:env.OTEL_EXPORTER_OTLP_ENDPOINT??'http://127.0.0.1:4318',sampleRatio:env.OTEL_TRACES_SAMPLER_ARG??'0.1',queueSize:env.OTEL_BSP_MAX_QUEUE_SIZE??'512',batchSize:env.OTEL_BSP_MAX_EXPORT_BATCH_SIZE??'128',exportTimeoutMs:env.OTEL_EXPORTER_OTLP_TIMEOUT??'1000',intervalMs:env.OTEL_METRIC_EXPORT_INTERVAL??'5000',shutdownMs:env.OTEL_SHUTDOWN_TIMEOUT_MS??'1000',logLevel:env.OTEL_LOG_LEVEL??'error'});
+}

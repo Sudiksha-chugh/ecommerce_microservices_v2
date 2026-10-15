@@ -1,3 +1,4 @@
+import {committed,rolledBack} from '@ecommerce/observability';
 import {createHash} from 'node:crypto';
 import {z} from 'zod';
 import type {Pool,PoolClient} from 'pg';
@@ -15,9 +16,9 @@ export class InboxProcessor {
   try{await client.query('BEGIN');if(signal?.aborted)throw new PersistenceError();
    const inserted=await client.query(`INSERT INTO inbox_events (consumer_name,event_id,event_type,event_version,correlation_id,causation_id,event_fingerprint)
     VALUES ($1,$2,$3,$4,$5,$6,$7) ON CONFLICT (consumer_name,event_id) DO NOTHING RETURNING event_id`,[consumerName,event.eventId,event.eventType,event.eventVersion,event.correlationId,event.causationId,fingerprint]);
-   if(inserted.rowCount===0){const existing=(await client.query<{event_fingerprint:string}>('SELECT event_fingerprint FROM inbox_events WHERE consumer_name=$1 AND event_id=$2',[consumerName,event.eventId])).rows[0];if(existing?.event_fingerprint!==fingerprint)throw new PermanentHandlerError();await client.query('COMMIT');this.counters.duplicates++;log(this.logger,{...fields(),outcome:'duplicate'});return 'duplicate';}
-   await effect(client,event);if(signal?.aborted)throw new PersistenceError();await client.query('COMMIT');this.counters.processed++;log(this.logger,{...fields(),outcome:'processed'});return 'processed';
-  }catch(error){try{await client.query('ROLLBACK');}catch{broken=true;}this.counters.failures++;log(this.logger,{...fields(),outcome:'rolled_back_or_uncertain'});if(error instanceof PermanentHandlerError)throw error;throw new PersistenceError();}
-  finally{client.release(broken); client.off('error', onClientError);}
+   if(inserted.rowCount===0){const existing=(await client.query<{event_fingerprint:string}>('SELECT event_fingerprint FROM inbox_events WHERE consumer_name=$1 AND event_id=$2',[consumerName,event.eventId])).rows[0];if(existing?.event_fingerprint!==fingerprint)throw new PermanentHandlerError();await client.query('COMMIT');committed(client);this.counters.duplicates++;log(this.logger,{...fields(),outcome:'duplicate'});return 'duplicate';}
+   await effect(client,event);if(signal?.aborted)throw new PersistenceError();await client.query('COMMIT');committed(client);this.counters.processed++;log(this.logger,{...fields(),outcome:'processed'});return 'processed';
+  }catch(error){try{await client.query('ROLLBACK');rolledBack(client);}catch{broken=true;}this.counters.failures++;log(this.logger,{...fields(),outcome:'rolled_back_or_uncertain'});if(error instanceof PermanentHandlerError)throw error;throw new PersistenceError();}
+  finally{rolledBack(client);client.release(broken); client.off('error', onClientError);}
  }
 }

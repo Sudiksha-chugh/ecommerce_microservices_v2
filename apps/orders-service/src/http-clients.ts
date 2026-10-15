@@ -1,3 +1,4 @@
+import {telemetryFetch} from '@ecommerce/observability';
 import { cartSchema, productSchema } from './order-validation.js';
 import { OrderError } from './errors.js';
 
@@ -5,7 +6,7 @@ async function getJson(origin: string, path: string, service: 'Cart' | 'Catalog'
   const controller = new AbortController();
   const deadline = setTimeout(() => controller.abort(), timeoutMs);
   try {
-    const response = await fetch(new URL(path, origin), {
+    const response = await telemetryFetch(new URL(path, origin), {
       signal: controller.signal, redirect: 'error',
       headers: { accept: 'application/json', ...(authorization ? { authorization } : {}) },
     });

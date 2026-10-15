@@ -1,3 +1,4 @@
+import '@ecommerce/observability/bootstrap';
 import { loadAuthEnvironment } from '@ecommerce/config';
 import { createApp } from './app.js';
 import { createPool, verifyDatabaseBoundary } from './db/pool.js';

@@ -1,3 +1,4 @@
+import {httpTelemetry,correlation} from '@ecommerce/observability';
 import express from 'express';
 import { randomUUID } from 'node:crypto';
 import { z } from 'zod';
@@ -12,6 +13,7 @@ import { SearchMetrics } from './metrics.js';
 export interface AppOptions {enabled:boolean;rebuildEnabled:boolean;defaultLimit:number;maxLimit:number;cursorKey:string;elastic:Elasticsearch;catalog:CatalogClient;repository:SearchRepository;verify:TokenVerifier;metrics?:SearchMetrics;indexerReadiness?:()=>string}
 export function createApp(options:AppOptions){const app=express();app.disable('x-powered-by');const metrics=options.metrics??new SearchMetrics();const codec=options.enabled?new CursorCodec(options.cursorKey):undefined;
  app.use((_req,res,next)=>{res.locals.requestId=randomUUID();res.set('X-Request-Id',res.locals.requestId);next();});
+ app.use(httpTelemetry('search-service'));
  app.get('/health',(_req,res)=>res.json({status:'ok',service:'search-service'}));
  app.get('/ready',async(_req,res)=>{
   const indexer=options.indexerReadiness?.()??'disabled',active=options.enabled||options.rebuildEnabled||indexer!=='disabled';
@@ -33,7 +35,7 @@ export function createApp(options:AppOptions){const app=express();app.disable('x
    const data=documents.filter(doc=>!doc.deleted&&visible.has(doc.id)).map(doc=>({id:doc.id,name:doc.name,description:doc.description,priceInPaise:doc.priceInPaise}));
    const last=result.hits.hits.at(-1);const nextCursor=last&&result.hits.hits.length===query.limit?codec!.encode(query,last.sort):null;
    res.set('Cache-Control','no-store');res.json({data,pagination:{limit:query.limit,nextCursor}});
-  }finally{const duration=performance.now()-start;metrics.duration(duration);console.info(JSON.stringify({component:'search-api',requestId:res.locals.requestId,searchDurationMs:duration}));}
+  }finally{const duration=performance.now()-start;metrics.duration(duration);console.info(JSON.stringify({component:'search-api',requestId:res.locals.requestId,searchDurationMs:duration,...correlation()}));}
  });
  app.use('/admin/search',async(req,res,next)=>{
   const active=options.enabled||options.rebuildEnabled||(options.indexerReadiness?.()??'disabled')!=='disabled';

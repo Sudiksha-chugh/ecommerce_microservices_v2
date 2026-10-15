@@ -1,3 +1,4 @@
+import {captureEventContext,withEventContext} from '@ecommerce/observability';
 import type {Pool,PoolClient} from 'pg';
 import {InboxProcessor,insertOutbox,transaction} from '@ecommerce/event-persistence';
 import {authorizeSaga,sagaEvent,validateEvent,PermanentHandlerError,type EventHandler,type SagaKeys} from '@ecommerce/messaging';
@@ -10,6 +11,7 @@ export function paymentsCheckoutHandler(pool:Pool,repository:PaymentRepository,k
   await inbox.process('payments.checkout.v1',event,async client=>{
    const p=event.payload;
    const payment=await repository.create(p.sagaId,p.paymentOperationId,{orderId:p.orderId,userId:p.userId,amountPaise:p.amountPaise,currency:p.currency},client);
+   captureEventContext(payment.id);
    const existing=(await client.query('SELECT * FROM checkout_payment_intents WHERE payment_id=$1 FOR UPDATE',[payment.id])).rows[0];
    if(existing){const previous=validateEvent(existing.command);if(previous.eventType!=='payment.process.requested'||JSON.stringify(previous.payload)!==JSON.stringify(p)||previous.correlationId!==event.correlationId)throw new PermanentHandlerError();
     // A new transport retry may repair an exhausted outcome outbox without creating a charge.
@@ -41,11 +43,13 @@ export async function processCheckoutPayments(pool:Pool,service:PaymentService,k
  (i.emitted_status IS DISTINCT FROM p.status AND p.status IN ('SUCCEEDED','FAILED')))
  ORDER BY i.next_action_at LIMIT $1`,[limit])).rows;
  for(const row of rows){
+  await withEventContext(row.id,async()=>{
   await service.operate(row.id,row.status==='CREATED'?'process':'reconcile');
   await transaction(pool,async client=>{
    const payment=(await client.query<PaymentRow>('SELECT * FROM payments WHERE id=$1 FOR UPDATE',[row.id])).rows[0]!;
    await emitCheckoutPayment(client,payment,keys);
    await client.query("UPDATE checkout_payment_intents SET next_action_at=clock_timestamp()+INTERVAL '30 seconds' WHERE payment_id=$1",[row.id]);
+  });
   });
  }
  return rows.length;

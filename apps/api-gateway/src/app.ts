@@ -1,3 +1,4 @@
+import {httpTelemetry} from '@ecommerce/observability';
 import express, { type RequestHandler } from 'express';
 import { randomUUID } from 'node:crypto';
 import { createProxyTrust, rateLimitMiddleware, RateLimitMetrics, type ProtectionOptions } from '@ecommerce/rate-limiting';
@@ -15,6 +16,7 @@ export function createApp(options: GatewayOptions = loadGatewayEnvironment({}), 
   app.disable('x-powered-by');
   app.set('trust proxy', protection ? createProxyTrust(protection.trustedProxies) : false);
   app.use((_req, res, next) => { res.locals.requestId = randomUUID(); res.set('X-Request-Id', res.locals.requestId); next(); });
+ app.use(httpTelemetry('api-gateway'));
   const metrics = protection ? protection.metrics ?? new RateLimitMetrics() : undefined;
   app.locals.rateLimitMetrics = metrics;
   const guard: RequestHandler = protection ? rateLimitMiddleware({ ...protection, metrics: metrics! }) : (_req, _res, next) => next();

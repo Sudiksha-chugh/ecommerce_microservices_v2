@@ -1,3 +1,4 @@
+import {telemetryFetch} from '@ecommerce/observability';
 import {z} from 'zod';
 import {internalHeaders} from '@ecommerce/security';
 import type {NotificationType} from './domain/state-machine.js';
@@ -8,7 +9,7 @@ export class RecipientResolver {
  constructor(private readonly authOrigin:string,private readonly ordersOrigin:string,private readonly key:string,private readonly timeoutMs=3000){}
  private async get(origin:string,path:string):Promise<unknown>{
   const controller=new AbortController(),timer=setTimeout(()=>controller.abort(),this.timeoutMs);
-  try{const res=await fetch(new URL(path,origin),{redirect:'error',signal:controller.signal,headers:internalHeaders('GET',path,this.key)});if(!res.ok){await res.body?.cancel();throw new ResolutionError(res.status===404?'RECIPIENT_CONTEXT_NOT_FOUND':'LOOKUP_UNAVAILABLE',res.status===404);}return await res.json();}
+  try{const res=await telemetryFetch(new URL(path,origin),{redirect:'error',signal:controller.signal,headers:internalHeaders('GET',path,this.key)});if(!res.ok){await res.body?.cancel();throw new ResolutionError(res.status===404?'RECIPIENT_CONTEXT_NOT_FOUND':'LOOKUP_UNAVAILABLE',res.status===404);}return await res.json();}
   catch(error){if(error instanceof ResolutionError)throw error;throw new ResolutionError('LOOKUP_UNAVAILABLE');}finally{clearTimeout(timer);}
  }
  async resolve(orderId:string,claimedUser:string|null,type:NotificationType){

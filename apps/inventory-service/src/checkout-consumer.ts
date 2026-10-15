@@ -1,3 +1,4 @@
+import {observeBusiness} from '@ecommerce/observability';
 import type {Pool} from 'pg';
 import {InboxProcessor,insertOutbox} from '@ecommerce/event-persistence';
 import {authorizeSaga,sagaEvent,PermanentHandlerError,type EventHandler,type SagaKeys} from '@ecommerce/messaging';
@@ -8,7 +9,9 @@ export function inventoryCheckoutHandler(pool:Pool,repository:InventoryRepositor
  return async (input,context)=>{
   const event=authorizeSaga(input,keys);
   if(!['inventory.reserve.requested','inventory.confirm.requested','inventory.release.requested'].includes(event.eventType))throw new PermanentHandlerError();
-  await inbox.process('inventory.checkout.v1',event,async client=>{
+  let reservationOutcome:'success'|'error'|undefined;
+  if(event.eventType==='inventory.reserve.requested')observeBusiness('reservation_attempt');
+  const disposition=await inbox.process('inventory.checkout.v1',event,async client=>{
    if(event.eventType==='inventory.reserve.requested'){
     const p=event.payload;
     await client.query('SAVEPOINT reservation');
@@ -21,10 +24,12 @@ export function inventoryCheckoutHandler(pool:Pool,repository:InventoryRepositor
      await client.query(`UPDATE inventory_reservation_requests SET saga_id=$2,reservation_operation_id=$3,saga_user_id=$4,saga_payment_operation_id=$5,saga_correlation_id=$6 WHERE order_id=$1`,[p.orderId,p.sagaId,p.reservationOperationId,p.userId,p.paymentOperationId,event.correlationId]);
      await client.query('UPDATE inventory_reservations SET checkout_hold=TRUE WHERE order_id=$1',[p.orderId]);
      const payload={sagaId:p.sagaId,orderId:p.orderId,userId:p.userId,reservationOperationId:p.reservationOperationId,paymentOperationId:p.paymentOperationId,reservationId:p.reservationOperationId};
+     reservationOutcome='success';
      await insertOutbox(client,sagaEvent('checkout.inventory.reserved',payload,keys,event.correlationId,event),p.orderId);
     }catch(error){
      await client.query('ROLLBACK TO SAVEPOINT reservation');
      if(!(error instanceof InventoryError)||![404,409].includes(error.status))throw error;
+     reservationOutcome='error';
      await insertOutbox(client,sagaEvent('checkout.inventory.reservation_failed',{sagaId:p.sagaId,orderId:p.orderId,userId:p.userId,reservationOperationId:p.reservationOperationId,paymentOperationId:p.paymentOperationId,reason:error.status===404?'PRODUCT_NOT_FOUND':error.message==='Insufficient stock'?'INSUFFICIENT_STOCK':'CONFLICT'} as never,keys,event.correlationId,event),p.orderId);
     }
    }else if(event.eventType==='inventory.confirm.requested'||event.eventType==='inventory.release.requested'){
@@ -49,6 +54,7 @@ export function inventoryCheckoutHandler(pool:Pool,repository:InventoryRepositor
    }
    await failureHook('before_commit');
   },context.signal);
+  if(disposition==='processed'&&reservationOutcome)observeBusiness(reservationOutcome==='success'?'reservation_success':'reservation_failure',reservationOutcome);
   await failureHook('after_commit');
  };
 }

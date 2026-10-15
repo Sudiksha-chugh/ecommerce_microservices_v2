@@ -1,3 +1,4 @@
+import {afterCommit,correlation} from '@ecommerce/observability';
 import {orderNotificationContext} from '../notification-context.js';
 import {OrderError} from '../errors.js';
 import {createHash,randomUUID} from 'node:crypto';
@@ -14,7 +15,10 @@ async function move(client:PoolClient,s:SagaRow,to:SagaState,event?:Event,reason
  await client.query(`INSERT INTO checkout_saga_transitions(saga_id,from_state,to_state,trigger_event_id,reason) VALUES($1,$2,$3,$4,$5)`,[s.id,from,to,event?.eventId??null,reason??null]);
  await client.query(`UPDATE checkout_sagas SET state=$2,version=version+1,updated_at=clock_timestamp(),last_error=$3 WHERE id=$1`,[s.id,to,reason??null]);
  s.state=to;
- console.info(JSON.stringify({component:'checkout-saga',sagaId:s.id,orderId:s.order_id,correlationId:s.correlation_id,eventId:event?.eventId,causationId:event?.causationId,operationId:event?.eventType.includes('payment')?s.payment_operation_id:s.reservation_operation_id,fromState:from,toState:to,durationMs:Date.now()-began,retryCount:s.retry_count,outcome:'transition_pending_commit'}));
+ if(to==='COMPLETED')afterCommit(client,'order_completed','success');
+ if(to==='FAILED'||to==='COMPENSATED')afterCommit(client,'order_failed','error');
+ if(['COMPENSATION_PENDING','CANCELLATION_REQUESTED'].includes(to))afterCommit(client,'compensation_started');
+ console.info(JSON.stringify({component:'checkout-saga',...correlation(),sagaId:s.id,orderId:s.order_id,correlationId:s.correlation_id,eventId:event?.eventId,causationId:event?.causationId,operationId:event?.eventType.includes('payment')?s.payment_operation_id:s.reservation_operation_id,fromState:from,toState:to,durationMs:Date.now()-began,retryCount:s.retry_count,outcome:'transition_pending_commit'}));
 }
 async function command(client:PoolClient,s:SagaRow,event:Event){
  await insertOutbox(client,event,s.order_id);
@@ -80,7 +84,7 @@ export class SagaRepository {
      await client.query('UPDATE checkout_sagas SET next_action_at=NULL,pending_command=NULL,claim_token=NULL,locked_until=NULL,locked_by=NULL WHERE id=$1',[s.id]);return;
     default:throw new PermanentHandlerError();
    }
-   console.info(JSON.stringify({component:'checkout-saga',sagaId:s.id,eventId:event.eventId,state:s.state,outcome:'stale_or_out_of_order'}));
+   console.info(JSON.stringify({component:'checkout-saga',...correlation(),sagaId:s.id,eventId:event.eventId,state:s.state,outcome:'stale_or_out_of_order'}));
   },context.signal);
  };
  private async terminal(client:PoolClient,s:SagaRow,status:'CONFIRMED'|'FAILED'|'CANCELLED',parent?:Event){

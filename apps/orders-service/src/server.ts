@@ -1,3 +1,4 @@
+import '@ecommerce/observability/bootstrap';
 import {orderNotificationContext} from './notification-context.js';
 import {SagaRepository} from './saga/repository.js';
 import {sagaKeys} from '@ecommerce/messaging';

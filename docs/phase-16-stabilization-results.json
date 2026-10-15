@@ -1,0 +1,88 @@
+{
+  "status": "incomplete",
+  "runtime": "Node.js 24.21.0 darwin-arm64/npm 11.19.0",
+  "runs": [
+    {
+      "run": "search-host-2",
+      "discovered": 129,
+      "executed": 49,
+      "passed": 49,
+      "failedAssertions": 0,
+      "skippedOrUnexecuted": 80,
+      "failedSuites": 1,
+      "success": false,
+      "durationMs": 121480,
+      "intentionalSkips": 0,
+      "unexecuted": 80,
+      "infrastructure": "host Node 24 and fresh generated isolated PG/RabbitMQ/Redis/Elasticsearch stores",
+      "failedHook": "beforeAll: 120000ms"
+    },
+    {
+      "run": "search-host-3",
+      "discovered": 129,
+      "executed": 129,
+      "passed": 129,
+      "failedAssertions": 0,
+      "skippedOrUnexecuted": 0,
+      "failedSuites": 1,
+      "success": false,
+      "durationMs": 86180,
+      "intentionalSkips": 0,
+      "unexecuted": 0,
+      "infrastructure": "host Node 24 and fresh generated isolated PG/RabbitMQ/Redis/Elasticsearch stores",
+      "failedHook": "afterAll: 60000ms"
+    },
+    {
+      "run": "unit-baseline",
+      "discovered": 49,
+      "executed": 49,
+      "passed": 49,
+      "failedAssertions": 0,
+      "skippedOrUnexecuted": 0,
+      "failedSuites": 0,
+      "success": true,
+      "durationMs": 1748.98,
+      "intentionalSkips": 0,
+      "unexecuted": 0,
+      "infrastructure": "host Node 24, unit-only"
+    }
+  ],
+  "infrastructureFailuresBeforeDiscovery": [
+    "search-baseline: UND_ERR_SOCKET at broker management",
+    "search-host-1: UND_ERR_SOCKET at broker management"
+  ],
+  "verificationNotExecuted": [
+    "corrected Search teardown repeat (execution approval rejected)",
+    "legacy regression stage",
+    "full regression Run 1",
+    "full regression Run 2"
+  ],
+  "modified": [
+    "apps/search-service/test/fixture.ts",
+    "apps/search-service/test/integration.test.ts",
+    "compose.search-test.yaml",
+    "infrastructure/docker/compose.integration-test.yaml",
+    "packages/event-persistence/test/rabbitmq-integration.test.ts",
+    "packages/messaging/test/rabbitmq.test.ts",
+    "packages/rate-limiting/test/fixture.ts",
+    "scripts/integration-runner.mjs",
+    "vitest.config.ts"
+  ],
+  "added": [
+    "apps/search-service/test/cleanup.ts",
+    "docs/phase-16-stabilization-report.md",
+    "scripts/integration-observer.mjs",
+    "test/integration-timing.ts",
+    "docs/phase-16-stabilization-results.json"
+  ],
+  "removed": [],
+  "historicalPhase16ReportPreserved": true,
+  "actualEnvironmentsPreserved": true,
+  "actualEnvironmentFileCount": 8,
+  "environmentPreservationEvidence": "Compared with eight actual environment checksums retained from Phase 16; all still match.",
+  "verificationApprovalRejected": {
+    "action": "Search rerun and immediate repeat after serialized teardown fix",
+    "reason": "No rejection reason supplied",
+    "executed": false
+  }
+}

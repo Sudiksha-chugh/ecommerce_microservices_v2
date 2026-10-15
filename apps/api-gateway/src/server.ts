@@ -1,3 +1,4 @@
+import '@ecommerce/observability/bootstrap';
 import { loadGatewayEnvironment } from '@ecommerce/config';
 import { createApp } from './app.js';
 import { readFile } from 'node:fs/promises';

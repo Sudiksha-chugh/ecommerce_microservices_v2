@@ -1,3 +1,4 @@
+import {instrumentRedis} from '@ecommerce/observability';
 import { readFileSync } from 'node:fs';
 import { createClient } from '@redis/client';
 import { RateLimitStoreError } from './errors.js';
@@ -18,12 +19,12 @@ export class RedisRateLimitStore implements DecisionStore {
     this.client = this.makeClient();
   }
   private makeClient() {
-    const client = createClient({ url: this.options.url, disableOfflineQueue: true,
+    const client = instrumentRedis(createClient({ url: this.options.url, disableOfflineQueue: true,
       // Redis handshakes also use this queue; external decisions have their own exact bound.
       commandsQueueMaxLength: Math.max(8, this.options.maxPending),
       socket: { connectTimeout: this.options.connectTimeoutMs,
         reconnectStrategy: retries => Math.min(100 * 2 ** Math.min(retries, 5), 2000) },
-    });
+    }));
     // Errors become bounded request decisions/readiness. Never print client messages or connection URLs.
     client.on('connect', () => {
       // A TCP connect can complete after destroy() while the client is awaiting socket creation.

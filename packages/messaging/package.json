@@ -6,7 +6,8 @@
   "exports": "./src/index.ts",
   "dependencies": {
     "amqplib": "^0.10.9",
-    "zod": "^4.0.0"
+    "zod": "^4.0.0",
+    "@ecommerce/observability": "0.1.0"
   },
   "devDependencies": {
     "@types/amqplib": "^0.10.7"

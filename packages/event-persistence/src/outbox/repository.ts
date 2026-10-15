@@ -1,3 +1,4 @@
+import {captureEventContext} from '@ecommerce/observability';
 import type {Pool,PoolClient} from 'pg';
 import {routingKey,validateEvent,type Event} from '@ecommerce/messaging';
 import {transaction} from '../common.js';
@@ -5,7 +6,7 @@ export interface Claim {id:string;envelope:unknown;claim_token:string;locked_by:
 export type FailureCode='BROKER_UNAVAILABLE'|'UNROUTABLE'|'INVALID_CONTRACT'|'CONFIGURATION_FAILURE';
 // Caller supplies its existing business transaction client. Never acquires a separate connection.
 export async function insertOutbox(client:PoolClient,input:Event,aggregateId?:string){
- const event=validateEvent(input);
+ const event=validateEvent(input);captureEventContext(event.eventId);
  await client.query(`INSERT INTO outbox_events (id,aggregate_id,event_type,event_version,routing_key,producer,occurred_at,payload,envelope,correlation_id,causation_id)
  VALUES ($1,$2,$3,$4,$5,$6,$7,$8::jsonb,$9::jsonb,$10,$11)`,[event.eventId,aggregateId??null,event.eventType,event.eventVersion,routingKey(event),event.producer,event.occurredAt,JSON.stringify(event.payload),JSON.stringify(event),event.correlationId,event.causationId]);
 }

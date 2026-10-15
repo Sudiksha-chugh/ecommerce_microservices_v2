@@ -1,3 +1,4 @@
+import {telemetryFetch} from '@ecommerce/observability';
 import {z} from 'zod';
 import type {ProviderResult} from './payment-repository.js';
 export type RefundProviderResult={status:'SUCCEEDED';providerRefundId:string}|{status:'FAILED';failureCode:string}|{status:'UNKNOWN'};
@@ -8,7 +9,7 @@ export class ProviderClient {
  constructor(private readonly origin:string,private readonly timeoutMs:number){}
  private async request(path:string,body?:object):Promise<unknown>{
   const controller=new AbortController(),timer=setTimeout(()=>controller.abort(),this.timeoutMs);
-  try{const res=await fetch(new URL(path,this.origin),{method:body?'POST':'GET',signal:controller.signal,redirect:'error',headers:body?{'content-type':'application/json'}:{},...(body?{body:JSON.stringify(body)}:{})});if(!res.ok){await res.body?.cancel();return {status:'UNKNOWN'};}return await res.json();}
+  try{const res=await telemetryFetch(new URL(path,this.origin),{method:body?'POST':'GET',signal:controller.signal,redirect:'error',headers:body?{'content-type':'application/json'}:{},...(body?{body:JSON.stringify(body)}:{})});if(!res.ok){await res.body?.cancel();return {status:'UNKNOWN'};}return await res.json();}
   catch{return {status:'UNKNOWN'};}finally{clearTimeout(timer);}
  }
  async charge(requestId:string,amountPaise:number,currency:string):Promise<ProviderResult>{const parsed=paymentResult.safeParse(await this.request('/charges',{requestId,amountPaise,currency}));return parsed.success?parsed.data:{status:'UNKNOWN'};}

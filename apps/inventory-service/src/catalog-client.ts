@@ -1,3 +1,4 @@
+import {telemetryFetch} from '@ecommerce/observability';
 import { InventoryError } from './errors.js';
 
 export class CatalogClient {
@@ -6,7 +7,7 @@ export class CatalogClient {
     const controller = new AbortController();
     const deadline = setTimeout(() => controller.abort(), this.timeoutMs);
     try {
-      const response = await fetch(new URL(`/products/${encodeURIComponent(productId)}`, this.origin), {
+      const response = await telemetryFetch(new URL(`/products/${encodeURIComponent(productId)}`, this.origin), {
         signal: controller.signal, redirect: 'error', headers: { accept: 'application/json' },
       });
       await response.body?.cancel();

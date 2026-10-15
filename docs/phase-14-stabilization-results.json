@@ -1,0 +1,614 @@
+{
+  "runs": [
+    {
+      "run": "baseline",
+      "passed": 709,
+      "failed": 1,
+      "skippedOrUnexecuted": 0,
+      "collected": 710,
+      "durationSeconds": 138.54,
+      "failures": [
+        {
+          "suite": "apps/orders-service/test/checkout.test.ts",
+          "test": "Durable checkout with real service databases and provider protects lost-response payments, reconciles with the original key and never charges twice",
+          "error": "Error: Invalid event"
+        }
+      ]
+    },
+    {
+      "run": "node24-before",
+      "passed": 709,
+      "failed": 1,
+      "skippedOrUnexecuted": 0,
+      "collected": 710,
+      "durationSeconds": 392.4,
+      "failures": [
+        {
+          "suite": "apps/orders-service/test/refund-compensation.test.ts",
+          "test": "Refund amount reservation and provider idempotency reconciles timeout using the same operation without another refund",
+          "error": "AssertionError: expected 'REQUIRES_RECONCILIATION' to be 'SUCCEEDED' // Object.is equality"
+        }
+      ]
+    },
+    {
+      "run": "node24-after-1",
+      "passed": 710,
+      "failed": 0,
+      "skippedOrUnexecuted": 0,
+      "collected": 710,
+      "durationSeconds": 38.92,
+      "failures": []
+    },
+    {
+      "run": "node24-after-2",
+      "passed": 707,
+      "failed": 3,
+      "skippedOrUnexecuted": 0,
+      "collected": 710,
+      "durationSeconds": 490.07,
+      "failures": [
+        {
+          "suite": "apps/orders-service/test/checkout.test.ts",
+          "test": "Real RabbitMQ checkout delivery and outage recovery completes checkout over RabbitMQ with duplicate deliveries and committed outbox restart recovery",
+          "error": "Error: Test timed out in 30000ms."
+        },
+        {
+          "suite": "apps/orders-service/test/refund-compensation.test.ts",
+          "test": "RabbitMQ distributed refund and compensation recovers publisher outage, duplicate outcomes and consumer-before-ACK failure end to end",
+          "error": "Error: Test timed out in 30000ms."
+        },
+        {
+          "suite": "apps/notification-service/test/notifications.test.ts",
+          "test": "Real isolated RabbitMQ least-privilege notification role can consume and retry owned queues but cannot configure/publish the business exchange or read other queues",
+          "error": "AssertionError: expected 'reconnecting' to be 'ready' // Object.is equality"
+        }
+      ]
+    },
+    {
+      "run": "notifications-node24",
+      "passed": 66,
+      "failed": 0,
+      "skippedOrUnexecuted": 0,
+      "collected": 66,
+      "durationSeconds": 7.24,
+      "failures": []
+    },
+    {
+      "run": "isolated-node24-3",
+      "passed": 703,
+      "failed": 7,
+      "skippedOrUnexecuted": 0,
+      "collected": 710,
+      "durationSeconds": 513.85,
+      "failures": [
+        {
+          "suite": "apps/orders-service/test/refund-compensation.test.ts",
+          "test": "Refund amount reservation and provider idempotency supports several partial refunds whose sum equals captured amount",
+          "error": "Error: Test timed out in 30000ms."
+        },
+        {
+          "suite": "apps/orders-service/test/refund-compensation.test.ts",
+          "test": "Refund amount reservation and provider idempotency includes requested, processing, unknown and manual-review refunds in capacity",
+          "error": "Error: Connection terminated due to connection timeout"
+        },
+        {
+          "suite": "apps/orders-service/test/refund-compensation.test.ts",
+          "test": "Refund amount reservation and provider idempotency serializes concurrent refund requests on captured payment balance",
+          "error": "Error: Connection terminated due to connection timeout"
+        },
+        {
+          "suite": "apps/orders-service/test/refund-compensation.test.ts",
+          "test": "Refund amount reservation and provider idempotency deduplicates concurrent identical keys and rejects conflicting retries",
+          "error": "error: deadlock detected"
+        },
+        {
+          "suite": "apps/orders-service/test/refund-compensation.test.ts",
+          "test": "Cancellation coordinates payment, refunds and inventory in the checkout Saga deduplicates concurrent cancellation keys and rejects conflicting reuse across orders",
+          "error": "Error: Event persistence unavailable; transaction outcome may be uncertain"
+        },
+        {
+          "suite": "packages/messaging/test/rabbitmq.test.ts",
+          "test": "Real RabbitMQ durability and routing handles a real broker negative confirm when an isolated queue is full",
+          "error": "Error: Test timed out in 30000ms."
+        },
+        {
+          "suite": "packages/messaging/test/rabbitmq.test.ts",
+          "test": "Connection, channel and handoff recovery recovers a broker-link interruption without duplicate active consumers",
+          "error": "AssertionError: {\"status\":\"reconnecting\",\"counters\":{\"published\":1,\"consumed\":1,\"failed\":0,\"retried\":0,\"deadLettered\":0,\"reconnections\":2}}: expected 'reconnecting' to be 'ready' // Object.is equality"
+        }
+      ]
+    },
+    {
+      "run": "isolated-node24-5",
+      "passed": 701,
+      "failed": 10,
+      "skippedOrUnexecuted": 0,
+      "collected": 711,
+      "durationSeconds": 1319.26,
+      "failures": [
+        {
+          "suite": "apps/inventory-service/test/inventory.test.ts",
+          "test": "Concurrent inventory operations never oversells under contention",
+          "error": "AssertionError: expected [ \u2026(11) ] to have a length of 15 but got 11"
+        },
+        {
+          "suite": "apps/inventory-service/test/inventory.test.ts",
+          "test": "Database-driven expiration and workers uses configured TTL without refreshing terminal replays",
+          "error": "AssertionError: expected 219 to be greater than 500"
+        },
+        {
+          "suite": "apps/orders-service/test/checkout.test.ts",
+          "test": "Durable checkout with real service databases and provider escalates paid but unfulfillable reservations without releasing stock or failing the order",
+          "error": "error: canceling statement due to statement timeout"
+        },
+        {
+          "suite": "apps/orders-service/test/checkout.test.ts",
+          "test": "Real RabbitMQ checkout delivery and outage recovery completes checkout over RabbitMQ with duplicate deliveries and committed outbox restart recovery",
+          "error": "Error: Test timed out in 30000ms."
+        },
+        {
+          "suite": "apps/orders-service/test/refund-compensation.test.ts",
+          "test": "Real process crashes and persistent financial recovery recovers refund-before-outcome-commit from the original durable provider operation",
+          "error": "Error: Invalid event"
+        },
+        {
+          "suite": "apps/orders-service/test/refund-compensation.test.ts",
+          "test": "RabbitMQ distributed refund and compensation recovers publisher outage, duplicate outcomes and consumer-before-ACK failure end to end",
+          "error": "Error: Test timed out in 30000ms."
+        },
+        {
+          "suite": "packages/event-persistence/test/persistence.test.ts",
+          "test": "Outbox claims, fencing and recovery allows only one active owner among concurrent workers",
+          "error": "AssertionError: expected [ { \u2026(6) }, { \u2026(6) } ] to have a length of 1 but got 2"
+        },
+        {
+          "suite": "packages/messaging/test/rabbitmq.test.ts",
+          "test": "Real RabbitMQ durability and routing handles a real broker negative confirm when an isolated queue is full",
+          "error": "Error: Test timed out in 30000ms."
+        },
+        {
+          "suite": "packages/messaging/test/rabbitmq.test.ts",
+          "test": "Connection, channel and handoff recovery recovers a broker-link interruption without duplicate active consumers",
+          "error": "AssertionError: expected 3 to be 2 // Object.is equality"
+        },
+        {
+          "suite": "packages/messaging/test/readiness.test.ts",
+          "test": "Explicit queue selection preserves ownership and default registrations rejects an undeclared owned consumer and unknown queues while preserving the default topology",
+          "error": "AssertionError: expected [Function] to throw an error"
+        }
+      ]
+    },
+    {
+      "run": "container-node24-2",
+      "passed": 509,
+      "failed": 60,
+      "skippedOrUnexecuted": 117,
+      "collected": 686,
+      "durationSeconds": 4595.36,
+      "failures": [
+        {
+          "suite": "apps/auth-service/test/auth.test.ts",
+          "test": "Auth registration with real PostgreSQL rejects duplicate email user@example.com",
+          "error": "Error: Test timed out in 5000ms."
+        },
+        {
+          "suite": "apps/auth-service/test/auth.test.ts",
+          "test": "Auth registration with real PostgreSQL rejects duplicate email USER@EXAMPLE.COM",
+          "error": "Error: Hook timed out in 10000ms."
+        },
+        {
+          "suite": "apps/auth-service/test/auth.test.ts",
+          "test": "Auth registration with real PostgreSQL handles concurrent duplicate registrations through the unique index",
+          "error": "Error: Hook timed out in 10000ms."
+        },
+        {
+          "suite": "apps/auth-service/test/auth.test.ts",
+          "test": "Auth registration with real PostgreSQL rejects invalid email",
+          "error": "Error: Test timed out in 5000ms."
+        },
+        {
+          "suite": "apps/auth-service/test/auth.test.ts",
+          "test": "Auth registration with real PostgreSQL rejects missing password",
+          "error": "Error: Hook timed out in 10000ms."
+        },
+        {
+          "suite": "apps/auth-service/test/auth.test.ts",
+          "test": "Auth registration with real PostgreSQL rejects short password",
+          "error": "Error: Hook timed out in 10000ms."
+        },
+        {
+          "suite": "apps/auth-service/test/auth.test.ts",
+          "test": "Auth registration with real PostgreSQL rejects long password",
+          "error": "Error: Hook timed out in 10000ms."
+        },
+        {
+          "suite": "apps/auth-service/test/auth.test.ts",
+          "test": "Auth registration with real PostgreSQL rejects non-string password",
+          "error": "Error: Test timed out in 5000ms."
+        },
+        {
+          "suite": "apps/auth-service/test/auth.test.ts",
+          "test": "Auth registration with real PostgreSQL rejects role escalation",
+          "error": "Error: Test timed out in 5000ms."
+        },
+        {
+          "suite": "apps/auth-service/test/auth.test.ts",
+          "test": "Auth registration with real PostgreSQL rejects unknown field",
+          "error": "Error: Test timed out in 5000ms."
+        },
+        {
+          "suite": "apps/auth-service/test/auth.test.ts",
+          "test": "Auth registration with real PostgreSQL enforces role and case-insensitive email constraints in PostgreSQL",
+          "error": "Error: Test timed out in 5000ms."
+        },
+        {
+          "suite": "apps/auth-service/test/auth.test.ts",
+          "test": "Auth login and JWT verification returns only the current public user for a valid token",
+          "error": "Error: Test timed out in 5000ms."
+        },
+        {
+          "suite": "apps/auth-service/test/auth.test.ts",
+          "test": "Auth login and JWT verification rejects missing and malformed authorization",
+          "error": "Error: Test timed out in 5000ms."
+        },
+        {
+          "suite": "apps/auth-service/test/auth.test.ts",
+          "test": "Auth login and JWT verification rejects wrong signature, expired token, wrong issuer/audience and invalid claims",
+          "error": "Error: Hook timed out in 10000ms."
+        },
+        {
+          "suite": "apps/auth-service/test/auth.test.ts",
+          "test": "Auth login and JWT verification rejects deleted users and reads current roles instead of trusting stale claims on /me",
+          "error": "Error: Test timed out in 5000ms."
+        },
+        {
+          "suite": "apps/auth-service/test/auth.test.ts",
+          "test": "Auth login and JWT verification fails startup for mismatched signing/verification keys",
+          "error": "Error: Test timed out in 5000ms."
+        },
+        {
+          "suite": "apps/auth-service/test/auth.test.ts",
+          "test": "Auth login and JWT verification sanitizes unexpected database failures",
+          "error": "Error: Test timed out in 5000ms."
+        },
+        {
+          "suite": "apps/auth-service/test/auth.test.ts",
+          "test": "Auth login and JWT verification test role cannot connect to auth_db",
+          "error": "Error: Hook timed out in 10000ms."
+        },
+        {
+          "suite": "apps/auth-service/test/auth.test.ts",
+          "test": "Auth login and JWT verification test role cannot connect to catalog_db",
+          "error": "Error: Hook timed out in 10000ms."
+        },
+        {
+          "suite": "apps/auth-service/test/auth.test.ts",
+          "test": "Auth login and JWT verification test role cannot connect to catalog_test_db",
+          "error": "Error: timeout exceeded when trying to connect"
+        },
+        {
+          "suite": "apps/auth-service/test/auth.test.ts",
+          "test": "Local admin bootstrap safety creates an admin that can login with a signed admin role",
+          "error": "Error: Hook timed out in 10000ms."
+        },
+        {
+          "suite": "apps/auth-service/test/auth.test.ts",
+          "test": "Local admin bootstrap safety leaves existing admin roles and password hashes unchanged",
+          "error": "error: relation \"users\" does not exist"
+        },
+        {
+          "suite": "apps/auth-service/test/auth.test.ts",
+          "test": "Local admin bootstrap safety refuses to elevate an existing customer",
+          "error": "error: relation \"users\" does not exist"
+        },
+        {
+          "suite": "apps/auth-service/test/auth.test.ts",
+          "test": "Local admin bootstrap safety is disabled in production before any users are created",
+          "error": "error: relation \"users\" does not exist"
+        },
+        {
+          "suite": "apps/auth-service/test/auth.test.ts",
+          "test": "Local admin bootstrap safety rejects starting production Auth against a test database",
+          "error": "error: relation \"users\" does not exist"
+        },
+        {
+          "suite": "apps/api-gateway/test/auth.test.ts",
+          "test": "Gateway Auth forwarding forwards Authorization on Catalog writes and preserves 401/403",
+          "error": "Error: expected 403 \"Forbidden\", got 504 \"Gateway Timeout\""
+        },
+        {
+          "suite": "apps/api-gateway/test/inventory.test.ts",
+          "test": "Gateway Inventory HTTP forwarding forwards put /inventory/11111111-1111-4111-8111-111111111111 with headers, exact body bytes and status",
+          "error": "Error: Test timed out in 5000ms."
+        },
+        {
+          "suite": "apps/api-gateway/test/inventory.test.ts",
+          "test": "Gateway Inventory HTTP forwarding forwards get /inventory/11111111-1111-4111-8111-111111111111 with headers, exact body bytes and status",
+          "error": "Error: Test timed out in 5000ms."
+        },
+        {
+          "suite": "apps/api-gateway/test/products.test.ts",
+          "test": "Gateway product forwarding over HTTP returns 504 when Catalog does not respond",
+          "error": "Error: Test timed out in 5000ms."
+        },
+        {
+          "suite": "apps/api-gateway/test/products.test.ts",
+          "test": "Gateway product forwarding over HTTP keeps the timeout active while reading the response body",
+          "error": "Error: Test timed out in 5000ms."
+        },
+        {
+          "suite": "apps/api-gateway/test/products.test.ts",
+          "test": "Gateway product management forwarding forwards post method, body, status and relevant headers",
+          "error": "Error: Test timed out in 5000ms."
+        },
+        {
+          "suite": "apps/api-gateway/test/products.test.ts",
+          "test": "Gateway product management forwarding forwards patch method, body, status and relevant headers",
+          "error": "Error: Test timed out in 5000ms."
+        },
+        {
+          "suite": "apps/api-gateway/test/products.test.ts",
+          "test": "Gateway product management forwarding forwards delete method, body, status and relevant headers",
+          "error": "Error: Test timed out in 5000ms."
+        },
+        {
+          "suite": "apps/orders-service/test/checkout.test.ts",
+          "test": "Durable checkout with real service databases and provider completes only after inventory confirmation with an immutable audit trail",
+          "error": "Error: Test timed out in 30000ms."
+        },
+        {
+          "suite": "apps/orders-service/test/checkout.test.ts",
+          "test": "Durable checkout with real service databases and provider never attempts payment when inventory is insufficient",
+          "error": "Error: Connection terminated due to connection timeout"
+        },
+        {
+          "suite": "apps/orders-service/test/checkout.test.ts",
+          "test": "Durable checkout with real service databases and provider compensates a definitive decline after release commits",
+          "error": "Error: Connection terminated due to connection timeout"
+        },
+        {
+          "suite": "apps/orders-service/test/checkout.test.ts",
+          "test": "Durable checkout with real service databases and provider protects lost-response payments, reconciles with the original key and never charges twice",
+          "error": "error: deadlock detected"
+        },
+        {
+          "suite": "apps/orders-service/test/checkout.test.ts",
+          "test": "Durable checkout with real service databases and provider keeps a genuinely unknown provider result unresolved without releasing stock",
+          "error": "Error: Test timed out in 30000ms."
+        },
+        {
+          "suite": "apps/orders-service/test/checkout.test.ts",
+          "test": "Durable checkout with real service databases and provider deduplicates concurrent checkout requests and every delivered step",
+          "error": "Error: Connection terminated due to connection timeout"
+        },
+        {
+          "suite": "apps/orders-service/test/checkout.test.ts",
+          "test": "Durable checkout with real service databases and provider ignores stale failure, duplicate inventory success, and out-of-order confirmation",
+          "error": "Error: Connection terminated due to connection timeout"
+        },
+        {
+          "suite": "apps/orders-service/test/checkout.test.ts",
+          "test": "Durable checkout with real service databases and provider replays a committed reservation after a consumer dies before ACK",
+          "error": "Error: Crash fixture timed out"
+        },
+        {
+          "suite": "apps/orders-service/test/checkout.test.ts",
+          "test": "Durable checkout with real service databases and provider recovers an inventory consumer crash before commit with no orphan effects",
+          "error": "Error: Crash fixture timed out"
+        },
+        {
+          "suite": "apps/orders-service/test/checkout.test.ts",
+          "test": "Durable checkout with real service databases and provider recovers a provider-success worker crash by lookup, without another charge",
+          "error": "Error: Connection terminated due to connection timeout"
+        },
+        {
+          "suite": "apps/orders-service/test/checkout.test.ts",
+          "test": "Durable checkout with real service databases and provider recovers creation committed before an Orders process dies",
+          "error": "Error: Connection terminated due to connection timeout"
+        },
+        {
+          "suite": "apps/orders-service/test/checkout.test.ts",
+          "test": "Durable checkout with real service databases and provider recovers expired Saga claims and fences a stale recovery worker",
+          "error": "Error: Connection terminated due to connection timeout"
+        },
+        {
+          "suite": "apps/orders-service/test/checkout.test.ts",
+          "test": "Durable checkout with real service databases and provider rolls back a recovery outbox insertion and resumes after lease expiration",
+          "error": "Error: Test timed out in 30000ms."
+        },
+        {
+          "suite": "apps/orders-service/test/checkout.test.ts",
+          "test": "Durable checkout with real service databases and provider escalates paid but unfulfillable reservations without releasing stock or failing the order",
+          "error": "Error: Test timed out in 30000ms."
+        },
+        {
+          "suite": "apps/orders-service/test/checkout.test.ts",
+          "test": "Durable checkout with real service databases and provider stops automated recovery at its retry bound without assuming unknown payment failure",
+          "error": "Error: Connection terminated due to connection timeout"
+        },
+        {
+          "suite": "apps/orders-service/test/checkout.test.ts",
+          "test": "Durable checkout with real service databases and provider rolls back order, items, Saga, audit and both outboxes when initial command persistence fails",
+          "error": "Error: Connection terminated due to connection timeout"
+        },
+        {
+          "suite": "packages/event-persistence/test/persistence.test.ts",
+          "test": "Transactional inbox deduplication scopes receipts per logical consumer and per event ID",
+          "error": "Error: Test timed out in 30000ms."
+        },
+        {
+          "suite": "packages/event-persistence/test/persistence.test.ts",
+          "test": "Transactional inbox deduplication rolls back the receipt and effect when the handler fails",
+          "error": "Error: Connection terminated due to connection timeout"
+        },
+        {
+          "suite": "packages/event-persistence/test/persistence.test.ts",
+          "test": "Transactional inbox deduplication discards a terminated active connection without crashing and retries atomically",
+          "error": "Error: Connection terminated due to connection timeout"
+        },
+        {
+          "suite": "packages/event-persistence/test/persistence.test.ts",
+          "test": "Transactional inbox deduplication rolls back when a database write fails",
+          "error": "Error: Connection terminated due to connection timeout"
+        },
+        {
+          "suite": "packages/event-persistence/test/persistence.test.ts",
+          "test": "Transactional inbox deduplication rejects reused event IDs with changed contents as permanent errors",
+          "error": "Error: Connection terminated due to connection timeout"
+        },
+        {
+          "suite": "packages/event-persistence/test/persistence.test.ts",
+          "test": "Transactional inbox deduplication deduplicates JSON object key ordering across PostgreSQL JSONB and wire replays",
+          "error": "Error: Connection terminated due to connection timeout"
+        },
+        {
+          "suite": "packages/event-persistence/test/persistence.test.ts",
+          "test": "Transactional inbox deduplication rolls back if channel cancellation arrives before commit",
+          "error": "Error: Connection terminated due to connection timeout"
+        },
+        {
+          "suite": "packages/event-persistence/test/persistence.test.ts",
+          "test": "Transactional inbox deduplication preserves correlation/causation and creates a distinct child identity",
+          "error": "Error: Connection terminated due to connection timeout"
+        },
+        {
+          "suite": "packages/messaging/test/readiness.test.ts",
+          "test": "Service messaging readiness without workflow activation reports disabled/ready/reconnecting for service 0 without business calls",
+          "error": "Error: Test timed out in 5000ms."
+        },
+        {
+          "suite": "packages/messaging/test/readiness.test.ts",
+          "test": "Service messaging readiness without workflow activation reports disabled/ready/reconnecting for service 1 without business calls",
+          "error": "Error: Test timed out in 5000ms."
+        },
+        {
+          "suite": "packages/messaging/test/readiness.test.ts",
+          "test": "Service messaging readiness without workflow activation reports disabled/ready/reconnecting for service 2 without business calls",
+          "error": "Error: Test timed out in 5000ms."
+        }
+      ]
+    },
+    {
+      "run": "container-node24-4",
+      "passed": 647,
+      "failed": 14,
+      "skippedOrUnexecuted": 50,
+      "collected": 711,
+      "durationSeconds": 1472.7,
+      "failures": [
+        {
+          "suite": "apps/orders-service/test/refund-compensation.test.ts",
+          "test": "Cancellation coordinates payment, refunds and inventory in the checkout Saga keeps ambiguous payments protected during cancellation then refunds delayed success",
+          "error": "AssertionError: expected 'CANCELLATION_PENDING' to be 'REFUND_PENDING' // Object.is equality"
+        },
+        {
+          "suite": "apps/orders-service/test/refund-compensation.test.ts",
+          "test": "Real process crashes and persistent financial recovery recovers a refund intent crash before commit",
+          "error": "Error: Crash fixture timed out"
+        },
+        {
+          "suite": "apps/orders-service/test/refund-compensation.test.ts",
+          "test": "Real process crashes and persistent financial recovery recovers a refund intent crash after commit",
+          "error": "Error: Connection terminated due to connection timeout"
+        },
+        {
+          "suite": "apps/orders-service/test/refund-compensation.test.ts",
+          "test": "Real process crashes and persistent financial recovery recovers refund-after-provider from the original durable provider operation",
+          "error": "Error: Connection terminated due to connection timeout"
+        },
+        {
+          "suite": "apps/orders-service/test/refund-compensation.test.ts",
+          "test": "Real process crashes and persistent financial recovery recovers refund-before-outcome-commit from the original durable provider operation",
+          "error": "Error: Crash fixture timed out"
+        },
+        {
+          "suite": "apps/orders-service/test/refund-compensation.test.ts",
+          "test": "Real process crashes and persistent financial recovery recovers Inventory compensation crash after commit without double stock restoration",
+          "error": "Error: Crash fixture timed out"
+        },
+        {
+          "suite": "apps/orders-service/test/refund-compensation.test.ts",
+          "test": "Real process crashes and persistent financial recovery recovers cancellation committed before Orders restart and a crashed recovery claim",
+          "error": "Error: Test timed out in 30000ms."
+        },
+        {
+          "suite": "apps/orders-service/test/refund-compensation.test.ts",
+          "test": "Operator resolution and inventory lifecycle distinctions allows an operator to resolve manual refund review by lookup and resumes cancellation safely",
+          "error": "Error: Test timed out in 30000ms."
+        },
+        {
+          "suite": "apps/orders-service/test/refund-compensation.test.ts",
+          "test": "Operator resolution and inventory lifecycle distinctions keeps temporary provider failure unknown until a definitive persisted lookup result exists",
+          "error": "Error: Connection terminated due to connection timeout"
+        },
+        {
+          "suite": "apps/orders-service/test/refund-compensation.test.ts",
+          "test": "Operator resolution and inventory lifecycle distinctions classifies already expired reservations without decrementing stock a second time",
+          "error": "error: canceling statement due to statement timeout"
+        },
+        {
+          "suite": "apps/orders-service/test/refund-compensation.test.ts",
+          "test": "Operator resolution and inventory lifecycle distinctions rejects restoration of confirmed stock without a successful refund operation",
+          "error": "Error: Connection terminated due to connection timeout"
+        },
+        {
+          "suite": "apps/orders-service/test/refund-compensation.test.ts",
+          "test": "Operator resolution and inventory lifecycle distinctions keeps paid-but-unfulfilled compensation recoverable on refund decline",
+          "error": "error: canceling statement due to statement timeout"
+        },
+        {
+          "suite": "apps/orders-service/test/refund-compensation.test.ts",
+          "test": "Operator resolution and inventory lifecycle distinctions keeps paid-but-unfulfilled compensation recoverable on refund ambiguous",
+          "error": "Error: Connection terminated due to connection timeout"
+        },
+        {
+          "suite": "apps/orders-service/test/refund-compensation.test.ts",
+          "test": "Operator resolution and inventory lifecycle distinctions keeps new refund and cancellation operations disabled when no opt-in services are supplied",
+          "error": "Error: Connection terminated due to connection timeout"
+        }
+      ]
+    },
+    {
+      "run": "notifications-final",
+      "passed": 66,
+      "failed": 0,
+      "skippedOrUnexecuted": 0,
+      "collected": 66,
+      "durationSeconds": 18.39,
+      "failures": []
+    },
+    {
+      "run": "full-final-host",
+      "passed": 711,
+      "failed": 0,
+      "skippedOrUnexecuted": 0,
+      "collected": 711,
+      "durationSeconds": 86.16,
+      "failures": []
+    },
+    {
+      "run": "full-final-host-repeat",
+      "passed": 711,
+      "failed": 0,
+      "skippedOrUnexecuted": 0,
+      "collected": 711,
+      "durationSeconds": 68.73,
+      "failures": []
+    }
+  ],
+  "finalSmoke": {
+    "project": "commerce-v2-notification-smoke-a99765499a",
+    "build": true,
+    "runtime": "v24.21.0",
+    "disabledDefaults": true,
+    "migrations": true,
+    "authorization": true,
+    "readiness": true,
+    "delivery": true,
+    "stableProviderOperation": true,
+    "shutdown": true,
+    "cleanup": true
+  },
+  "typecheck": "passed on Node 24.21.0",
+  "diffCheck": "passed"
+}

@@ -29,3 +29,6 @@ coverage/
 
 # Local dedicated verification evidence (never development data).
 verification-evidence/
+
+!.env.observability.example
+.secrets/

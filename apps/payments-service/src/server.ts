@@ -1,3 +1,4 @@
+import '@ecommerce/observability/bootstrap';
 import {RefundRepository} from './refund-repository.js';
 import {RefundService} from './refund-service.js';
 import {refundHandler} from './refund-consumer.js';
