@@ -4,6 +4,7 @@ import {promisify} from 'node:util';
 import {readFile,writeFile,mkdir} from 'node:fs/promises';
 import {resolve,join} from 'node:path';
 import {cpus,totalmem,platform} from 'node:os';
+import {readTestEvidence} from './verification-test-evidence.mjs';
 import {verifyPhase17Source} from './phase17-source.mjs';
 import {validateCommitIdentity} from './verification-snapshot.mjs';
 import {validateGateReport,redactEvidence} from './verification-harness.mjs';
@@ -15,7 +16,7 @@ const verify=()=>verifyPhase17Source(root,process.env.PHASE17_SOURCE_IDENTITY);
 async function run(name,args,extra={}){
  await verify();if(interrupted)throw new Error('Verification interrupted');const stage={name,status:'running',started:new Date().toISOString()};report.stages.push(stage);await save();
  try{await new Promise((done,fail)=>{child=spawn(process.execPath,args,{env:{...process.env,OTEL_ENABLED:'false',...extra},stdio:['ignore','pipe','pipe']});for(const [stream,target] of [[child.stdout,process.stdout],[child.stderr,process.stderr]]){let line='';stream.setEncoding('utf8');stream.on('data',chunk=>{line+=chunk;if(line.length>65536)line='[oversized diagnostic omitted]\n';let end;while((end=line.indexOf('\n'))>=0){target.write(redactEvidence(line.slice(0,end+1)));line=line.slice(end+1);}});stream.on('end',()=>{if(line)target.write(redactEvidence(line));});}const timer=setTimeout(()=>child?.kill('SIGTERM'),5400000);child.once('error',error=>{clearTimeout(timer);fail(error);});child.once('exit',code=>{clearTimeout(timer);child=undefined;code===0?done():fail(new Error(name+' failed with exit '+code));});});await verify();stage.status='passed';}
- catch(error){stage.status='failed';stage.error=redactEvidence(error.message);throw error;}finally{stage.finished=new Date().toISOString();await save();}
+ catch(error){const output=args.find(arg=>arg.startsWith('--outputFile='))?.slice('--outputFile='.length);if(output)try{stage.tests=await readTestEvidence(output);}catch(evidenceError){stage.testEvidenceUnavailable=evidenceError.code??evidenceError.name;}stage.status='failed';stage.error=redactEvidence(error.message);throw error;}finally{stage.finished=new Date().toISOString();await save();}
 }
 async function testReport(name,file,expected){const data=JSON.parse(await readFile(file,'utf8'));validateGateReport({name},data);if(expected&&data.numTotalTests!==expected)throw new Error(name+' test discovery changed unexpectedly');report.stages.find(s=>s.name===name).tests={total:data.numTotalTests,passed:data.numPassedTests,failed:data.numFailedTests,pending:data.numPendingTests,failedSuites:data.numFailedTestSuites};await save();return data;}
 async function save(){await writeFile(join(directory,'stage-results.json'),JSON.stringify(report,null,2)+'\n',{mode:0o600});}

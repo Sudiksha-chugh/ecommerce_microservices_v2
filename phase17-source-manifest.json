@@ -1,5 +1,5 @@
 {
-  "identity": "7830ded0e2c939236ea4ce0ffe77948269c9426359ea7fef7c3cf81741b7cffe",
+  "identity": "3357866de9d910ed750ea56dcb8d4c529966b98b15f6cc2308e9e240a3268e45",
   "files": [
     {
       "path": ".dockerignore",
@@ -1559,7 +1559,7 @@
     },
     {
       "path": "scripts/observability-runner.mjs",
-      "sha256": "5ff61dc1ab236c251ad49ec0550f371de24f8ce92b1c3e6a756a1da76174f514"
+      "sha256": "7a2c5c20fbc78054e2faea933af343f715c8624e77f5b9a24100cb6ad6c9803c"
     },
     {
       "path": "scripts/observability-static.mjs",
@@ -1602,12 +1602,20 @@
       "sha256": "877dacb421bb29478dd71af62dfd3632509473ad96454217cdfc02349937e80d"
     },
     {
+      "path": "scripts/verification-test-evidence.mjs",
+      "sha256": "678dddaad59e7bb01d011d1508891ab764cbf1c2debb3b6c26e574b398ccfdbc"
+    },
+    {
+      "path": "scripts/verification-test-evidence.test.mjs",
+      "sha256": "71025df91b06f8549f505ee1dedc2e55e01b6eb77aca43a027c0c172a1a52f1f"
+    },
+    {
       "path": "scripts/verify-phase16.mjs",
       "sha256": "85a8f500ff5adfa13486c4173a828108a8bf16e6db47f760bfb5bf97861198d7"
     },
     {
       "path": "scripts/verify-phase17.mjs",
-      "sha256": "ed49ce865666e315d97dcbaffa647fc17a9dd3794e684150f3b6bcd95659d08e"
+      "sha256": "5866051846558f8739b37839fcc95b9b3584ded24611254f63f175a2560fc846"
     },
     {
       "path": "test/environment.ts",
