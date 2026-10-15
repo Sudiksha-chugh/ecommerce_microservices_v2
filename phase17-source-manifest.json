@@ -1,5 +1,5 @@
 {
-  "identity": "edd1f34687aa21c93f4299e7c86e8d21d0fdc474f4dd2e190f4047df635701de",
+  "identity": "9bcf86421b72dd5eea2111940d0d77d92081500b7d6251060f9a55017310841b",
   "files": [
     {
       "path": ".dockerignore",
@@ -1418,8 +1418,16 @@
       "sha256": "cc98e7bb5e3c6e0f056f6489efff12ae5830d2b91688b2715a8050ed38274ee2"
     },
     {
+      "path": "packages/observability/test/grafana-proof.d.mts",
+      "sha256": "0b8e0014cfdc52eacc70cb8cf87e280af407ba17a88fa18dfc47cb7f5c8d629a"
+    },
+    {
+      "path": "packages/observability/test/grafana-proof.mjs",
+      "sha256": "833998f1a917929eab36dd899c23b20e8806a67361e1f543452e9e02fc9d9826"
+    },
+    {
       "path": "packages/observability/test/integration.proof.ts",
-      "sha256": "784e9cb2b9a1cb51365d31b34d3a3c3cc229e296000006889401c693410a5c3b"
+      "sha256": "93bbe000d98816ac5d77c8623cdc49fc8a0278c452f89c2426807c2dff89559f"
     },
     {
       "path": "packages/observability/test/messaging-safety.test.ts",
@@ -1555,11 +1563,15 @@
     },
     {
       "path": "scripts/observability-readiness.mjs",
-      "sha256": "46fad4ff088cd3a8f5c39e61c215c72b15b9bd186b08d7e59ef34dbcfb65e786"
+      "sha256": "932ac9e1a99f9531ed327e43d13e70af189fad4e2fcdc74f7911d2ac29c3c05d"
+    },
+    {
+      "path": "scripts/observability-restart.test.mjs",
+      "sha256": "94693dfb2b10d713e5dc60c1905aa22a8beeab91d3d34806c0b2a4c1e7cee22c"
     },
     {
       "path": "scripts/observability-runner.mjs",
-      "sha256": "7a2c5c20fbc78054e2faea933af343f715c8624e77f5b9a24100cb6ad6c9803c"
+      "sha256": "94bd335ede9b2799d8391f9a85d8ff6c43ff57d1406d24957ac479e748ce12da"
     },
     {
       "path": "scripts/observability-static.mjs",

@@ -1,3 +1,4 @@
+import {proveGrafana} from './grafana-proof.mjs';
 import {checkoutParentage,cleanupProof} from './proof-assertions.js';
 import {execFile} from 'node:child_process';
 import {promisify} from 'node:util';
@@ -120,6 +121,7 @@ async function proveFlow(outage?:'otel-collector'|'tempo'|'prometheus'|'grafana'
   expect(searchJSON).toContain('elasticsearch');for(const secret of [token,userId,productId,'password','authorization','db.statement'])expect(checkoutJSON).not.toContain(secret);
   const metrics:Record<string,number>={};for(const name of ['http_server_requests_total','http_server_errors_total','http_server_request_duration_seconds_count','http_client_request_duration_seconds_count','messaging_operations_total','business_observations_total','dependency_operation_duration_seconds_count'])await vi.waitFor(async()=>{await telemetry.flush();const r=await fetch(process.env.OBS_PROMETHEUS_URL+'/api/v1/query?query='+encodeURIComponent(name),{signal:AbortSignal.timeout(2000)});const data=await r.json() as {status:string;data:{result:{metric:Record<string,string>;value:[number,string]}[]}};expect(data.status).toBe('success');expect(data.data.result.length).toBeGreaterThan(0);expect(data.data.result.length).toBeLessThanOrEqual(128);for(const series of data.data.result){expect(series.metric.service_name).toBe('observability-proof');expect(Number(series.value[1])).toBeGreaterThan(0);expect(Object.keys(series.metric).join(' ')).not.toMatch(/request.?id|trace.?id|user.?id|event.?id|idempotency/i);}metrics[name]=data.data.result.length;},{timeout:20000,interval:1000});
   proof.topology=topology;proof.serviceName='observability-proof';proof.checkout={traceId:http!.traceId,requestId,rootAndDependencies:true,committedStatus:'COMPLETED',charges:1};proof.search={traceId:search!.traceId,elasticsearch:true};proof.metrics=metrics;proof.redis={traceId:redisTraceId,ping:true};
+  proof.grafana=await proveGrafana({grafanaUrl:process.env.OBS_GRAFANA_URL!,prometheusUrl:process.env.OBS_PROMETHEUS_URL!,password:(await readFile(process.env.OBS_GRAFANA_PASSWORD_FILE!,'utf8')).trim(),traceId:String(http!.traceId)});
   await writeFile(process.env.OBS_PROOF_FILE!,JSON.stringify(proof,null,2));
  }finally{
   await cleanupProof([async()=>{await f?.close();},async()=>{await redis?.close();},...workers.map(w=>()=>w.stop()),()=>manager.stop(),async()=>{

@@ -1,0 +1,2 @@
+export interface GrafanaProof {traceId:string;traceRetrieved:boolean;dashboards:number;queries:{dashboard:string;expression:string;series:number}[]}
+export function proveGrafana(options:{grafanaUrl:string;prometheusUrl:string;password:string;traceId:string},overrides?:{getJson?:(url:string,headers?:Record<string,string>)=>Promise<unknown>;wait?:<T>(name:string,check:()=>Promise<T>)=>Promise<T>}):Promise<GrafanaProof>;

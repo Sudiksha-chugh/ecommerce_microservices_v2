@@ -1,0 +1,10 @@
+// Validate actual provisioned queries and the actual checkout trace BEFORE destructive backend outages.
+async function fetchJson(url,headers){const response=await fetch(url,{headers,signal:AbortSignal.timeout(2000)});if(!response.ok)throw new Error('Grafana proof HTTP '+response.status);return response.json();}
+async function retry(name,check){const end=Date.now()+20000;let error;do{try{return await check();}catch(e){error=e;}await new Promise(resolve=>setTimeout(resolve,250));}while(Date.now()<end);throw new Error(name+' did not become ready',{cause:error});}
+export async function proveGrafana({grafanaUrl,prometheusUrl,password,traceId},{getJson=fetchJson,wait=retry}={}){
+ const auth={Authorization:'Basic '+Buffer.from('observability-admin:'+password).toString('base64')};
+ await wait('Grafana checkout trace navigation',async()=>{const trace=await getJson(grafanaUrl+'/api/datasources/proxy/uid/tempo/api/traces/'+traceId,{...auth,Accept:'application/json'});if(!JSON.stringify(trace).includes('rabbitmq process'))throw new Error('Grafana Tempo trace navigation lacks checkout trace');});
+ const dashboards=await getJson(grafanaUrl+'/api/search?type=dash-db',auth);if(!Array.isArray(dashboards)||dashboards.length!==7)throw new Error('Expected seven provisioned dashboards');
+ const queries=(await Promise.all(dashboards.map(async d=>{const dashboard=await getJson(grafanaUrl+'/api/dashboards/uid/'+encodeURIComponent(d.uid),auth);return Promise.all(dashboard.dashboard.panels.flatMap(panel=>(panel.targets??[]).map(target=>wait('Dashboard query '+d.uid,async()=>{const result=await getJson(prometheusUrl+'/api/v1/query?query='+encodeURIComponent(target.expr));if(result.status!=='success')throw new Error('Invalid PromQL');if(result.data.result.length===0)throw new Error('Dashboard query has no application series: '+d.uid);return {dashboard:d.uid,expression:target.expr,series:result.data.result.length};}))));}))).flat();
+ if(!queries.length)throw new Error('No dashboard queries verified');return {traceId,traceRetrieved:true,dashboards:dashboards.length,queries};
+}
