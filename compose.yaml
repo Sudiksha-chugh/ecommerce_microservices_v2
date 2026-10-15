@@ -17,6 +17,12 @@ services:
       INVENTORY_PGUSER: ${INVENTORY_PGUSER:-inventory_user}
       INVENTORY_PGPASSWORD: ${INVENTORY_PGPASSWORD:?Set INVENTORY_PGPASSWORD in .env.inventory}
       INVENTORY_TEST_PASSWORD: ${INVENTORY_TEST_PASSWORD:?Set INVENTORY_TEST_PASSWORD in .env.inventory}
+      PAYMENTS_PGUSER: ${PAYMENTS_PGUSER:-payments_user}
+      PAYMENTS_PGPASSWORD: ${PAYMENTS_PGPASSWORD:?Set PAYMENTS_PGPASSWORD in .env.payments}
+      PAYMENTS_TEST_PASSWORD: ${PAYMENTS_TEST_PASSWORD:?Set PAYMENTS_TEST_PASSWORD in .env.payments}
+      MOCK_PGUSER: ${MOCK_PGUSER:-mock_provider_user}
+      MOCK_PGPASSWORD: ${MOCK_PGPASSWORD:?Set MOCK_PGPASSWORD in .env.mock-provider}
+      MOCK_TEST_PASSWORD: ${MOCK_TEST_PASSWORD:?Set MOCK_TEST_PASSWORD in .env.mock-provider}
     ports:
       - "127.0.0.1:${PGPORT:-5432}:5432"
     volumes:
@@ -26,6 +32,8 @@ services:
       interval: 2s
       timeout: 5s
       retries: 30
+  # Gateway rate limiting can share this standalone Redis using its separate bounded-TTL namespace.
+  # It remains disabled in Gateway; host 6380 is selected by the existing .env.cart port override.
   redis:
     image: redis:8
     command: ["redis-server", "--appendonly", "yes", "--appendfsync", "everysec"]
@@ -38,6 +46,142 @@ services:
       interval: 2s
       timeout: 5s
       retries: 30
+  rabbitmq:
+    image: rabbitmq:4.2-management
+    hostname: commerce-rabbitmq
+    restart: unless-stopped
+    environment:
+      RABBITMQ_DEFAULT_USER: ${RABBITMQ_ADMIN_USER:?Set RABBITMQ_ADMIN_USER}
+      RABBITMQ_DEFAULT_PASS: ${RABBITMQ_ADMIN_PASSWORD:?Set RABBITMQ_ADMIN_PASSWORD}
+      RABBITMQ_DEFAULT_VHOST: ${RABBITMQ_VHOST:-commerce}
+    ports:
+      - "127.0.0.1:${RABBITMQ_AMQP_PORT:-5673}:5672"
+      - "127.0.0.1:${RABBITMQ_MANAGEMENT_PORT:-15673}:15672"
+    volumes:
+      - commerce_rabbitmq_data:/var/lib/rabbitmq
+    healthcheck:
+      test: ["CMD", "rabbitmq-diagnostics", "-q", "ping"]
+      interval: 5s
+      timeout: 5s
+      retries: 30
+  notifications-db:
+    build:
+      context: .
+      dockerfile: infrastructure/docker/notifications-postgres.Dockerfile
+    profiles: [notifications]
+    environment:
+      POSTGRES_DB: postgres
+      POSTGRES_USER: notifications_admin
+      POSTGRES_PASSWORD: ${NOTIFICATIONS_DB_ADMIN_PASSWORD:-}
+      NOTIFICATIONS_DATABASE_PASSWORD: ${NOTIFICATIONS_DATABASE_PASSWORD:-}
+      MOCK_EMAIL_DATABASE_PASSWORD: ${MOCK_EMAIL_DATABASE_PASSWORD:-}
+    ports:
+      - "127.0.0.1:${NOTIFICATIONS_PGPORT:-5440}:5432"
+    volumes:
+      - notifications_postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U notifications_admin -d postgres"]
+      interval: 2s
+      timeout: 5s
+      retries: 30
+  notification-service:
+    build:
+      context: .
+      dockerfile: infrastructure/docker/notification-service.Dockerfile
+    profiles: [notifications]
+    depends_on:
+      notifications-db:
+        condition: service_healthy
+      rabbitmq:
+        condition: service_healthy
+    ports:
+      - "127.0.0.1:${NOTIFICATION_PORT:-4007}:4007"
+    environment:
+      NOTIFICATION_HOST: 0.0.0.0
+      NOTIFICATION_PORT: 4007
+      DATABASE_URL: ${NOTIFICATION_DOCKER_DATABASE_URL:-postgresql://notifications_user:unconfigured@notifications-db:5432/notifications_db}
+      MOCK_EMAIL_DATABASE_URL: ${MOCK_EMAIL_DOCKER_DATABASE_URL:-postgresql://mock_email_user:unconfigured@notifications-db:5432/mock_email_provider_db}
+      RABBITMQ_URL: ${NOTIFICATION_DOCKER_RABBITMQ_URL:-}
+      NOTIFICATION_PROVIDER: mock
+      NOTIFICATION_WORKER_ENABLED: ${NOTIFICATION_WORKER_ENABLED:-false}
+      NOTIFICATION_CONSUMER_ENABLED: ${NOTIFICATION_CONSUMER_ENABLED:-false}
+      NOTIFICATION_MAX_ATTEMPTS: ${NOTIFICATION_MAX_ATTEMPTS:-5}
+      NOTIFICATION_RETRY_BASE_MS: ${NOTIFICATION_RETRY_BASE_MS:-30000}
+      NOTIFICATION_LOOKUP_KEY: ${NOTIFICATION_LOOKUP_KEY:-}
+      AUTH_SERVICE_URL: ${NOTIFICATION_DOCKER_AUTH_URL:-http://host.docker.internal:4000}
+      ORDERS_SERVICE_URL: ${NOTIFICATION_DOCKER_ORDERS_URL:-http://host.docker.internal:4003}
+      JWT_PUBLIC_KEY_FILE: /run/keys/auth-public.pem
+      JWT_ISSUER: ${JWT_ISSUER:-ecommerce-auth}
+      JWT_AUDIENCE: ${JWT_AUDIENCE:-ecommerce-api}
+      SAGA_ORDERS_KEY: ${SAGA_ORDERS_KEY:-}
+      SAGA_PAYMENTS_KEY: ${SAGA_PAYMENTS_KEY:-}
+    volumes:
+      - ./.secrets/auth-public.pem:/run/keys/auth-public.pem:ro
+
+  search-db:
+    profiles: [search]
+    build:
+      context: .
+      dockerfile: infrastructure/docker/search-postgres.Dockerfile
+    environment:
+      POSTGRES_USER: search_admin
+      POSTGRES_PASSWORD: ${SEARCH_DB_ADMIN_PASSWORD:-}
+      SEARCH_DATABASE_PASSWORD: ${SEARCH_DATABASE_PASSWORD:-}
+    ports: ["127.0.0.1:${SEARCH_PGPORT:-5441}:5432"]
+    volumes: [search_postgres_data:/var/lib/postgresql/data]
+    healthcheck:
+      test: [CMD-SHELL, "pg_isready -U search_admin -d postgres"]
+      interval: 2s
+      timeout: 5s
+      retries: 30
+  search-elasticsearch:
+    profiles: [search]
+    image: docker.elastic.co/elasticsearch/elasticsearch:8.15.0
+    environment:
+      discovery.type: single-node
+      xpack.security.enabled: "false"
+      ES_JAVA_OPTS: -Xms512m -Xmx512m
+      action.auto_create_index: "false"
+    ports: ["127.0.0.1:${SEARCH_ELASTICSEARCH_PORT:-9210}:9200"]
+    volumes: [search_elasticsearch_data:/usr/share/elasticsearch/data]
+    healthcheck:
+      test: [CMD-SHELL, "curl -fsS 'http://localhost:9200/_cluster/health?wait_for_status=yellow' >/dev/null"]
+      interval: 2s
+      timeout: 5s
+      retries: 60
+  search-service:
+    profiles: [search]
+    build:
+      context: .
+      dockerfile: infrastructure/docker/search-service.Dockerfile
+    depends_on:
+      search-db: {condition: service_healthy}
+      search-elasticsearch: {condition: service_started}
+    ports: ["127.0.0.1:${SEARCH_PORT:-4008}:4008"]
+    environment:
+      SEARCH_HOST: 0.0.0.0
+      SEARCH_PORT: 4008
+      SEARCH_ENABLED: ${SEARCH_ENABLED:-false}
+      SEARCH_INDEXING_ENABLED: ${SEARCH_INDEXING_ENABLED:-false}
+      SEARCH_REBUILD_ENABLED: ${SEARCH_REBUILD_ENABLED:-false}
+      SEARCH_ELASTICSEARCH_URL: http://search-elasticsearch:9200
+      SEARCH_DATABASE_URL: ${SEARCH_DOCKER_DATABASE_URL:-postgresql://search_user:unconfigured@search-db:5432/search_db}
+      SEARCH_INDEX_ALIAS: ${SEARCH_INDEX_ALIAS:-commerce_v2_products_current}
+      SEARCH_RABBITMQ_URL: ${SEARCH_DOCKER_RABBITMQ_URL:-}
+      SEARCH_CATALOG_URL: ${SEARCH_DOCKER_CATALOG_URL:-http://host.docker.internal:4001}
+      SEARCH_LOOKUP_KEY: ${SEARCH_LOOKUP_KEY:-}
+      CATALOG_EVENT_KEY: ${CATALOG_EVENT_KEY:-}
+      SEARCH_CURSOR_KEY: ${SEARCH_CURSOR_KEY:-}
+      JWT_ISSUER: ${JWT_ISSUER:-ecommerce-auth}
+      JWT_AUDIENCE: ${JWT_AUDIENCE:-ecommerce-api}
+      JWT_PUBLIC_KEY_FILE: /run/keys/auth-public.pem
+    volumes: [./.secrets/auth-public.pem:/run/keys/auth-public.pem:ro]
+
 volumes:
+  commerce_rabbitmq_data:
   cart_redis_data:
   catalog_postgres_data:
+  notifications_postgres_data:
+
+  search_postgres_data:
+  search_elasticsearch_data:

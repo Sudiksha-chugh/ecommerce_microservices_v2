@@ -1,3 +1,4 @@
+import type {SagaKeys} from '@ecommerce/messaging';
 import { createHash } from 'node:crypto';
 import type { OrderItem } from '@ecommerce/contracts';
 import type { CartClient, CatalogClient } from './http-clients.js';
@@ -7,7 +8,7 @@ import { OrderError } from './errors.js';
 
 export class OrderService {
   constructor(private readonly orders: OrderRepository, private readonly cart: CartClient, private readonly catalog: CatalogClient) {}
-  async create(userId: string, key: string, authorization: string) {
+  async create(userId: string, key: string, authorization: string, checkoutKeys?: SagaKeys) {
     const existing = await this.orders.findByKey(userId, key);
     if (existing) return existing.order; // Completed retries never inspect a changed cart or current prices.
     const cart = await this.cart.getCart(authorization);
@@ -26,7 +27,7 @@ export class OrderService {
     catch { throw new OrderError(422, 'Order amount exceeds supported range'); }
     const snapshot = { items, totalAmountInPaise };
     const fingerprint = createHash('sha256').update(JSON.stringify({ version: 1, ...snapshot })).digest('hex');
-    return this.orders.create(userId, key, fingerprint, snapshot);
+    return this.orders.create(userId, key, fingerprint, snapshot, checkoutKeys);
   }
   findAll(userId: string, limit: number, offset: number) { return this.orders.findAll(userId, limit, offset); }
   findById(userId: string, id: string) { return this.orders.findById(userId, id); }

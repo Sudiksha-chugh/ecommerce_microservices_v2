@@ -23,6 +23,8 @@ const gatewayEnvironmentSchema = z.object({
   HOST: host.default('127.0.0.1'),
   PORT: port.default(3000),
   CATALOG_SERVICE_URL: upstreamOrigin.default('http://127.0.0.1:4001'),
+  PAYMENTS_SERVICE_URL: upstreamOrigin.default('http://127.0.0.1:4004'),
+  PAYMENTS_REQUEST_TIMEOUT_MS: z.coerce.number().int().min(1).max(120000).default(10000),
   INVENTORY_SERVICE_URL: upstreamOrigin.default('http://127.0.0.1:4005'),
   INVENTORY_REQUEST_TIMEOUT_MS: z.coerce.number().int().min(1).max(120000).default(10000),
   ORDERS_SERVICE_URL: upstreamOrigin.default('http://127.0.0.1:4003'),
@@ -166,4 +168,26 @@ export function loadInventoryEnvironment(environment: NodeJS.ProcessEnv = proces
     throw new Error(`Invalid Inventory Service environment: ${issues.join('; ')}`);
   }
   return result.data;
+}
+
+const paymentsEnvironmentSchema = z.object({
+ ...commonEnvironment, ...jwtEnvironment,
+ PAYMENTS_HOST: host.default('127.0.0.1'), PAYMENTS_PORT: port.default(4004),
+ PAYMENTS_PGHOST: host.default('127.0.0.1'), PAYMENTS_PGPORT: port.default(5432),
+ PAYMENTS_PGDATABASE: z.literal('payments_db').default('payments_db'),
+ PAYMENTS_PGUSER: z.string().min(1).default('payments_user'), PAYMENTS_PGPASSWORD: z.string().min(1),
+ PAYMENTS_PGPOOL_MAX: z.coerce.number().int().min(1).max(50).default(10),
+ PAYMENTS_PGCONNECT_TIMEOUT_MS: z.coerce.number().int().min(1).max(30000).default(2000),
+ PAYMENTS_PGQUERY_TIMEOUT_MS: z.coerce.number().int().min(1).max(30000).default(2000),
+ MOCK_PROVIDER_URL: upstreamOrigin.default('http://127.0.0.1:4006'),
+ PROVIDER_REQUEST_TIMEOUT_MS: z.coerce.number().int().min(1).max(30000).default(2000),
+ PAYMENT_LEASE_MS: z.coerce.number().int().min(1).max(120000).default(10000),
+ RECONCILIATION_INTERVAL_MS: z.coerce.number().int().min(50).max(60000).default(5000),
+ RECONCILIATION_BATCH_SIZE: z.coerce.number().int().min(1).max(100).default(10),
+}).refine((env) => env.PAYMENT_LEASE_MS > env.PROVIDER_REQUEST_TIMEOUT_MS, 'Payment lease must exceed provider deadline');
+export type PaymentsEnvironment = z.infer<typeof paymentsEnvironmentSchema>;
+export function loadPaymentsEnvironment(environment: NodeJS.ProcessEnv = process.env): PaymentsEnvironment {
+ const result = paymentsEnvironmentSchema.safeParse(environment);
+ if (!result.success) throw new Error(`Invalid Payments environment: ${result.error.issues.map((issue) => `${issue.path.join('.')}: ${issue.message}`).join('; ')}`);
+ return result.data;
 }

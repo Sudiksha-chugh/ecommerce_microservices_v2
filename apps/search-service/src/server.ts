@@ -1,0 +1,25 @@
+import type {ServerResponse} from 'node:http';
+import { readFile } from 'node:fs/promises';
+import { Pool } from 'pg';
+import { createTokenVerifier, InvalidTokenError } from '@ecommerce/security';
+import { bootstrapMessaging } from '@ecommerce/messaging';
+import { pollWorker } from '@ecommerce/event-persistence';
+import { loadSearchEnvironment } from './config.js';
+import { Elasticsearch } from './elasticsearch.js';
+import { SearchRepository } from './repository.js';
+import { CatalogClient } from './catalog-client.js';
+import { Projector } from './projector.js';
+import { RebuildCoordinator } from './rebuild.js';
+import { createApp } from './app.js';
+const env=loadSearchEnvironment();const active=env.SEARCH_ENABLED||env.SEARCH_INDEXING_ENABLED||env.SEARCH_REBUILD_ENABLED;
+const verify=active?await createTokenVerifier(await readFile(env.JWT_PUBLIC_KEY_FILE!,'utf8'),{issuer:env.JWT_ISSUER!,audience:env.JWT_AUDIENCE!}):async()=>{throw new InvalidTokenError();};
+const pool=new Pool({connectionString:env.SEARCH_DATABASE_URL,max:10,connectionTimeoutMillis:2000,statement_timeout:5000});pool.on('error',()=>console.warn(JSON.stringify({component:'search',outcome:'database_unavailable'})));
+const elastic=new Elasticsearch(env.SEARCH_ELASTICSEARCH_URL,env.SEARCH_INDEX_ALIAS,env.SEARCH_REQUEST_TIMEOUT_MS,env.SEARCH_ELASTICSEARCH_API_KEY);
+const repository=new SearchRepository(pool,env.SEARCH_INDEX_ALIAS);const catalog=new CatalogClient(env.SEARCH_CATALOG_URL,env.SEARCH_LOOKUP_KEY??'',env.SEARCH_REQUEST_TIMEOUT_MS);
+const projector=new Projector(repository,elastic);const coordinator=new RebuildCoordinator(repository,projector,catalog);
+const messaging=bootstrapMessaging('search',{MESSAGING_ENABLED:env.SEARCH_INDEXING_ENABLED?'true':'false',MESSAGING_URL:env.SEARCH_RABBITMQ_URL,MESSAGING_PREFETCH:String(env.SEARCH_RABBITMQ_PREFETCH)},env.SEARCH_INDEXING_ENABLED?{'search.product-events.v1':(event,context)=>projector.consume(event,env.CATALOG_EVENT_KEY!,context.retryCount)}:{},record=>{if(record.outcome==='dead_letter_handoff')projector.metrics.values.search_dlq_total++;console.info(JSON.stringify(record));});
+const worker=env.SEARCH_REBUILD_ENABLED?pollWorker(async()=>{await coordinator.step();},1000,'search-rebuild'):undefined;
+const server=createApp({enabled:env.SEARCH_ENABLED,rebuildEnabled:env.SEARCH_REBUILD_ENABLED,defaultLimit:env.SEARCH_DEFAULT_LIMIT,maxLimit:env.SEARCH_MAX_LIMIT,cursorKey:env.SEARCH_CURSOR_KEY??'',elastic,catalog,repository,verify,metrics:projector.metrics,indexerReadiness:messaging.readiness}).listen(env.SEARCH_PORT,env.SEARCH_HOST,()=>console.info(JSON.stringify({component:'search',outcome:'listening',port:env.SEARCH_PORT})));
+const responses=new Set<ServerResponse>();server.on('request',(_req,res)=>{responses.add(res);res.once('finish',()=>responses.delete(res));res.once('close',()=>responses.delete(res));});
+let closing=false;async function stop(){if(closing)return;closing=true;for(const response of responses){response.shouldKeepAlive=false;if(!response.headersSent)response.setHeader('Connection','close');}const timer=setTimeout(()=>{server.closeAllConnections();process.exit(1);},env.SHUTDOWN_TIMEOUT_MS);timer.unref();server.close(async()=>{try{await worker?.stop();await messaging.stop();await pool.end();}catch{process.exitCode=1;}finally{clearTimeout(timer);}});}
+server.on('error',()=>{void stop();process.exitCode=1;});process.on('SIGTERM',()=>void stop());process.on('SIGINT',()=>void stop());

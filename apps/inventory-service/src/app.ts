@@ -4,8 +4,9 @@ import type { InventoryService } from './inventory-service.js';
 import { uuidSchema, stockSchema, reservationSchema, emptyBodySchema } from './inventory-validation.js';
 import { requireAdmin } from './middleware/require-admin.js';
 import { errorHandler } from './middleware/error-handler.js';
-export function createApp(inventory: InventoryService, verify: TokenVerifier) {
+export function createApp(inventory: InventoryService, verify: TokenVerifier, messagingReadiness: () => string = () => 'disabled') {
   const app = express(); app.disable('x-powered-by');
+  app.get('/ready', (_req, res) => { const messaging = messagingReadiness(); res.status(['disabled','ready'].includes(messaging) ? 200 : 503).json({ messaging }); });
   app.get('/health', (_req, res) => res.json({ status: 'ok', service: 'inventory-service' }));
   app.use('/inventory', (_req, res, next) => { res.set('Cache-Control', 'no-store'); next(); });
   app.get('/inventory/:productId', async (req, res) => {

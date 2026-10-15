@@ -27,3 +27,5 @@ export async function createTokenVerifier(publicKeyPem: string, settings: JwtSet
     }
   };
 }
+
+export * from './internal-service.js';

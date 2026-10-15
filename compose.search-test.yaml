@@ -1,0 +1,36 @@
+# Exclusive disposable project with no development volumes, ports or secrets.
+services:
+  postgres:
+    image: postgres:17
+    environment: {POSTGRES_USER: search_test_admin, POSTGRES_PASSWORD: isolated_search_only, POSTGRES_DB: postgres}
+    ports: ["127.0.0.1::5432"]
+    tmpfs: [/var/lib/postgresql/data]
+    healthcheck: {test: [CMD-SHELL, "pg_isready -U search_test_admin -d postgres"], interval: 1s, timeout: 3s, retries: 30}
+  rabbitmq:
+    image: rabbitmq:4.2-management
+    hostname: isolated-search-broker
+    environment: {RABBITMQ_DEFAULT_USER: search_test_broker, RABBITMQ_DEFAULT_PASS: isolated_search_broker_only, RABBITMQ_DEFAULT_VHOST: search_test}
+    ports: ["127.0.0.1::5672", "127.0.0.1::15672"]
+    user: "999:999"
+    tmpfs: ["/var/lib/rabbitmq:uid=999,gid=999,mode=0700"]
+    healthcheck: {test: ["CMD", "bash", "-ec", "auth=$$(printf \"%s:%s\" \"$$RABBITMQ_DEFAULT_USER\" \"$$RABBITMQ_DEFAULT_PASS\" | base64 -w0); exec 3<>/dev/tcp/127.0.0.1/15672; printf \"GET /api/overview HTTP/1.1\\r\\nHost: localhost\\r\\nAuthorization: Basic %s\\r\\nConnection: close\\r\\n\\r\\n\" \"$$auth\" >&3; IFS= read -r status <&3; [[ \"$$status\" == *\" 200 \"* ]]"], interval: 2s, timeout: 5s, retries: 30}
+  elasticsearch:
+    image: docker.elastic.co/elasticsearch/elasticsearch:8.15.0
+    mem_limit: 768m
+    cpus: 2
+    environment:
+      discovery.type: single-node
+      xpack.security.enabled: "false"
+      xpack.ml.enabled: "false"
+      xpack.watcher.enabled: "false"
+      xpack.profiling.enabled: "false"
+      xpack.apm_data.enabled: "false"
+      ingest.geoip.downloader.enabled: "false"
+      node.roles: '[master,data,ingest]'
+      node.processors: '2'
+      node.store.allow_mmap: 'false'
+      ES_JAVA_OPTS: -Xms256m -Xmx256m -XX:TieredStopAtLevel=1
+      action.auto_create_index: "false"
+    ports: ["127.0.0.1::9200"]
+    tmpfs: ["/usr/share/elasticsearch/data:uid=1000,gid=0,mode=0770"]
+    healthcheck: {test: [CMD-SHELL, "curl -fsS 'http://localhost:9200/_cluster/health?wait_for_status=yellow' >/dev/null"], interval: 2s, timeout: 5s, retries: 60}

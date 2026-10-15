@@ -29,13 +29,13 @@ export interface OrderItem {
   quantity: number; lineTotalInPaise: number;
 }
 export interface OrderSummary {
-  id: string; userId: string; status: 'PENDING'; totalAmountInPaise: number;
+  id: string; userId: string; status: 'PENDING' | 'CONFIRMED' | 'FAILED' | 'CANCELLED'; totalAmountInPaise: number;
   createdAt: string; updatedAt: string;
 }
 export interface Order extends OrderSummary { items: OrderItem[] }
 
 export interface InventoryStock { productId: string; totalStock: number; reservedStock: number; availableStock: number }
-export type ReservationStatus = 'RESERVED' | 'CONFIRMED' | 'RELEASED' | 'EXPIRED';
+export type ReservationStatus = 'RESERVED' | 'CONFIRMED' | 'RELEASED' | 'EXPIRED' | 'RESTORED';
 export interface ReservationGroup {
   orderId: string; status: ReservationStatus; expiresAt: string;
   items: Array<{ id: string; productId: string; quantity: number; status: ReservationStatus; expiresAt: string }>;

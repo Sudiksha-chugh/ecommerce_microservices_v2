@@ -1,3 +1,4 @@
+import {testEnvironmentFile} from '../../../test/environment.js';
 import { randomUUID } from 'node:crypto';
 import { existsSync } from 'node:fs';
 import { loadEnvFile } from 'node:process';
@@ -14,7 +15,7 @@ import { CartService } from '../src/cart-service.js';
 import { CatalogClient } from '../src/catalog-client.js';
 import { createRedisClient, connectRedis } from '../src/redis/client.js';
 
-if (existsSync('.env.cart')) loadEnvFile('.env.cart');
+if (existsSync(testEnvironmentFile('.env.cart'))) loadEnvFile(testEnvironmentFile('.env.cart'));
 const testUrl = z.url().refine((value) => {
   const url = new URL(value);
   return ['redis:', 'rediss:'].includes(url.protocol) && url.pathname === '/15' && !url.search && !url.hash;
