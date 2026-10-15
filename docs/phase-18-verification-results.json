@@ -1,0 +1,2047 @@
+{
+  "status": "COMPLETE",
+  "date": "2026-10-15",
+  "scope": "Phase 18 SQL Query Telemetry and PostgreSQL EXPLAIN JSON Analysis",
+  "baseline": "c7d7074913853a2b53493da8d5cbfb9cb7065104",
+  "verifiedCommit": "19393cfa874b3f8c5f9145b89df12baca9b364cd",
+  "verifiedSourceIdentity": "a0d89ede56ae06da3a17e196ab99d875d9dabcc6bf653732f026c5f1d63c3457",
+  "runId": 38736159387,
+  "runUrl": "https://github.com/Sudiksha-chugh/ecommerce_microservices_v2/actions/runs/38736159387",
+  "stages": [
+    {
+      "name": "typecheck",
+      "status": "passed",
+      "started": "2026-10-15T12:38:30.115Z",
+      "finished": "2026-10-15T12:38:33.134Z"
+    },
+    {
+      "name": "compiled-preload",
+      "status": "passed",
+      "started": "2026-10-15T12:38:33.195Z",
+      "finished": "2026-10-15T12:38:33.810Z"
+    },
+    {
+      "name": "static-stack",
+      "status": "passed",
+      "started": "2026-10-15T12:38:33.875Z",
+      "finished": "2026-10-15T12:38:45.802Z"
+    },
+    {
+      "name": "harness",
+      "status": "passed",
+      "started": "2026-10-15T12:38:45.857Z",
+      "finished": "2026-10-15T12:38:47.152Z",
+      "tests": {
+        "total": 50,
+        "passed": 50,
+        "failed": 0,
+        "pending": 0,
+        "failedSuites": 0
+      }
+    },
+    {
+      "name": "observability-unit",
+      "status": "passed",
+      "started": "2026-10-15T12:38:47.208Z",
+      "finished": "2026-10-15T12:38:51.350Z",
+      "tests": {
+        "total": 79,
+        "passed": 79,
+        "failed": 0,
+        "pending": 0,
+        "failedSuites": 0
+      }
+    },
+    {
+      "name": "disabled-focused",
+      "status": "passed",
+      "started": "2026-10-15T12:38:51.407Z",
+      "finished": "2026-10-15T12:38:56.404Z",
+      "tests": {
+        "total": 228,
+        "passed": 228,
+        "failed": 0,
+        "pending": 0,
+        "failedSuites": 0
+      }
+    },
+    {
+      "name": "five-live-proofs-and-collector-performance",
+      "status": "passed",
+      "started": "2026-10-15T12:38:56.465Z",
+      "finished": "2026-10-15T12:41:50.531Z"
+    },
+    {
+      "name": "full-regression-1",
+      "status": "passed",
+      "started": "2026-10-15T12:41:50.591Z",
+      "finished": "2026-10-15T12:43:49.055Z",
+      "tests": {
+        "total": 1027,
+        "passed": 1027,
+        "failed": 0,
+        "pending": 0,
+        "failedSuites": 0
+      }
+    },
+    {
+      "name": "full-regression-2",
+      "status": "passed",
+      "started": "2026-10-15T12:43:49.120Z",
+      "finished": "2026-10-15T12:45:49.129Z",
+      "tests": {
+        "total": 1027,
+        "passed": 1027,
+        "failed": 0,
+        "pending": 0,
+        "failedSuites": 0
+      }
+    }
+  ],
+  "capacity": {
+    "hostCpus": 4,
+    "hostTotalBytes": 16766414848,
+    "hostAvailableBytes": 14836015104,
+    "swapUsedBytes": 0,
+    "dockerMemoryBytes": 16766414848,
+    "dockerCpus": 4,
+    "diskAvailableBytes": 91149328384
+  },
+  "liveProofs": {
+    "counts": {
+      "numTotalTests": 5,
+      "numPassedTests": 5,
+      "numFailedTests": 0,
+      "numPendingTests": 0,
+      "numTodoTests": 0,
+      "numFailedTestSuites": 0
+    },
+    "failures": [],
+    "unexecuted": [],
+    "suiteErrors": [],
+    "truncated": false,
+    "success": true
+  },
+  "sqlMetricSeries": {
+    "sql_query_executions_total": 7,
+    "sql_query_errors_total": 7,
+    "sql_query_slow_total": 7,
+    "sql_query_duration_seconds_count": 7
+  },
+  "grafana": {
+    "traceId": "e30bfa6b5966df870faa476bbe1617d1",
+    "traceRetrieved": true,
+    "dashboards": 8,
+    "queries": [
+      {
+        "dashboard": "commerce-dependencies",
+        "expression": "histogram_quantile(0.95,sum by (le,db_system_name) (rate(dependency_operation_duration_seconds_bucket[5m])))",
+        "series": 3
+      },
+      {
+        "dashboard": "commerce-dependencies",
+        "expression": "histogram_quantile(0.95,sum by (le,service_name) (rate(http_client_request_duration_seconds_bucket[5m])))",
+        "series": 1
+      },
+      {
+        "dashboard": "commerce-http-performance",
+        "expression": "histogram_quantile(0.5, sum by (le,service_name) (rate(http_server_request_duration_seconds_bucket[5m])))",
+        "series": 1
+      },
+      {
+        "dashboard": "commerce-http-performance",
+        "expression": "histogram_quantile(0.95, sum by (le,service_name) (rate(http_server_request_duration_seconds_bucket[5m])))",
+        "series": 1
+      },
+      {
+        "dashboard": "commerce-http-performance",
+        "expression": "histogram_quantile(0.99, sum by (le,service_name) (rate(http_server_request_duration_seconds_bucket[5m])))",
+        "series": 1
+      },
+      {
+        "dashboard": "commerce-inventory-compensation",
+        "expression": "sum by (operation,outcome) (rate(business_observations_total{operation=~\"reservation_.*|compensation_.*\"}[5m]))",
+        "series": 2
+      },
+      {
+        "dashboard": "commerce-orders-payments",
+        "expression": "sum by (operation,outcome) (rate(business_observations_total{operation=~\"order_.*|payment_.*|refund_.*|reconciliation_.*\"}[5m]))",
+        "series": 4
+      },
+      {
+        "dashboard": "commerce-rabbitmq",
+        "expression": "sum by (operation,outcome) (rate(messaging_operations_total[5m]))",
+        "series": 6
+      },
+      {
+        "dashboard": "commerce-rabbitmq",
+        "expression": "histogram_quantile(0.95,sum by (le) (rate(messaging_process_duration_seconds_bucket[5m])))",
+        "series": 1
+      },
+      {
+        "dashboard": "commerce-rabbitmq",
+        "expression": "sum by (operation) (rate(messaging_operations_total{operation=~\"retry|dead_letter\"}[5m]))",
+        "series": 2
+      },
+      {
+        "dashboard": "commerce-search-performance",
+        "expression": "histogram_quantile(0.95,sum by (le) (rate(http_server_request_duration_seconds_bucket{http_route=\"/search/products\"}[5m])))",
+        "series": 1
+      },
+      {
+        "dashboard": "commerce-search-performance",
+        "expression": "sum by (operation,outcome) (rate(business_observations_total{operation=~\"search_.*\"}[5m]))",
+        "series": 1
+      },
+      {
+        "dashboard": "commerce-search-performance",
+        "expression": "histogram_quantile(0.95, sum by (le, operation) (rate(search_rebuild_duration_seconds_bucket[5m])))",
+        "series": 1
+      },
+      {
+        "dashboard": "commerce-service-overview",
+        "expression": "sum by (service_name) (rate(http_server_requests_total[5m]))",
+        "series": 1
+      },
+      {
+        "dashboard": "commerce-service-overview",
+        "expression": "sum by (service_name) (rate(http_server_errors_total[5m]))",
+        "series": 1
+      },
+      {
+        "dashboard": "commerce-sql-performance",
+        "expression": "sum by (service_name,operation) (rate(sql_query_executions_total[5m]))",
+        "series": 7
+      },
+      {
+        "dashboard": "commerce-sql-performance",
+        "expression": "histogram_quantile(0.95,sum by (le,service_name,operation) (rate(sql_query_duration_seconds_bucket[5m])))",
+        "series": 7
+      },
+      {
+        "dashboard": "commerce-sql-performance",
+        "expression": "sum by (service_name,operation) (rate(sql_query_errors_total[5m]))",
+        "series": 7
+      },
+      {
+        "dashboard": "commerce-sql-performance",
+        "expression": "sum by (service_name,operation) (rate(sql_query_slow_total[5m]))",
+        "series": 7
+      }
+    ]
+  },
+  "checkoutTopology": [
+    {
+      "name": "HTTP POST",
+      "spanId": "af2feef979a099fa",
+      "parentSpanId": "",
+      "service": "observability-proof"
+    },
+    {
+      "name": "http POST",
+      "spanId": "61ddc3a06191cf7c",
+      "parentSpanId": "af2feef979a099fa",
+      "service": "observability-proof"
+    },
+    {
+      "name": "HTTP POST",
+      "spanId": "49aab293a5750d1a",
+      "parentSpanId": "61ddc3a06191cf7c",
+      "service": "observability-proof"
+    },
+    {
+      "name": "postgresql SELECT",
+      "spanId": "a97dd4dcc4b5e21f",
+      "parentSpanId": "49aab293a5750d1a",
+      "service": "observability-proof"
+    },
+    {
+      "name": "http GET",
+      "spanId": "0b5c90cd85518c95",
+      "parentSpanId": "49aab293a5750d1a",
+      "service": "observability-proof"
+    },
+    {
+      "name": "http GET",
+      "spanId": "b9cabc6fc521a1f3",
+      "parentSpanId": "49aab293a5750d1a",
+      "service": "observability-proof"
+    },
+    {
+      "name": "postgresql INSERT",
+      "spanId": "66a586446f25a64b",
+      "parentSpanId": "49aab293a5750d1a",
+      "service": "observability-proof"
+    },
+    {
+      "name": "postgresql CONNECT",
+      "spanId": "b687499499897bd4",
+      "parentSpanId": "49aab293a5750d1a",
+      "service": "observability-proof"
+    },
+    {
+      "name": "postgresql BEGIN",
+      "spanId": "d9a70e393e0bf576",
+      "parentSpanId": "49aab293a5750d1a",
+      "service": "observability-proof"
+    },
+    {
+      "name": "postgresql INSERT",
+      "spanId": "f77a782fb83aab81",
+      "parentSpanId": "49aab293a5750d1a",
+      "service": "observability-proof"
+    },
+    {
+      "name": "postgresql SELECT",
+      "spanId": "b23ab833bb7e3235",
+      "parentSpanId": "49aab293a5750d1a",
+      "service": "observability-proof"
+    },
+    {
+      "name": "postgresql INSERT",
+      "spanId": "d6c9b41d799b0598",
+      "parentSpanId": "49aab293a5750d1a",
+      "service": "observability-proof"
+    },
+    {
+      "name": "postgresql INSERT",
+      "spanId": "d186216350e5f731",
+      "parentSpanId": "49aab293a5750d1a",
+      "service": "observability-proof"
+    },
+    {
+      "name": "postgresql INSERT",
+      "spanId": "e2591b2020f963c0",
+      "parentSpanId": "49aab293a5750d1a",
+      "service": "observability-proof"
+    },
+    {
+      "name": "postgresql INSERT",
+      "spanId": "7a2a4b6d9ca88615",
+      "parentSpanId": "49aab293a5750d1a",
+      "service": "observability-proof"
+    },
+    {
+      "name": "postgresql UPDATE",
+      "spanId": "e39a26c354988d53",
+      "parentSpanId": "49aab293a5750d1a",
+      "service": "observability-proof"
+    },
+    {
+      "name": "postgresql INSERT",
+      "spanId": "01169df3c7b04b45",
+      "parentSpanId": "49aab293a5750d1a",
+      "service": "observability-proof"
+    },
+    {
+      "name": "postgresql UPDATE",
+      "spanId": "b04328af423aafa4",
+      "parentSpanId": "49aab293a5750d1a",
+      "service": "observability-proof"
+    },
+    {
+      "name": "postgresql COMMIT",
+      "spanId": "a2662312cf717008",
+      "parentSpanId": "49aab293a5750d1a",
+      "service": "observability-proof"
+    },
+    {
+      "name": "postgresql SELECT",
+      "spanId": "e174922be587a67e",
+      "parentSpanId": "49aab293a5750d1a",
+      "service": "observability-proof"
+    },
+    {
+      "name": "rabbitmq publish",
+      "spanId": "472281bf3d3d30c8",
+      "parentSpanId": "49aab293a5750d1a",
+      "service": "observability-proof"
+    },
+    {
+      "name": "rabbitmq publish",
+      "spanId": "86d263f92e62632b",
+      "parentSpanId": "49aab293a5750d1a",
+      "service": "observability-proof"
+    },
+    {
+      "name": "rabbitmq process",
+      "spanId": "5fbc11b2e1bbe194",
+      "parentSpanId": "472281bf3d3d30c8",
+      "service": "observability-proof"
+    },
+    {
+      "name": "postgresql CONNECT",
+      "spanId": "a3ed343be10b9546",
+      "parentSpanId": "5fbc11b2e1bbe194",
+      "service": "observability-proof"
+    },
+    {
+      "name": "postgresql INSERT",
+      "spanId": "64e308f4db8c680a",
+      "parentSpanId": "5fbc11b2e1bbe194",
+      "service": "observability-proof"
+    },
+    {
+      "name": "postgresql BEGIN",
+      "spanId": "6ecbe507a4ed5ecc",
+      "parentSpanId": "5fbc11b2e1bbe194",
+      "service": "observability-proof"
+    },
+    {
+      "name": "postgresql OTHER",
+      "spanId": "9f1d4a90e9416af5",
+      "parentSpanId": "5fbc11b2e1bbe194",
+      "service": "observability-proof"
+    },
+    {
+      "name": "postgresql SELECT",
+      "spanId": "0dd12dca9d50b36a",
+      "parentSpanId": "5fbc11b2e1bbe194",
+      "service": "observability-proof"
+    },
+    {
+      "name": "postgresql INSERT",
+      "spanId": "550dc959cd618d11",
+      "parentSpanId": "5fbc11b2e1bbe194",
+      "service": "observability-proof"
+    },
+    {
+      "name": "postgresql SELECT",
+      "spanId": "27d79f20d7859bb5",
+      "parentSpanId": "5fbc11b2e1bbe194",
+      "service": "observability-proof"
+    },
+    {
+      "name": "postgresql UPDATE",
+      "spanId": "2045b032cac0aa08",
+      "parentSpanId": "5fbc11b2e1bbe194",
+      "service": "observability-proof"
+    },
+    {
+      "name": "postgresql WITH",
+      "spanId": "74498a6e50b4115a",
+      "parentSpanId": "5fbc11b2e1bbe194",
+      "service": "observability-proof"
+    },
+    {
+      "name": "postgresql UPDATE",
+      "spanId": "df604b8a08788f3b",
+      "parentSpanId": "5fbc11b2e1bbe194",
+      "service": "observability-proof"
+    },
+    {
+      "name": "postgresql SELECT",
+      "spanId": "467faa86d81ad583",
+      "parentSpanId": "5fbc11b2e1bbe194",
+      "service": "observability-proof"
+    },
+    {
+      "name": "postgresql SELECT",
+      "spanId": "c1dedebfc09b452e",
+      "parentSpanId": "5fbc11b2e1bbe194",
+      "service": "observability-proof"
+    },
+    {
+      "name": "postgresql UPDATE",
+      "spanId": "487f120bfe19ae12",
+      "parentSpanId": "5fbc11b2e1bbe194",
+      "service": "observability-proof"
+    },
+    {
+      "name": "postgresql UPDATE",
+      "spanId": "a6b4138ba0796937",
+      "parentSpanId": "5fbc11b2e1bbe194",
+      "service": "observability-proof"
+    },
+    {
+      "name": "postgresql INSERT",
+      "spanId": "d98dc9cf980555bf",
+      "parentSpanId": "5fbc11b2e1bbe194",
+      "service": "observability-proof"
+    },
+    {
+      "name": "postgresql COMMIT",
+      "spanId": "7438a3b4848f678d",
+      "parentSpanId": "5fbc11b2e1bbe194",
+      "service": "observability-proof"
+    },
+    {
+      "name": "rabbitmq publish",
+      "spanId": "3111227fa163d3aa",
+      "parentSpanId": "5fbc11b2e1bbe194",
+      "service": "observability-proof"
+    },
+    {
+      "name": "rabbitmq publish",
+      "spanId": "925e633bb6910ed0",
+      "parentSpanId": "5fbc11b2e1bbe194",
+      "service": "observability-proof"
+    },
+    {
+      "name": "postgresql CONNECT",
+      "spanId": "22f34208982c05cb",
+      "parentSpanId": "79ae08ba5f11dd20",
+      "service": "observability-proof"
+    },
+    {
+      "name": "rabbitmq process",
+      "spanId": "79ae08ba5f11dd20",
+      "parentSpanId": "925e633bb6910ed0",
+      "service": "observability-proof"
+    },
+    {
+      "name": "postgresql BEGIN",
+      "spanId": "5f9585cf5e623749",
+      "parentSpanId": "79ae08ba5f11dd20",
+      "service": "observability-proof"
+    },
+    {
+      "name": "postgresql INSERT",
+      "spanId": "bfc161202de16fc7",
+      "parentSpanId": "79ae08ba5f11dd20",
+      "service": "observability-proof"
+    },
+    {
+      "name": "postgresql SELECT",
+      "spanId": "6b7421f4f0050217",
+      "parentSpanId": "79ae08ba5f11dd20",
+      "service": "observability-proof"
+    },
+    {
+      "name": "postgresql INSERT",
+      "spanId": "33f72688b8dd12e7",
+      "parentSpanId": "79ae08ba5f11dd20",
+      "service": "observability-proof"
+    },
+    {
+      "name": "postgresql UPDATE",
+      "spanId": "c2768e5555460418",
+      "parentSpanId": "79ae08ba5f11dd20",
+      "service": "observability-proof"
+    },
+    {
+      "name": "postgresql UPDATE",
+      "spanId": "67c7d4159101046e",
+      "parentSpanId": "79ae08ba5f11dd20",
+      "service": "observability-proof"
+    },
+    {
+      "name": "postgresql INSERT",
+      "spanId": "9f90069e55ed082f",
+      "parentSpanId": "79ae08ba5f11dd20",
+      "service": "observability-proof"
+    },
+    {
+      "name": "postgresql UPDATE",
+      "spanId": "850b373f0dbe258f",
+      "parentSpanId": "79ae08ba5f11dd20",
+      "service": "observability-proof"
+    },
+    {
+      "name": "postgresql SELECT",
+      "spanId": "8cf11929861d548b",
+      "parentSpanId": "79ae08ba5f11dd20",
+      "service": "observability-proof"
+    },
+    {
+      "name": "postgresql INSERT",
+      "spanId": "0c225aead47f224e",
+      "parentSpanId": "79ae08ba5f11dd20",
+      "service": "observability-proof"
+    },
+    {
+      "name": "postgresql UPDATE",
+      "spanId": "8dec9fc7b5795b05",
+      "parentSpanId": "79ae08ba5f11dd20",
+      "service": "observability-proof"
+    },
+    {
+      "name": "postgresql COMMIT",
+      "spanId": "608c28ff43858912",
+      "parentSpanId": "79ae08ba5f11dd20",
+      "service": "observability-proof"
+    },
+    {
+      "name": "rabbitmq publish",
+      "spanId": "57184caa2a97615e",
+      "parentSpanId": "79ae08ba5f11dd20",
+      "service": "observability-proof"
+    },
+    {
+      "name": "rabbitmq process",
+      "spanId": "0e4a72e7c7f795c6",
+      "parentSpanId": "57184caa2a97615e",
+      "service": "observability-proof"
+    },
+    {
+      "name": "postgresql CONNECT",
+      "spanId": "48853702c920f88c",
+      "parentSpanId": "0e4a72e7c7f795c6",
+      "service": "observability-proof"
+    },
+    {
+      "name": "postgresql BEGIN",
+      "spanId": "9d34759542f301a1",
+      "parentSpanId": "0e4a72e7c7f795c6",
+      "service": "observability-proof"
+    },
+    {
+      "name": "postgresql INSERT",
+      "spanId": "f5c1bf74df80824e",
+      "parentSpanId": "0e4a72e7c7f795c6",
+      "service": "observability-proof"
+    },
+    {
+      "name": "postgresql INSERT",
+      "spanId": "7a6d97d730a42797",
+      "parentSpanId": "0e4a72e7c7f795c6",
+      "service": "observability-proof"
+    },
+    {
+      "name": "postgresql SELECT",
+      "spanId": "945731eda9f57f4f",
+      "parentSpanId": "0e4a72e7c7f795c6",
+      "service": "observability-proof"
+    },
+    {
+      "name": "postgresql INSERT",
+      "spanId": "bd177ad167b1063d",
+      "parentSpanId": "0e4a72e7c7f795c6",
+      "service": "observability-proof"
+    },
+    {
+      "name": "postgresql COMMIT",
+      "spanId": "47afe78ab5091ad5",
+      "parentSpanId": "0e4a72e7c7f795c6",
+      "service": "observability-proof"
+    },
+    {
+      "name": "rabbitmq process",
+      "spanId": "ee4e07e2612ce3c4",
+      "parentSpanId": "3111227fa163d3aa",
+      "service": "observability-proof"
+    },
+    {
+      "name": "postgresql CONNECT",
+      "spanId": "4205719a12588a62",
+      "parentSpanId": "ee4e07e2612ce3c4",
+      "service": "observability-proof"
+    },
+    {
+      "name": "postgresql INSERT",
+      "spanId": "818a1f7d6761738f",
+      "parentSpanId": "ee4e07e2612ce3c4",
+      "service": "observability-proof"
+    },
+    {
+      "name": "postgresql BEGIN",
+      "spanId": "a4ef746a1e0fd672",
+      "parentSpanId": "ee4e07e2612ce3c4",
+      "service": "observability-proof"
+    },
+    {
+      "name": "postgresql SELECT",
+      "spanId": "e7f0869672f3f8bd",
+      "parentSpanId": "ee4e07e2612ce3c4",
+      "service": "observability-proof"
+    },
+    {
+      "name": "postgresql COMMIT",
+      "spanId": "6954b44db68079c5",
+      "parentSpanId": "ee4e07e2612ce3c4",
+      "service": "observability-proof"
+    },
+    {
+      "name": "postgresql BEGIN",
+      "spanId": "31e405451887b006",
+      "parentSpanId": "0e4a72e7c7f795c6",
+      "service": "observability-proof"
+    },
+    {
+      "name": "postgresql SELECT",
+      "spanId": "98581cc2719a9410",
+      "parentSpanId": "0e4a72e7c7f795c6",
+      "service": "observability-proof"
+    },
+    {
+      "name": "postgresql CONNECT",
+      "spanId": "e127cebcb96b7728",
+      "parentSpanId": "0e4a72e7c7f795c6",
+      "service": "observability-proof"
+    },
+    {
+      "name": "postgresql INSERT",
+      "spanId": "2a6d2866bd5cafff",
+      "parentSpanId": "0e4a72e7c7f795c6",
+      "service": "observability-proof"
+    },
+    {
+      "name": "postgresql UPDATE",
+      "spanId": "c6e0c183be56a385",
+      "parentSpanId": "0e4a72e7c7f795c6",
+      "service": "observability-proof"
+    },
+    {
+      "name": "postgresql SELECT",
+      "spanId": "b6bc35f2a974cfdc",
+      "parentSpanId": "0e4a72e7c7f795c6",
+      "service": "observability-proof"
+    },
+    {
+      "name": "postgresql COMMIT",
+      "spanId": "cee3c0ceeae27849",
+      "parentSpanId": "0e4a72e7c7f795c6",
+      "service": "observability-proof"
+    },
+    {
+      "name": "http POST",
+      "spanId": "60b34e8937bef47e",
+      "parentSpanId": "0e4a72e7c7f795c6",
+      "service": "observability-proof"
+    },
+    {
+      "name": "postgresql BEGIN",
+      "spanId": "04ce418e7e1c55a3",
+      "parentSpanId": "0e4a72e7c7f795c6",
+      "service": "observability-proof"
+    },
+    {
+      "name": "postgresql CONNECT",
+      "spanId": "d31f780e68828118",
+      "parentSpanId": "0e4a72e7c7f795c6",
+      "service": "observability-proof"
+    },
+    {
+      "name": "postgresql UPDATE",
+      "spanId": "d34765f5836dbbd8",
+      "parentSpanId": "0e4a72e7c7f795c6",
+      "service": "observability-proof"
+    },
+    {
+      "name": "postgresql SELECT",
+      "spanId": "fb0f0a4d959bad9a",
+      "parentSpanId": "0e4a72e7c7f795c6",
+      "service": "observability-proof"
+    },
+    {
+      "name": "postgresql UPDATE",
+      "spanId": "0d0917fb9e5ce5c1",
+      "parentSpanId": "0e4a72e7c7f795c6",
+      "service": "observability-proof"
+    },
+    {
+      "name": "postgresql SELECT",
+      "spanId": "cec3b27685405440",
+      "parentSpanId": "0e4a72e7c7f795c6",
+      "service": "observability-proof"
+    },
+    {
+      "name": "postgresql INSERT",
+      "spanId": "f9fbc375cd33d3e5",
+      "parentSpanId": "0e4a72e7c7f795c6",
+      "service": "observability-proof"
+    },
+    {
+      "name": "postgresql UPDATE",
+      "spanId": "4b368fc20a82ee4d",
+      "parentSpanId": "0e4a72e7c7f795c6",
+      "service": "observability-proof"
+    },
+    {
+      "name": "postgresql COMMIT",
+      "spanId": "b808b6210c03202c",
+      "parentSpanId": "0e4a72e7c7f795c6",
+      "service": "observability-proof"
+    },
+    {
+      "name": "postgresql BEGIN",
+      "spanId": "289029f6441ccf28",
+      "parentSpanId": "0e4a72e7c7f795c6",
+      "service": "observability-proof"
+    },
+    {
+      "name": "postgresql CONNECT",
+      "spanId": "5ee8bdd52b5258f3",
+      "parentSpanId": "0e4a72e7c7f795c6",
+      "service": "observability-proof"
+    },
+    {
+      "name": "postgresql SELECT",
+      "spanId": "dc9ea8f6b314ef18",
+      "parentSpanId": "0e4a72e7c7f795c6",
+      "service": "observability-proof"
+    },
+    {
+      "name": "postgresql UPDATE",
+      "spanId": "0b46cedbbbad69cd",
+      "parentSpanId": "0e4a72e7c7f795c6",
+      "service": "observability-proof"
+    },
+    {
+      "name": "postgresql SELECT",
+      "spanId": "fb705a2e30ec2529",
+      "parentSpanId": "0e4a72e7c7f795c6",
+      "service": "observability-proof"
+    },
+    {
+      "name": "postgresql COMMIT",
+      "spanId": "b31cd3474e5542ac",
+      "parentSpanId": "0e4a72e7c7f795c6",
+      "service": "observability-proof"
+    },
+    {
+      "name": "rabbitmq publish",
+      "spanId": "300f2f447860c470",
+      "parentSpanId": "0e4a72e7c7f795c6",
+      "service": "observability-proof"
+    },
+    {
+      "name": "rabbitmq process",
+      "spanId": "9db4cbabb9b3b6b8",
+      "parentSpanId": "300f2f447860c470",
+      "service": "observability-proof"
+    },
+    {
+      "name": "postgresql CONNECT",
+      "spanId": "88b41959ebcb99b5",
+      "parentSpanId": "9db4cbabb9b3b6b8",
+      "service": "observability-proof"
+    },
+    {
+      "name": "postgresql BEGIN",
+      "spanId": "340ab055b21acab0",
+      "parentSpanId": "9db4cbabb9b3b6b8",
+      "service": "observability-proof"
+    },
+    {
+      "name": "postgresql INSERT",
+      "spanId": "962c666634fa01ce",
+      "parentSpanId": "9db4cbabb9b3b6b8",
+      "service": "observability-proof"
+    },
+    {
+      "name": "postgresql SELECT",
+      "spanId": "5baf3aef92e5bedf",
+      "parentSpanId": "9db4cbabb9b3b6b8",
+      "service": "observability-proof"
+    },
+    {
+      "name": "postgresql SELECT",
+      "spanId": "e4023efc8a929dcc",
+      "parentSpanId": "9db4cbabb9b3b6b8",
+      "service": "observability-proof"
+    },
+    {
+      "name": "postgresql INSERT",
+      "spanId": "37a5cd17584865c3",
+      "parentSpanId": "9db4cbabb9b3b6b8",
+      "service": "observability-proof"
+    },
+    {
+      "name": "postgresql UPDATE",
+      "spanId": "7a0f1a383213a01d",
+      "parentSpanId": "9db4cbabb9b3b6b8",
+      "service": "observability-proof"
+    },
+    {
+      "name": "postgresql UPDATE",
+      "spanId": "3cc2c7ab0f527d05",
+      "parentSpanId": "9db4cbabb9b3b6b8",
+      "service": "observability-proof"
+    },
+    {
+      "name": "postgresql INSERT",
+      "spanId": "0fd8c45f4e1d8dfc",
+      "parentSpanId": "9db4cbabb9b3b6b8",
+      "service": "observability-proof"
+    },
+    {
+      "name": "postgresql UPDATE",
+      "spanId": "9836cf8e0c430d0a",
+      "parentSpanId": "9db4cbabb9b3b6b8",
+      "service": "observability-proof"
+    },
+    {
+      "name": "postgresql INSERT",
+      "spanId": "51b2cef3cfa164c4",
+      "parentSpanId": "9db4cbabb9b3b6b8",
+      "service": "observability-proof"
+    },
+    {
+      "name": "postgresql UPDATE",
+      "spanId": "ccd197914d7fc294",
+      "parentSpanId": "9db4cbabb9b3b6b8",
+      "service": "observability-proof"
+    },
+    {
+      "name": "postgresql COMMIT",
+      "spanId": "7081e978d365be44",
+      "parentSpanId": "9db4cbabb9b3b6b8",
+      "service": "observability-proof"
+    },
+    {
+      "name": "rabbitmq publish",
+      "spanId": "da04714d55b918b1",
+      "parentSpanId": "9db4cbabb9b3b6b8",
+      "service": "observability-proof"
+    },
+    {
+      "name": "rabbitmq process",
+      "spanId": "0ffda8996cc1987e",
+      "parentSpanId": "da04714d55b918b1",
+      "service": "observability-proof"
+    },
+    {
+      "name": "postgresql CONNECT",
+      "spanId": "bdb173bd75027548",
+      "parentSpanId": "0ffda8996cc1987e",
+      "service": "observability-proof"
+    },
+    {
+      "name": "postgresql SELECT",
+      "spanId": "25dc9784176eb9dd",
+      "parentSpanId": "0ffda8996cc1987e",
+      "service": "observability-proof"
+    },
+    {
+      "name": "postgresql INSERT",
+      "spanId": "34b2c6df944ec518",
+      "parentSpanId": "0ffda8996cc1987e",
+      "service": "observability-proof"
+    },
+    {
+      "name": "postgresql BEGIN",
+      "spanId": "cd429879fae11d66",
+      "parentSpanId": "0ffda8996cc1987e",
+      "service": "observability-proof"
+    },
+    {
+      "name": "postgresql SELECT",
+      "spanId": "cdf5037992c95e62",
+      "parentSpanId": "0ffda8996cc1987e",
+      "service": "observability-proof"
+    },
+    {
+      "name": "postgresql SELECT",
+      "spanId": "1524b878e5a67199",
+      "parentSpanId": "0ffda8996cc1987e",
+      "service": "observability-proof"
+    },
+    {
+      "name": "postgresql SELECT",
+      "spanId": "de41701790781ea7",
+      "parentSpanId": "0ffda8996cc1987e",
+      "service": "observability-proof"
+    },
+    {
+      "name": "postgresql WITH",
+      "spanId": "63bc304f84775bf2",
+      "parentSpanId": "0ffda8996cc1987e",
+      "service": "observability-proof"
+    },
+    {
+      "name": "postgresql UPDATE",
+      "spanId": "62930a1c479eb3f4",
+      "parentSpanId": "0ffda8996cc1987e",
+      "service": "observability-proof"
+    },
+    {
+      "name": "postgresql UPDATE",
+      "spanId": "6572660d4b2ccd1f",
+      "parentSpanId": "0ffda8996cc1987e",
+      "service": "observability-proof"
+    },
+    {
+      "name": "postgresql SELECT",
+      "spanId": "cbe40add96a5e97f",
+      "parentSpanId": "0ffda8996cc1987e",
+      "service": "observability-proof"
+    },
+    {
+      "name": "postgresql COMMIT",
+      "spanId": "2be920d52fdb86e9",
+      "parentSpanId": "0ffda8996cc1987e",
+      "service": "observability-proof"
+    },
+    {
+      "name": "postgresql INSERT",
+      "spanId": "8ab643f831d274b6",
+      "parentSpanId": "0ffda8996cc1987e",
+      "service": "observability-proof"
+    },
+    {
+      "name": "rabbitmq publish",
+      "spanId": "a440329976159e95",
+      "parentSpanId": "0ffda8996cc1987e",
+      "service": "observability-proof"
+    },
+    {
+      "name": "rabbitmq process",
+      "spanId": "adcefe562c2c46ff",
+      "parentSpanId": "a440329976159e95",
+      "service": "observability-proof"
+    },
+    {
+      "name": "postgresql BEGIN",
+      "spanId": "341f9e73d9454b6d",
+      "parentSpanId": "adcefe562c2c46ff",
+      "service": "observability-proof"
+    },
+    {
+      "name": "postgresql INSERT",
+      "spanId": "7975c99fdae3e281",
+      "parentSpanId": "adcefe562c2c46ff",
+      "service": "observability-proof"
+    },
+    {
+      "name": "postgresql CONNECT",
+      "spanId": "b6b0406e56456599",
+      "parentSpanId": "adcefe562c2c46ff",
+      "service": "observability-proof"
+    },
+    {
+      "name": "postgresql SELECT",
+      "spanId": "5053101fb2ba83ee",
+      "parentSpanId": "adcefe562c2c46ff",
+      "service": "observability-proof"
+    },
+    {
+      "name": "postgresql INSERT",
+      "spanId": "9c475d62ee8e8ab0",
+      "parentSpanId": "adcefe562c2c46ff",
+      "service": "observability-proof"
+    },
+    {
+      "name": "postgresql UPDATE",
+      "spanId": "28f908e11e17a23a",
+      "parentSpanId": "adcefe562c2c46ff",
+      "service": "observability-proof"
+    },
+    {
+      "name": "postgresql UPDATE",
+      "spanId": "c7d8ca47b7b8a78a",
+      "parentSpanId": "adcefe562c2c46ff",
+      "service": "observability-proof"
+    },
+    {
+      "name": "postgresql UPDATE",
+      "spanId": "0714b02d674cba88",
+      "parentSpanId": "adcefe562c2c46ff",
+      "service": "observability-proof"
+    },
+    {
+      "name": "postgresql SELECT",
+      "spanId": "506a131374b11534",
+      "parentSpanId": "adcefe562c2c46ff",
+      "service": "observability-proof"
+    },
+    {
+      "name": "postgresql COMMIT",
+      "spanId": "5b7bc417e13155b3",
+      "parentSpanId": "adcefe562c2c46ff",
+      "service": "observability-proof"
+    },
+    {
+      "name": "postgresql INSERT",
+      "spanId": "7db0176933078fe6",
+      "parentSpanId": "adcefe562c2c46ff",
+      "service": "observability-proof"
+    },
+    {
+      "name": "rabbitmq publish",
+      "spanId": "30fba980c2a9b87e",
+      "parentSpanId": "adcefe562c2c46ff",
+      "service": "observability-proof"
+    }
+  ],
+  "postgresql": {
+    "counts": {
+      "numTotalTests": 9,
+      "numPassedTests": 9,
+      "numFailedTests": 0,
+      "numPendingTests": 0,
+      "numTodoTests": 0,
+      "numFailedTestSuites": 0
+    },
+    "failures": [],
+    "unexecuted": [],
+    "suiteErrors": [],
+    "truncated": false,
+    "success": true
+  },
+  "sqlPerformance": {
+    "version": 1,
+    "passed": true,
+    "node": "v24.21.0",
+    "platform": "linux",
+    "exportTarget": "supplied_collector",
+    "limitations": "Local fixture microbenchmark; sampled memory at completion, no production-capacity claim. SDK-only includes the existing operation spans. Modes without a supplied Collector use an unavailable endpoint; only the explicit outage mode proves the forced outage condition when a live Collector is supplied.",
+    "runs": [
+      {
+        "mode": "disabled",
+        "requests": 2000,
+        "concurrency": 5,
+        "warmupRequests": 100,
+        "warmupMs": 27.566269000000034,
+        "elapsedMs": 113.50162499999999,
+        "p50Ms": 0.18822000000000116,
+        "p95Ms": 0.7552439999999478,
+        "p99Ms": 1.6733910000000378,
+        "throughput": 17620.8930929403,
+        "cpuMsPerRequest": 0.06568550000000001,
+        "rssBytes": 119672832,
+        "heapUsedBytes": 32123328,
+        "errors": 0,
+        "warmupErrors": 0,
+        "exitCode": 0,
+        "repetition": 1
+      },
+      {
+        "mode": "sdk-only",
+        "requests": 2000,
+        "concurrency": 5,
+        "warmupRequests": 100,
+        "warmupMs": 37.78743700000001,
+        "elapsedMs": 179.22009499999996,
+        "p50Ms": 0.2985739999999737,
+        "p95Ms": 1.078745999999967,
+        "p99Ms": 2.317719000000011,
+        "throughput": 11159.462893934971,
+        "cpuMsPerRequest": 0.12654,
+        "rssBytes": 137875456,
+        "heapUsedBytes": 34105320,
+        "errors": 0,
+        "warmupErrors": 0,
+        "exitCode": 0,
+        "repetition": 1
+      },
+      {
+        "mode": "sql-sampled",
+        "requests": 2000,
+        "concurrency": 5,
+        "warmupRequests": 100,
+        "warmupMs": 42.19763599999999,
+        "elapsedMs": 189.09416599999997,
+        "p50Ms": 0.33395699999999806,
+        "p95Ms": 1.1325610000000097,
+        "p99Ms": 2.278361000000018,
+        "throughput": 10576.740902730971,
+        "cpuMsPerRequest": 0.136494,
+        "rssBytes": 146321408,
+        "heapUsedBytes": 39996632,
+        "errors": 0,
+        "warmupErrors": 0,
+        "exitCode": 0,
+        "repetition": 1
+      },
+      {
+        "mode": "sql-full",
+        "requests": 2000,
+        "concurrency": 5,
+        "warmupRequests": 100,
+        "warmupMs": 47.575626,
+        "elapsedMs": 212.33961999999997,
+        "p50Ms": 0.36848799999995663,
+        "p95Ms": 1.3973399999999856,
+        "p99Ms": 2.4286050000000046,
+        "throughput": 9418.873406668055,
+        "cpuMsPerRequest": 0.150832,
+        "rssBytes": 142286848,
+        "heapUsedBytes": 38320760,
+        "errors": 0,
+        "warmupErrors": 0,
+        "exitCode": 0,
+        "repetition": 1
+      },
+      {
+        "mode": "sql-export-outage",
+        "requests": 2000,
+        "concurrency": 5,
+        "warmupRequests": 100,
+        "warmupMs": 47.46018400000003,
+        "elapsedMs": 180.13493099999994,
+        "p50Ms": 0.3124349999999936,
+        "p95Ms": 1.0561519999999973,
+        "p99Ms": 2.100436000000002,
+        "throughput": 11102.788275972975,
+        "cpuMsPerRequest": 0.125925,
+        "rssBytes": 135864320,
+        "heapUsedBytes": 39507016,
+        "errors": 0,
+        "warmupErrors": 0,
+        "exitCode": 0,
+        "repetition": 1
+      },
+      {
+        "mode": "sdk-only",
+        "requests": 2000,
+        "concurrency": 5,
+        "warmupRequests": 100,
+        "warmupMs": 35.73053599999997,
+        "elapsedMs": 173.64820200000003,
+        "p50Ms": 0.29402799999996887,
+        "p95Ms": 1.0673280000000318,
+        "p99Ms": 2.033726999999999,
+        "throughput": 11517.539352351023,
+        "cpuMsPerRequest": 0.12314449999999999,
+        "rssBytes": 146227200,
+        "heapUsedBytes": 34945904,
+        "errors": 0,
+        "warmupErrors": 0,
+        "exitCode": 0,
+        "repetition": 2
+      },
+      {
+        "mode": "sql-sampled",
+        "requests": 2000,
+        "concurrency": 5,
+        "warmupRequests": 100,
+        "warmupMs": 43.71470499999998,
+        "elapsedMs": 193.651138,
+        "p50Ms": 0.33565999999996166,
+        "p95Ms": 1.265493000000049,
+        "p99Ms": 2.2497390000000337,
+        "throughput": 10327.85048750914,
+        "cpuMsPerRequest": 0.13226849999999998,
+        "rssBytes": 136531968,
+        "heapUsedBytes": 40296752,
+        "errors": 0,
+        "warmupErrors": 0,
+        "exitCode": 0,
+        "repetition": 2
+      },
+      {
+        "mode": "sql-full",
+        "requests": 2000,
+        "concurrency": 5,
+        "warmupRequests": 100,
+        "warmupMs": 50.071095000000014,
+        "elapsedMs": 201.05961499999995,
+        "p50Ms": 0.3500410000000329,
+        "p95Ms": 1.2145079999999666,
+        "p99Ms": 2.370858999999996,
+        "throughput": 9947.298466676168,
+        "cpuMsPerRequest": 0.14461349999999998,
+        "rssBytes": 142303232,
+        "heapUsedBytes": 38062336,
+        "errors": 0,
+        "warmupErrors": 0,
+        "exitCode": 0,
+        "repetition": 2
+      },
+      {
+        "mode": "sql-export-outage",
+        "requests": 2000,
+        "concurrency": 5,
+        "warmupRequests": 100,
+        "warmupMs": 41.853819999999985,
+        "elapsedMs": 183.38368100000002,
+        "p50Ms": 0.31694200000004,
+        "p95Ms": 1.1473470000000248,
+        "p99Ms": 2.1961969999999837,
+        "throughput": 10906.095837393512,
+        "cpuMsPerRequest": 0.13097999999999999,
+        "rssBytes": 137256960,
+        "heapUsedBytes": 39879736,
+        "errors": 0,
+        "warmupErrors": 0,
+        "exitCode": 0,
+        "repetition": 2
+      },
+      {
+        "mode": "disabled",
+        "requests": 2000,
+        "concurrency": 5,
+        "warmupRequests": 100,
+        "warmupMs": 29.051636000000002,
+        "elapsedMs": 110.97224999999997,
+        "p50Ms": 0.1937679999999773,
+        "p95Ms": 0.7013749999999845,
+        "p99Ms": 1.1657960000000003,
+        "throughput": 18022.523648930255,
+        "cpuMsPerRequest": 0.0642775,
+        "rssBytes": 119263232,
+        "heapUsedBytes": 32113320,
+        "errors": 0,
+        "warmupErrors": 0,
+        "exitCode": 0,
+        "repetition": 2
+      },
+      {
+        "mode": "sql-sampled",
+        "requests": 2000,
+        "concurrency": 5,
+        "warmupRequests": 100,
+        "warmupMs": 43.38700399999999,
+        "elapsedMs": 183.79125,
+        "p50Ms": 0.3199159999999779,
+        "p95Ms": 1.067700000000002,
+        "p99Ms": 2.4307400000000143,
+        "throughput": 10881.910863547639,
+        "cpuMsPerRequest": 0.1298295,
+        "rssBytes": 138838016,
+        "heapUsedBytes": 39114208,
+        "errors": 0,
+        "warmupErrors": 0,
+        "exitCode": 0,
+        "repetition": 3
+      },
+      {
+        "mode": "sql-full",
+        "requests": 2000,
+        "concurrency": 5,
+        "warmupRequests": 100,
+        "warmupMs": 47.64536000000004,
+        "elapsedMs": 240.66887000000003,
+        "p50Ms": 0.4476070000000618,
+        "p95Ms": 1.484500999999966,
+        "p99Ms": 2.849223000000052,
+        "throughput": 8310.173226807437,
+        "cpuMsPerRequest": 0.1689155,
+        "rssBytes": 142151680,
+        "heapUsedBytes": 38386864,
+        "errors": 0,
+        "warmupErrors": 0,
+        "exitCode": 0,
+        "repetition": 3
+      },
+      {
+        "mode": "sql-export-outage",
+        "requests": 2000,
+        "concurrency": 5,
+        "warmupRequests": 100,
+        "warmupMs": 42.846588999999994,
+        "elapsedMs": 183.211572,
+        "p50Ms": 0.3320139999999583,
+        "p95Ms": 1.085675999999978,
+        "p99Ms": 2.0932770000000005,
+        "throughput": 10916.341026755668,
+        "cpuMsPerRequest": 0.1298105,
+        "rssBytes": 137191424,
+        "heapUsedBytes": 39893920,
+        "errors": 0,
+        "warmupErrors": 0,
+        "exitCode": 0,
+        "repetition": 3
+      },
+      {
+        "mode": "disabled",
+        "requests": 2000,
+        "concurrency": 5,
+        "warmupRequests": 100,
+        "warmupMs": 31.883182000000033,
+        "elapsedMs": 111.60659899999996,
+        "p50Ms": 0.19533100000001014,
+        "p95Ms": 0.7370180000000346,
+        "p99Ms": 1.4469649999999774,
+        "throughput": 17920.08732386873,
+        "cpuMsPerRequest": 0.06868300000000001,
+        "rssBytes": 124522496,
+        "heapUsedBytes": 32159344,
+        "errors": 0,
+        "warmupErrors": 0,
+        "exitCode": 0,
+        "repetition": 3
+      },
+      {
+        "mode": "sdk-only",
+        "requests": 2000,
+        "concurrency": 5,
+        "warmupRequests": 100,
+        "warmupMs": 35.72611499999999,
+        "elapsedMs": 184.79803499999997,
+        "p50Ms": 0.29410799999999426,
+        "p95Ms": 1.2368620000000305,
+        "p99Ms": 2.2755789999999934,
+        "throughput": 10822.62590075701,
+        "cpuMsPerRequest": 0.1256665,
+        "rssBytes": 137342976,
+        "heapUsedBytes": 34359344,
+        "errors": 0,
+        "warmupErrors": 0,
+        "exitCode": 0,
+        "repetition": 3
+      }
+    ],
+    "summaries": [
+      {
+        "mode": "disabled",
+        "runs": 3,
+        "p50Ms": 0.1937679999999773,
+        "p95Ms": 0.7370180000000346,
+        "p99Ms": 1.4469649999999774,
+        "throughput": 17920.08732386873,
+        "cpuMsPerRequest": 0.06568550000000001
+      },
+      {
+        "mode": "sdk-only",
+        "runs": 3,
+        "p50Ms": 0.29410799999999426,
+        "p95Ms": 1.078745999999967,
+        "p99Ms": 2.2755789999999934,
+        "throughput": 11159.462893934971,
+        "cpuMsPerRequest": 0.1256665
+      },
+      {
+        "mode": "sql-sampled",
+        "runs": 3,
+        "p50Ms": 0.33395699999999806,
+        "p95Ms": 1.1325610000000097,
+        "p99Ms": 2.278361000000018,
+        "throughput": 10576.740902730971,
+        "cpuMsPerRequest": 0.13226849999999998
+      },
+      {
+        "mode": "sql-full",
+        "runs": 3,
+        "p50Ms": 0.36848799999995663,
+        "p95Ms": 1.3973399999999856,
+        "p99Ms": 2.4286050000000046,
+        "throughput": 9418.873406668055,
+        "cpuMsPerRequest": 0.150832
+      },
+      {
+        "mode": "sql-export-outage",
+        "runs": 3,
+        "p50Ms": 0.31694200000004,
+        "p95Ms": 1.085675999999978,
+        "p99Ms": 2.100436000000002,
+        "throughput": 10916.341026755668,
+        "cpuMsPerRequest": 0.1298105
+      }
+    ]
+  },
+  "sampledSqlVsSdkOnly": {
+    "p95Percent": 4.988662762137186,
+    "throughputPercent": -5.221774531108503,
+    "cpuPercent": 5.2535878694799365
+  },
+  "existingHttpPerformance": {
+    "method": {
+      "repetitions": 3,
+      "order": "ABC / BCA / CAB",
+      "requests": 20000,
+      "warmups": 500,
+      "concurrency": 5,
+      "samplingRatio": 0.1,
+      "A": "SDK disabled",
+      "B": "SDK enabled; in-process no-op exporters, no telemetry network; retains queue/batch/periodic reader",
+      "C": "SDK with OTLP HTTP to supplied Collector",
+      "limitations": [
+        "Manual instrumentation only; no automatic patching exists",
+        "Startup excluded from HTTP timing, recorded separately",
+        "Process CPU and sampled peak memory; other host/container workloads not controlled",
+        "No real broker or store load; event workload is an awaited operation fixture",
+        "C without supplied Collector does not measure Collector/Tempo/Prometheus cost",
+        "No acceptance threshold is inferred from these results"
+      ]
+    },
+    "results": [
+      {
+        "repeat": 1,
+        "mode": "A",
+        "requests": 20000,
+        "concurrency": 5,
+        "warmups": 500,
+        "warmupMs": 226.886299,
+        "measurementMs": 1880.6775749999997,
+        "initializationMs": 86.146818,
+        "samplingRatio": 0,
+        "errorCount": 0,
+        "errorRate": 0,
+        "warmupErrors": 0,
+        "httpP50Ms": 0.37901400000009744,
+        "httpP95Ms": 0.7868909999999687,
+        "httpP99Ms": 1.3957570000000032,
+        "throughputPerSecond": 10634.465081022729,
+        "cpuUserMs": 2482.866,
+        "cpuSystemMs": 421.28,
+        "cpuCorePercent": 154.42019613595917,
+        "cpuMsPerRequest": 0.1452073,
+        "peakRssBytes": 328613888,
+        "peakHeapBytes": 148029056,
+        "eventOperations": 1000,
+        "eventMeasurementMs": 2.6623500000000604,
+        "eventP50Ms": 0.0024330000001100416,
+        "eventP95Ms": 0.004006000000117638,
+        "receiver": "none",
+        "exportsDuringHttp": {
+          "traces": 0,
+          "metrics": 0
+        },
+        "localReceiverTotals": {
+          "traces": 0,
+          "metrics": 0,
+          "bytes": 0
+        }
+      },
+      {
+        "repeat": 1,
+        "mode": "B",
+        "requests": 20000,
+        "concurrency": 5,
+        "warmups": 500,
+        "warmupMs": 267.961337,
+        "measurementMs": 2621.766135,
+        "initializationMs": 149.43928000000002,
+        "samplingRatio": 0.1,
+        "errorCount": 0,
+        "errorRate": 0,
+        "warmupErrors": 0,
+        "httpP50Ms": 0.5549450000000888,
+        "httpP95Ms": 1.0573829999999589,
+        "httpP99Ms": 2.1857120000000805,
+        "throughputPerSecond": 7628.445471548514,
+        "cpuUserMs": 3278.258,
+        "cpuSystemMs": 491.303,
+        "cpuCorePercent": 143.77945270087946,
+        "cpuMsPerRequest": 0.18847805,
+        "peakRssBytes": 340611072,
+        "peakHeapBytes": 159149016,
+        "eventOperations": 1000,
+        "eventMeasurementMs": 4.71601499999997,
+        "eventP50Ms": 0.003956000000016502,
+        "eventP95Ms": 0.006539999999858992,
+        "receiver": "none",
+        "exportsDuringHttp": {
+          "traces": 0,
+          "metrics": 0
+        },
+        "localReceiverTotals": {
+          "traces": 0,
+          "metrics": 0,
+          "bytes": 0
+        }
+      },
+      {
+        "repeat": 1,
+        "mode": "C",
+        "requests": 20000,
+        "concurrency": 5,
+        "warmups": 500,
+        "warmupMs": 303.57735899999994,
+        "measurementMs": 2649.0469590000002,
+        "initializationMs": 160.52344399999998,
+        "samplingRatio": 0.1,
+        "errorCount": 0,
+        "errorRate": 0,
+        "warmupErrors": 0,
+        "httpP50Ms": 0.5471340000003693,
+        "httpP95Ms": 1.1680980000001,
+        "httpP99Ms": 3.324645000000146,
+        "throughputPerSecond": 7549.885037730657,
+        "cpuUserMs": 3338.789,
+        "cpuSystemMs": 471.872,
+        "cpuCorePercent": 143.85026233881874,
+        "cpuMsPerRequest": 0.19053305,
+        "peakRssBytes": 343019520,
+        "peakHeapBytes": 160219336,
+        "eventOperations": 1000,
+        "eventMeasurementMs": 5.672878999999739,
+        "eventP50Ms": 0.004637000000002445,
+        "eventP95Ms": 0.0069710000002487504,
+        "receiver": "supplied Collector",
+        "exportsDuringHttp": {
+          "traces": 0,
+          "metrics": 0
+        },
+        "localReceiverTotals": {
+          "traces": 0,
+          "metrics": 0,
+          "bytes": 0
+        }
+      },
+      {
+        "repeat": 2,
+        "mode": "B",
+        "requests": 20000,
+        "concurrency": 5,
+        "warmups": 500,
+        "warmupMs": 272.96756100000005,
+        "measurementMs": 2438.392366,
+        "initializationMs": 144.724617,
+        "samplingRatio": 0.1,
+        "errorCount": 0,
+        "errorRate": 0,
+        "warmupErrors": 0,
+        "httpP50Ms": 0.517118999999866,
+        "httpP95Ms": 1.0151299999999992,
+        "httpP99Ms": 2.445447999999942,
+        "throughputPerSecond": 8202.12541626699,
+        "cpuUserMs": 3098.611,
+        "cpuSystemMs": 469.176,
+        "cpuCorePercent": 146.31718216263477,
+        "cpuMsPerRequest": 0.17838935,
+        "peakRssBytes": 341241856,
+        "peakHeapBytes": 161207576,
+        "eventOperations": 1000,
+        "eventMeasurementMs": 4.889355000000251,
+        "eventP50Ms": 0.004437000000052649,
+        "eventP95Ms": 0.006378999999924417,
+        "receiver": "none",
+        "exportsDuringHttp": {
+          "traces": 0,
+          "metrics": 0
+        },
+        "localReceiverTotals": {
+          "traces": 0,
+          "metrics": 0,
+          "bytes": 0
+        }
+      },
+      {
+        "repeat": 2,
+        "mode": "C",
+        "requests": 20000,
+        "concurrency": 5,
+        "warmups": 500,
+        "warmupMs": 265.00672699999996,
+        "measurementMs": 2658.4782430000005,
+        "initializationMs": 146.07711899999998,
+        "samplingRatio": 0.1,
+        "errorCount": 0,
+        "errorRate": 0,
+        "warmupErrors": 0,
+        "httpP50Ms": 0.5509090000000469,
+        "httpP95Ms": 1.119104999999763,
+        "httpP99Ms": 2.1909799999999677,
+        "throughputPerSecond": 7523.1008764738635,
+        "cpuUserMs": 3347.816,
+        "cpuSystemMs": 531.17,
+        "cpuCorePercent": 145.91001488214923,
+        "cpuMsPerRequest": 0.1939493,
+        "peakRssBytes": 347697152,
+        "peakHeapBytes": 160999328,
+        "eventOperations": 1000,
+        "eventMeasurementMs": 5.702614000000267,
+        "eventP50Ms": 0.004546000000118511,
+        "eventP95Ms": 0.0069410000000971195,
+        "receiver": "supplied Collector",
+        "exportsDuringHttp": {
+          "traces": 0,
+          "metrics": 0
+        },
+        "localReceiverTotals": {
+          "traces": 0,
+          "metrics": 0,
+          "bytes": 0
+        }
+      },
+      {
+        "repeat": 2,
+        "mode": "A",
+        "requests": 20000,
+        "concurrency": 5,
+        "warmups": 500,
+        "warmupMs": 262.421386,
+        "measurementMs": 1944.749564,
+        "initializationMs": 94.75323700000001,
+        "samplingRatio": 0,
+        "errorCount": 0,
+        "errorRate": 0,
+        "warmupErrors": 0,
+        "httpP50Ms": 0.3791839999998956,
+        "httpP95Ms": 0.8445970000000216,
+        "httpP99Ms": 1.9611779999999044,
+        "throughputPerSecond": 10284.10051876479,
+        "cpuUserMs": 2530.7,
+        "cpuSystemMs": 451.342,
+        "cpuCorePercent": 153.33809839589196,
+        "cpuMsPerRequest": 0.1491021,
+        "peakRssBytes": 329998336,
+        "peakHeapBytes": 148075400,
+        "eventOperations": 1000,
+        "eventMeasurementMs": 2.8640909999999167,
+        "eventP50Ms": 0.0025040000000444707,
+        "eventP95Ms": 0.004777000000103726,
+        "receiver": "none",
+        "exportsDuringHttp": {
+          "traces": 0,
+          "metrics": 0
+        },
+        "localReceiverTotals": {
+          "traces": 0,
+          "metrics": 0,
+          "bytes": 0
+        }
+      },
+      {
+        "repeat": 3,
+        "mode": "C",
+        "requests": 20000,
+        "concurrency": 5,
+        "warmups": 500,
+        "warmupMs": 266.11075600000004,
+        "measurementMs": 2606.823951,
+        "initializationMs": 144.01621999999998,
+        "samplingRatio": 0.1,
+        "errorCount": 0,
+        "errorRate": 0,
+        "warmupErrors": 0,
+        "httpP50Ms": 0.5441100000000461,
+        "httpP95Ms": 1.1238120000000436,
+        "httpP99Ms": 2.1346260000000257,
+        "throughputPerSecond": 7672.171337971568,
+        "cpuUserMs": 3342.803,
+        "cpuSystemMs": 462.544,
+        "cpuCorePercent": 145.97637092218048,
+        "cpuMsPerRequest": 0.19026735,
+        "peakRssBytes": 340668416,
+        "peakHeapBytes": 167138760,
+        "eventOperations": 1000,
+        "eventMeasurementMs": 4.700283000000127,
+        "eventP50Ms": 0.003224999999929423,
+        "eventP95Ms": 0.006409000000076048,
+        "receiver": "supplied Collector",
+        "exportsDuringHttp": {
+          "traces": 0,
+          "metrics": 0
+        },
+        "localReceiverTotals": {
+          "traces": 0,
+          "metrics": 0,
+          "bytes": 0
+        }
+      },
+      {
+        "repeat": 3,
+        "mode": "A",
+        "requests": 20000,
+        "concurrency": 5,
+        "warmups": 500,
+        "warmupMs": 231.28761800000004,
+        "measurementMs": 1914.635271,
+        "initializationMs": 87.32260400000001,
+        "samplingRatio": 0,
+        "errorCount": 0,
+        "errorRate": 0,
+        "warmupErrors": 0,
+        "httpP50Ms": 0.37948500000015883,
+        "httpP95Ms": 0.8370850000001155,
+        "httpP99Ms": 1.5955339999999865,
+        "throughputPerSecond": 10445.853736703672,
+        "cpuUserMs": 2535.214,
+        "cpuSystemMs": 416.141,
+        "cpuCorePercent": 154.14711327544535,
+        "cpuMsPerRequest": 0.14756775,
+        "peakRssBytes": 322723840,
+        "peakHeapBytes": 144224016,
+        "eventOperations": 1000,
+        "eventMeasurementMs": 2.7534960000002684,
+        "eventP50Ms": 0.0024429999998574203,
+        "eventP95Ms": 0.0038760000002184825,
+        "receiver": "none",
+        "exportsDuringHttp": {
+          "traces": 0,
+          "metrics": 0
+        },
+        "localReceiverTotals": {
+          "traces": 0,
+          "metrics": 0,
+          "bytes": 0
+        }
+      },
+      {
+        "repeat": 3,
+        "mode": "B",
+        "requests": 20000,
+        "concurrency": 5,
+        "warmups": 500,
+        "warmupMs": 267.93604200000004,
+        "measurementMs": 2594.631309,
+        "initializationMs": 146.81381199999998,
+        "samplingRatio": 0.1,
+        "errorCount": 0,
+        "errorRate": 0,
+        "warmupErrors": 0,
+        "httpP50Ms": 0.5328930000000582,
+        "httpP95Ms": 1.1905219999998735,
+        "httpP99Ms": 2.5654969999999366,
+        "throughputPerSecond": 7708.224259310362,
+        "cpuUserMs": 3287.465,
+        "cpuSystemMs": 476.686,
+        "cpuCorePercent": 145.0746002695368,
+        "cpuMsPerRequest": 0.18820755,
+        "peakRssBytes": 340680704,
+        "peakHeapBytes": 161077376,
+        "eventOperations": 1000,
+        "eventMeasurementMs": 4.160212000000229,
+        "eventP50Ms": 0.0031649999996261613,
+        "eventP95Ms": 0.005939000000125816,
+        "receiver": "none",
+        "exportsDuringHttp": {
+          "traces": 0,
+          "metrics": 0
+        },
+        "localReceiverTotals": {
+          "traces": 0,
+          "metrics": 0,
+          "bytes": 0
+        }
+      }
+    ]
+  },
+  "cleanup": {
+    "telemetry": {
+      "project": "commerce-v2-observability-7c150645b448",
+      "verified": true
+    },
+    "sql": {
+      "project": "commerce-v2-sql-d31e78afc4fc",
+      "verified": true
+    },
+    "storeProjects": [
+      "commerce-v2-stabilization-a347cca44ec4",
+      "commerce-v2-stabilization-add38d88a5da",
+      "commerce-v2-stabilization-c83af5b94065"
+    ]
+  },
+  "preservation": {
+    "originalBranch": "backend",
+    "originalHead": "e501bc4b9a6ba1e346aa64d9d43da1609c5f455c",
+    "originalIndexUnchanged": true,
+    "actualEnvironmentFilesHashIdentical": 8,
+    "developmentDatabaseCommands": 0,
+    "unrelatedContainerStops": 0,
+    "phase18DevelopmentBranchPushed": false
+  },
+  "localGatesBeforeRemote": {
+    "observabilityAndSql": {
+      "numTotalTests": 79,
+      "numPassedTests": 79,
+      "numFailedTests": 0,
+      "numFailedTestSuites": 0,
+      "numPendingTests": 0
+    },
+    "harness": {
+      "numTotalTests": 50,
+      "numPassedTests": 50,
+      "numFailedTests": 0,
+      "numFailedTestSuites": 0,
+      "numPendingTests": 0
+    },
+    "disabledFocused": {
+      "numTotalTests": 228,
+      "numPassedTests": 228,
+      "numFailedTests": 0,
+      "numFailedTestSuites": 0,
+      "numPendingTests": 0
+    },
+    "postgresql": {
+      "passed": true,
+      "cleanup": true,
+      "counts": {
+        "numTotalTests": 9,
+        "numPassedTests": 9,
+        "numFailedTests": 0,
+        "numPendingTests": 0,
+        "numTodoTests": 0,
+        "numFailedTestSuites": 0
+      }
+    },
+    "typecheck": true,
+    "compiledPreload": true,
+    "dashboardPromql": {
+      "dashboards": 8,
+      "expressions": 19,
+      "promtool": "passed"
+    },
+    "sqlPerformance": {
+      "passed": true,
+      "runs": 15,
+      "measuredQueries": 30000,
+      "warmupQueries": 1500,
+      "errors": 0,
+      "summaries": [
+        {
+          "mode": "disabled",
+          "runs": 3,
+          "p50Ms": 0.711667000000034,
+          "p95Ms": 1.7512500000000273,
+          "p99Ms": 3.6298329999999623,
+          "throughput": 5872.040877484435,
+          "cpuMsPerRequest": 0.0722855
+        },
+        {
+          "mode": "sdk-only",
+          "runs": 3,
+          "p50Ms": 0.7191660000000866,
+          "p95Ms": 2.8433339999999134,
+          "p99Ms": 5.379374999999982,
+          "throughput": 4840.621531641727,
+          "cpuMsPerRequest": 0.119974
+        },
+        {
+          "mode": "sql-sampled",
+          "runs": 3,
+          "p50Ms": 0.8646249999999895,
+          "p95Ms": 3.3110419999999863,
+          "p99Ms": 7.355792000000065,
+          "throughput": 3762.9468915004104,
+          "cpuMsPerRequest": 0.152894
+        },
+        {
+          "mode": "sql-full",
+          "runs": 3,
+          "p50Ms": 0.8521660000000111,
+          "p95Ms": 2.3897920000000568,
+          "p99Ms": 4.973458999999991,
+          "throughput": 4428.764560983467,
+          "cpuMsPerRequest": 0.16140000000000002
+        },
+        {
+          "mode": "sql-export-outage",
+          "runs": 3,
+          "p50Ms": 0.7817499999999882,
+          "p95Ms": 2.061125000000061,
+          "p99Ms": 4.3117919999999685,
+          "throughput": 4995.8425223009735,
+          "cpuMsPerRequest": 0.13459800000000002
+        }
+      ],
+      "exportTarget": "unavailable_loopback",
+      "limitations": "Local fixture microbenchmark; sampled memory at completion, no production-capacity claim. SDK-only includes the existing operation spans. Modes without a supplied Collector use an unavailable endpoint; only the explicit outage mode proves the forced outage condition when a live Collector is supplied."
+    }
+  },
+  "historicalLocalCorrections": [
+    "Permission test was strengthened to require SQLSTATE 42501 independent of read-only defaults; it initially failed because Pool.query replaced an errored connection. It now pins one connection.",
+    "One earlier benchmark worker failed without retained details; its cause remains unknown. The benchmark now retains bounded redacted failure evidence and the outer gate marks performance failure incomplete. Later frozen-source local gates passed; historical failure is not reclassified as a pass.",
+    "Privilege audit added explicit column, sequence, maintenance and grant-option checks, with real PostgreSQL regressions."
+  ],
+  "firstRemoteAttempt": {
+    "runId": 38733927878,
+    "commit": "d0e676c2c1c4f8d59337b53e1fcc8d31a2d6e81b",
+    "stages": [
+      {
+        "name": "typecheck",
+        "status": "passed",
+        "started": "2026-10-15T12:20:58.189Z",
+        "finished": "2026-10-15T12:21:02.005Z"
+      },
+      {
+        "name": "compiled-preload",
+        "status": "passed",
+        "started": "2026-10-15T12:21:02.075Z",
+        "finished": "2026-10-15T12:21:02.886Z"
+      },
+      {
+        "name": "static-stack",
+        "status": "passed",
+        "started": "2026-10-15T12:21:02.954Z",
+        "finished": "2026-10-15T12:21:13.531Z"
+      },
+      {
+        "name": "harness",
+        "status": "passed",
+        "started": "2026-10-15T12:21:13.598Z",
+        "finished": "2026-10-15T12:21:15.309Z",
+        "tests": {
+          "total": 50,
+          "passed": 50,
+          "failed": 0,
+          "pending": 0,
+          "failedSuites": 0
+        }
+      },
+      {
+        "name": "observability-unit",
+        "status": "passed",
+        "started": "2026-10-15T12:21:15.373Z",
+        "finished": "2026-10-15T12:21:20.501Z",
+        "tests": {
+          "total": 79,
+          "passed": 79,
+          "failed": 0,
+          "pending": 0,
+          "failedSuites": 0
+        }
+      },
+      {
+        "name": "disabled-focused",
+        "status": "passed",
+        "started": "2026-10-15T12:21:20.571Z",
+        "finished": "2026-10-15T12:21:27.010Z",
+        "tests": {
+          "total": 228,
+          "passed": 228,
+          "failed": 0,
+          "pending": 0,
+          "failedSuites": 0
+        }
+      },
+      {
+        "name": "five-live-proofs-and-collector-performance",
+        "status": "passed",
+        "started": "2026-10-15T12:21:27.089Z",
+        "finished": "2026-10-15T12:24:34.631Z"
+      },
+      {
+        "name": "full-regression-1",
+        "status": "failed",
+        "started": "2026-10-15T12:24:34.703Z",
+        "tests": {
+          "counts": {
+            "numTotalTests": 1027,
+            "numPassedTests": 1026,
+            "numFailedTests": 1,
+            "numPendingTests": 0,
+            "numTodoTests": 0,
+            "numFailedTestSuites": 2
+          },
+          "failures": [
+            {
+              "file": "/home/runner/work/ecommerce_microservices_v2/ecommerce_microservices_v2/apps/orders-service/test/refund-compensation.test.ts",
+              "name": "Cancellation coordinates payment, refunds and inventory in the checkout Saga keeps ambiguous payments protected during cancellation then refunds delayed success",
+              "status": "failed",
+              "errors": [
+                "AssertionError: expected 'CANCELLATION_PENDING' to be 'REFUND_PENDING' // Object.is equality\n    at /home/runner/work/ecommerce_microservices_v2/ecommerce_microservices_v2/apps/orders-service/test/refund-compensation.test.ts:113:455\n    at process.processTicksAndRejections (node:internal/process/task_queues:104:5)\n    at async file:///home/runner/work/ecommerce_microservices_v2/ecommerce_microservices_v2/node_modules/vitest/dist/chunks/run.BTlFXlnv.js:2783:20"
+              ]
+            }
+          ],
+          "unexecuted": [],
+          "suiteErrors": [],
+          "truncated": false,
+          "success": false
+        },
+        "error": "full-regression-1 failed with exit 1",
+        "finished": "2026-10-15T12:26:47.990Z"
+      }
+    ],
+    "fullRegression2": "not executed; stopped on first failure",
+    "controlledFixtureCorrection": {
+      "paths": [
+        "apps/orders-service/test/refund-compensation.test.ts",
+        "phase18-source-manifest.json"
+      ],
+      "newIdentity": "a0d89ede56ae06da3a17e196ab99d875d9dabcc6bf653732f026c5f1d63c3457",
+      "sourceFiles": 449,
+      "productionFilesChanged": 0,
+      "controlledReproducer": "same state mismatch before fix with future retry deadline; this establishes the fixture timing defect, not a recovered original deadline measurement",
+      "after": {
+        "passed": 1,
+        "unexecutedByNameFilter": 57,
+        "meaning": "diagnostic targeted run only, not a full-file or full-regression pass"
+      },
+      "typecheck": "PASS",
+      "ownedBeforeAndAfterFixturesCleanup": true,
+      "patch": "/private/tmp/commerce-v2-phase18-evidence/reviewed-refund-fixture-correction.patch"
+    }
+  },
+  "gitScope": {
+    "verificationBranch": "verification/phase18-sql",
+    "candidateCommits": [
+      "d0e676c2c1c4f8d59337b53e1fcc8d31a2d6e81b",
+      "19393cfa874b3f8c5f9145b89df12baca9b364cd"
+    ],
+    "mainWorkflowOnlyRegistration": "90ffb3a9699733b7c5a245c78a798fd2c67b2bd5",
+    "authorizedDispatches": 2,
+    "additionalDispatches": 0,
+    "finalFeatureCommit": "local only, finalized after these verified gates"
+  },
+  "limitations": [
+    "Generic plans are estimates for fixed approved representative lookups, not actual runtimes or value-specific plans.",
+    "Benchmark is a bounded localhost PostgreSQL workload, not production capacity or a nine-process deployment certification.",
+    "Internal diagnostic credentials/role and trusted schema or replica require operator provisioning; diagnostic code performs no production schema/data/privilege changes.",
+    "The final local feature commit changes documentation after CI; all non-documentation files are verified byte-identical to the tested candidate. Its rebuilt manifest identifies the documented tree, distinct from the CI source identity."
+  ]
+}

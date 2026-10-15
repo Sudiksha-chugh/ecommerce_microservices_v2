@@ -5,3 +5,7 @@ export * from './middleware.js';
 export * from './dependencies.js';
 export * from './events.js';
 export * from './commits.js';
+export * from './sql-telemetry.js';
+export * from './sql-plan.js';
+export * from './sql-diagnostics.js';
+export * from './sql-reporting.js';

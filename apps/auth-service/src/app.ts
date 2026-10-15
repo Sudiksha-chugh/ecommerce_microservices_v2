@@ -1,4 +1,4 @@
-import {httpTelemetry} from '@ecommerce/observability';
+import {httpTelemetry,mountSqlReporting} from '@ecommerce/observability';
 import {verifyInternalRequest} from '@ecommerce/security';
 import {z} from 'zod';
 import type {PublicUser} from '@ecommerce/contracts';
@@ -7,9 +7,9 @@ import type { AuthService } from './auth-service.js';
 import { loginSchema, registrationSchema } from './user-validation.js';
 import { errorHandler } from './middleware/error-handler.js';
 
-export function createApp(auth: AuthService,internal?:{key:string;lookup:(id:string)=>Promise<PublicUser|undefined>}) {
+export function createApp(auth: AuthService,internal?:{key:string;lookup:(id:string)=>Promise<PublicUser|undefined>},sqlVerify?:(authorization:string|undefined)=>Promise<{role:string}>) {
   const app = express();app.use(httpTelemetry('auth-service'));
-  app.disable('x-powered-by');
+  app.disable('x-powered-by');if(sqlVerify)mountSqlReporting(app,sqlVerify);
   app.get('/internal/users/:id/contact',async(req,res)=>{
     res.set('Cache-Control','no-store');
     if(!internal||!verifyInternalRequest(req.headers,req.method,req.path,internal.key)){res.status(401).json({error:{message:'Unauthorized'}});return;}

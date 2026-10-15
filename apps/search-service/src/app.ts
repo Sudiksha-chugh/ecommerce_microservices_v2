@@ -1,4 +1,4 @@
-import {httpTelemetry,correlation} from '@ecommerce/observability';
+import {httpTelemetry,correlation,mountSqlReporting} from '@ecommerce/observability';
 import express from 'express';
 import { randomUUID } from 'node:crypto';
 import { z } from 'zod';
@@ -11,7 +11,7 @@ import type { CatalogClient } from './catalog-client.js';
 import type { SearchRepository } from './repository.js';
 import { SearchMetrics } from './metrics.js';
 export interface AppOptions {enabled:boolean;rebuildEnabled:boolean;defaultLimit:number;maxLimit:number;cursorKey:string;elastic:Elasticsearch;catalog:CatalogClient;repository:SearchRepository;verify:TokenVerifier;metrics?:SearchMetrics;indexerReadiness?:()=>string}
-export function createApp(options:AppOptions){const app=express();app.disable('x-powered-by');const metrics=options.metrics??new SearchMetrics();const codec=options.enabled?new CursorCodec(options.cursorKey):undefined;
+export function createApp(options:AppOptions){const app=express();app.disable('x-powered-by');mountSqlReporting(app,options.verify);const metrics=options.metrics??new SearchMetrics();const codec=options.enabled?new CursorCodec(options.cursorKey):undefined;
  app.use((_req,res,next)=>{res.locals.requestId=randomUUID();res.set('X-Request-Id',res.locals.requestId);next();});
  app.use(httpTelemetry('search-service'));
  app.get('/health',(_req,res)=>res.json({status:'ok',service:'search-service'}));

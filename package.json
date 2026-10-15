@@ -79,7 +79,10 @@
     "test:harness": "vitest run --config vitest.harness.config.mjs",
     "verify:phase16": "node scripts/verify-phase16.mjs",
     "test:observability": "vitest run packages/observability/test",
-    "verify:observability": "node scripts/observability-runner.mjs"
+    "verify:observability": "node scripts/observability-runner.mjs",
+    "sql:diagnostics": "node --import tsx scripts/sql-diagnostics.mjs",
+    "test:sql": "vitest run packages/observability/test/sql",
+    "test:sql:integration": "node scripts/sql-integration-runner.mjs"
   },
   "devDependencies": {
     "@types/express": "^5.0.0",

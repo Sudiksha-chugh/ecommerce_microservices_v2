@@ -1,4 +1,4 @@
-import {httpTelemetry} from '@ecommerce/observability';
+import {httpTelemetry,mountSqlReporting} from '@ecommerce/observability';
 import { verifyInternalRequest } from '@ecommerce/security';
 import { z } from 'zod';
 import { CatalogSearchSource, exportQuery } from './search-source.js';
@@ -12,7 +12,7 @@ import { errorHandler } from './middleware/error-handler.js';
 
 export function createApp(repository: Pick<ProductRepository, 'findAll' | 'findById' | 'create' | 'update' | 'delete'>, verifyToken: TokenVerifier, searchSource?: CatalogSearchSource, searchKey = '') {
   const app = express();app.use(httpTelemetry('catalog-service'));
-  app.disable('x-powered-by');
+  app.disable('x-powered-by');mountSqlReporting(app,verifyToken);
 
   app.get(['/internal/catalog/search-watermark','/internal/catalog/search-export','/internal/catalog/search-visible','/internal/catalog/search-documents'], async(req,res)=>{
     if(!searchSource){res.status(404).json({error:{message:'Route not found'}});return;}

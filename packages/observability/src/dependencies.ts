@@ -1,3 +1,4 @@
+import {beginSqlObservation} from './sql-telemetry.js';
 import {enabled,startOperation,SpanKind,inject,correlation,context} from './context.js';
 import {dependencyMetric,httpClientMetric} from './metrics.js';
 export async function telemetryFetch(input:string|URL,init:RequestInit={},dependency:'http'|'elasticsearch'='http'):Promise<Response>{
@@ -11,21 +12,22 @@ export async function telemetryFetch(input:string|URL,init:RequestInit={},depend
 const wrapped=new WeakMap<object,object>();
 function category(value:unknown,allowed:readonly string[]){const token=typeof value==='string'?value.trim().split(/\s+/)[0]?.toUpperCase():undefined;return token&&allowed.includes(token)?token:'OTHER';}
 // Callback and Promise APIs retain their original return shape and callback argument order.
-function instrumentCall(target:object,fn:Function,args:unknown[],system:string,op:string,wrapResult?:(value:unknown)=>unknown){
+function instrumentCall(target:object,fn:Function,args:unknown[],system:string,op:string,wrapResult?:(value:unknown)=>unknown,sql?:unknown){
  const parent=context.active();
- const span=startOperation(system+' '+op,SpanKind.CLIENT,{'db.system.name':system,'db.operation.name':op}),start=performance.now();let done=false;
- const finish=(error?:unknown)=>{if(done)return;done=true;span.end(error);dependencyMetric(system,op,error?'error':'success',(performance.now()-start)/1000);};
+ const observation=system==='postgresql'&&op!=='CONNECT'?beginSqlObservation(sql,op):undefined;
+ const span=startOperation(system+' '+op,SpanKind.CLIENT,{'db.system.name':system,'db.operation.name':op}),start=performance.now();let done=false;if(observation?.fingerprint)span.update({'db.query.fingerprint':observation.fingerprint});
+ const finish=(error?:unknown,failed=Boolean(error))=>{if(done)return;done=true;observation?.finish(performance.now()-start,failed);span.end(failed?true:undefined);dependencyMetric(system,op,failed?'error':'success',(performance.now()-start)/1000);};
  const callback=args.at(-1);
  if(typeof callback==='function')args=args.slice(0,-1).concat((...values:unknown[])=>{finish(values[0]);if(!values[0]&&wrapResult&&values[1])values[1]=wrapResult(values[1]);return context.with(parent,()=>callback(...values));});
  try{const value=span.run(()=>Reflect.apply(fn,target,args));
-  if(value&&typeof value.then==='function')return value.then((result:unknown)=>{finish();return wrapResult?wrapResult(result):result;},(error:unknown)=>{finish(error);throw error;});
+  if(value&&typeof value.then==='function')return value.then((result:unknown)=>{finish();return wrapResult?wrapResult(result):result;},(error:unknown)=>{finish(error,true);throw error;});
   if(typeof callback!=='function')finish();return wrapResult&&value?wrapResult(value):value;
- }catch(error){finish(error);throw error;}
+ }catch(error){finish(error,true);throw error;}
 }
 export function instrumentPg<T extends object>(client:T):T{
  if(!enabled())return client;const previous=wrapped.get(client);if(previous)return previous as T;
  const proxy=new Proxy(client,{get(target,key){const value=Reflect.get(target,key,target);if(typeof value!=='function')return value;
-  if(key==='query')return (...args:unknown[])=>{const sql=typeof args[0]==='object'&&args[0]!==null?Reflect.get(args[0],'text'):args[0];return instrumentCall(target,value,args,'postgresql',category(sql,['SELECT','INSERT','UPDATE','DELETE','BEGIN','COMMIT','ROLLBACK','WITH','CREATE','ALTER','DROP']));};
+  if(key==='query')return (...args:unknown[])=>{const sql=typeof args[0]==='object'&&args[0]!==null?Reflect.get(args[0],'text'):args[0];return instrumentCall(target,value,args,'postgresql',category(sql,['SELECT','INSERT','UPDATE','DELETE','BEGIN','COMMIT','ROLLBACK','WITH','CREATE','ALTER','DROP']),undefined,sql);};
   if(key==='connect')return (...args:unknown[])=>instrumentCall(target,value,args,'postgresql','CONNECT',value=>typeof value==='object'&&value!==null?instrumentPg(value):value);
   return value.bind(target);
  }});wrapped.set(client,proxy);return proxy;

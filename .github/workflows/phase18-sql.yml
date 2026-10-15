@@ -1,0 +1,54 @@
+name: Phase 18 SQL observability verification
+# Draft: registration on the default branch and dispatch require separate authorization.
+on:
+  workflow_dispatch:
+    inputs:
+      source_identity:
+        description: Approved Phase 18 SQL manifest SHA256
+        required: true
+        type: string
+      expected_commit:
+        description: Approved verification commit full SHA
+        required: true
+        type: string
+permissions:
+  contents: read
+concurrency:
+  group: phase18-dedicated-verification
+  cancel-in-progress: false
+jobs:
+  verification:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 180
+    env:
+      PHASE18_SOURCE_IDENTITY: ${{ inputs.source_identity }}
+      PHASE18_EXPECTED_COMMIT: ${{ inputs.expected_commit }}
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+          ref: ${{ inputs.expected_commit }}
+      - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
+        with:
+          node-version: '24.21.0'
+          package-manager-cache: false
+      - run: npm ci --ignore-scripts
+      - name: Immutable source, readiness, five proofs, performance, independent full runs
+        run: node scripts/verify-phase18.mjs
+        env:
+          PHASE18_EVIDENCE_DIR: ${{ runner.temp }}/phase18-evidence
+      - name: Retain only bounded result summaries and sanitized proof/performance evidence
+        if: always()
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
+        with:
+          name: phase18-${{ github.run_id }}-${{ github.run_attempt }}
+          path: |
+            ${{ runner.temp }}/phase18-evidence/stage-results.json
+            ${{ runner.temp }}/phase18-evidence/static/static.json
+            ${{ runner.temp }}/phase18-evidence/live/flow-proof.json
+            ${{ runner.temp }}/phase18-evidence/live/result.json
+            ${{ runner.temp }}/phase18-evidence/live/performance/performance.json
+            ${{ runner.temp }}/phase18-evidence/live/sql/sql-integration.json
+            ${{ runner.temp }}/phase18-evidence/live/sql/sql-performance.json
+          if-no-files-found: warn
+          retention-days: 7

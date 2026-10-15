@@ -1,4 +1,4 @@
-import {httpTelemetry} from '@ecommerce/observability';
+import {httpTelemetry,mountSqlReporting} from '@ecommerce/observability';
 import express from 'express';
 import type { TokenVerifier } from '@ecommerce/security';
 import type { InventoryService } from './inventory-service.js';
@@ -6,7 +6,7 @@ import { uuidSchema, stockSchema, reservationSchema, emptyBodySchema } from './i
 import { requireAdmin } from './middleware/require-admin.js';
 import { errorHandler } from './middleware/error-handler.js';
 export function createApp(inventory: InventoryService, verify: TokenVerifier, messagingReadiness: () => string = () => 'disabled') {
-  const app = express();app.use(httpTelemetry('inventory-service')); app.disable('x-powered-by');
+  const app = express();app.use(httpTelemetry('inventory-service')); app.disable('x-powered-by');mountSqlReporting(app,verify);
   app.get('/ready', (_req, res) => { const messaging = messagingReadiness(); res.status(['disabled','ready'].includes(messaging) ? 200 : 503).json({ messaging }); });
   app.get('/health', (_req, res) => res.json({ status: 'ok', service: 'inventory-service' }));
   app.use('/inventory', (_req, res, next) => { res.set('Cache-Control', 'no-store'); next(); });
