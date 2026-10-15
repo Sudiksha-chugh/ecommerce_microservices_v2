@@ -1,10 +1,14 @@
 import express from 'express';
+import {SqlAdvisor,advisorConfig} from './sql-advisor.js';
+import {sqlAdvisorReporting} from './sql-advisor-reporting.js';
 import {sqlTelemetryConfig,sqlTelemetrySnapshot} from './sql-telemetry.js';
 import {DiagnosticError,type SqlDiagnostics} from './sql-diagnostics.js';
 type Verifier=(authorization:string|undefined)=>Promise<{role:string}>;
 // Never mounted by default. Hosting services supply their existing cryptographic JWT verifier.
 export function sqlReporting(verify:Verifier,diagnostics?:SqlDiagnostics){
  const router=express.Router();
+ // Existing in-process reports can advise on their own sampled telemetry without AI or new network access.
+ router.use('/advisor',sqlAdvisorReporting(verify,new SqlAdvisor(advisorConfig({}))));
  router.use((_req,res,next)=>{res.set('Cache-Control','no-store');next();});
  router.use(async(req,res,next)=>{try{const identity=await verify(req.headers.authorization);if(identity.role!=='admin'){res.status(403).json({error:'forbidden'});return;}}catch{res.set('WWW-Authenticate','Bearer').status(401).json({error:'unauthorized'});return;}next();});
  router.get('/',(_req,res)=>res.json(sqlTelemetrySnapshot()));

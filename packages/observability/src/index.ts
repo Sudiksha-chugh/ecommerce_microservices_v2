@@ -9,3 +9,6 @@ export * from './sql-telemetry.js';
 export * from './sql-plan.js';
 export * from './sql-diagnostics.js';
 export * from './sql-reporting.js';
+export * from './sql-advisor.js';
+export * from './sql-advisor-provider.js';
+export * from './sql-advisor-reporting.js';

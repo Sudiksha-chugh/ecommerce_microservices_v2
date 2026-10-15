@@ -4,6 +4,9 @@ import {Pool} from 'pg';
 import {createTokenVerifier} from '@ecommerce/security';
 import {sqlReporting} from './sql-reporting.js';
 import {SqlDiagnostics} from './sql-diagnostics.js';
+import {SqlAdvisor,advisorConfig} from './sql-advisor.js';
+import {configuredAdvisorProvider} from './sql-advisor-provider.js';
+import {sqlAdvisorReporting} from './sql-advisor-reporting.js';
 // A separate, explicitly started internal process. No application-pool reuse or auto-provisioning.
 export async function startSqlDiagnostics(env:NodeJS.ProcessEnv=process.env){
  if(env.SQL_DIAGNOSTICS_ENABLED!=='true')return;
@@ -17,7 +20,9 @@ export async function startSqlDiagnostics(env:NodeJS.ProcessEnv=process.env){
  const host=required('SQL_DIAGNOSTIC_PGHOST');if(!['127.0.0.1','::1','localhost'].includes(host))throw new Error('Diagnostics require an authenticated local database tunnel');
  const pool=new Pool({host,port:pgPort,database:required('SQL_DIAGNOSTIC_PGDATABASE'),user:role,password,max:1,connectionTimeoutMillis:1000,statement_timeout:1000,query_timeout:1500,idleTimeoutMillis:1000,maxLifetimeSeconds:60,application_name:'sql-diagnostics'});
  pool.on('error',()=>{});
- const app=express();app.disable('x-powered-by');app.use('/internal/sql',sqlReporting(verify,new SqlDiagnostics(pool,service)));app.use((_req,res)=>res.status(404).json({error:'not_found'}));
+ const diagnostics=new SqlDiagnostics(pool,service);
+ const config=advisorConfig(env),advisor=new SqlAdvisor(config,configuredAdvisorProvider(config,env));
+ const app=express();app.use('/internal/sql-advisor',sqlAdvisorReporting(verify,advisor,diagnostics));app.disable('x-powered-by');app.use('/internal/sql',sqlReporting(verify,diagnostics));app.use((_req,res)=>res.status(404).json({error:'not_found'}));
  const server=app.listen(port,'127.0.0.1');server.maxConnections=8;server.requestTimeout=5000;server.headersTimeout=5000;server.keepAliveTimeout=1000;
  await new Promise<void>((resolve,reject)=>{server.once('listening',resolve);server.once('error',reject);}).catch(async()=>{await pool.end();throw new Error('Diagnostic listener unavailable');});
  return {port,close:async()=>{server.closeAllConnections();await new Promise<void>(resolve=>server.close(()=>resolve()));await pool.end();}};

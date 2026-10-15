@@ -1,0 +1,79 @@
+{
+  "node": "v24.16.0",
+  "base": "3ec30e5",
+  "branch": "phase19/ai-sql-advisor",
+  "typecheck": "passed",
+  "lint": "not configured",
+  "observability": {
+    "numTotalTests": 126,
+    "numPassedTests": 126,
+    "numFailedTests": 0,
+    "numPendingTests": 0,
+    "numTodoTests": 0,
+    "numFailedTestSuites": 0
+  },
+  "advisorUnitTests": 47,
+  "phase18UnitTests": 46,
+  "postgresIntegration": {
+    "project": "commerce-v2-sql-ef22ac60a16c",
+    "passed": true,
+    "cleanup": true,
+    "tests": {
+      "counts": {
+        "numTotalTests": 10,
+        "numPassedTests": 10,
+        "numFailedTests": 0,
+        "numPendingTests": 0,
+        "numTodoTests": 0,
+        "numFailedTestSuites": 0
+      },
+      "failures": [],
+      "unexecuted": [],
+      "suiteErrors": [],
+      "truncated": false,
+      "success": true
+    }
+  },
+  "fullRegression": {
+    "firstAttempt": {
+      "outcome": "Elasticsearch functional preflight timeout",
+      "testsExecuted": 0,
+      "cleanup": true
+    },
+    "secondAttempt": {
+      "passed": 1065,
+      "failed": 9,
+      "total": 1074,
+      "filesPassed": 42,
+      "filesFailed": 5,
+      "cleanup": true,
+      "limitation": "One advisor test was added while the suite ran and loaded a stale cached module. Eight other failures occurred in existing refund, inventory, payments and orders tests. This was not a frozen-source verification."
+    },
+    "frozenSourceRepeat": {
+      "success": true,
+      "counts": {
+        "numTotalTests": 1074,
+        "numPassedTests": 1074,
+        "numFailedTests": 0,
+        "numPendingTests": 0,
+        "numTodoTests": 0,
+        "numFailedTestSuites": 0
+      },
+      "files": 47,
+      "cleanup": true,
+      "report": "/tmp/phase19-regression-frozen.json"
+    }
+  },
+  "liveProviderCalls": 0,
+  "commitsCreated": 0,
+  "pushes": 0,
+  "verdict": "complete: typecheck, 126 observability tests, 10 PostgreSQL integration tests, and 1074 frozen-source full regression tests passed",
+  "git": {
+    "branch": "phase19/ai-sql-advisor",
+    "head": "3ec30e5",
+    "modifiedTrackedFiles": 7,
+    "createdFiles": 11,
+    "commitsCreated": 0,
+    "pushes": 0
+  }
+}

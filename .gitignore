@@ -32,3 +32,5 @@ verification-evidence/
 
 !.env.observability.example
 .secrets/
+
+!.env.sql-advisor.example

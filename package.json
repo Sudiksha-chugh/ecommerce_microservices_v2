@@ -80,9 +80,10 @@
     "verify:phase16": "node scripts/verify-phase16.mjs",
     "test:observability": "vitest run packages/observability/test",
     "verify:observability": "node scripts/observability-runner.mjs",
-    "sql:diagnostics": "node --import tsx scripts/sql-diagnostics.mjs",
+    "sql:diagnostics": "node --import ./packages/observability/bootstrap.mjs --import tsx scripts/sql-diagnostics.mjs",
     "test:sql": "vitest run packages/observability/test/sql",
-    "test:sql:integration": "node scripts/sql-integration-runner.mjs"
+    "test:sql:integration": "node scripts/sql-integration-runner.mjs",
+    "test:sql-advisor": "vitest run packages/observability/test/advisor"
   },
   "devDependencies": {
     "@types/express": "^5.0.0",
