@@ -1,3 +1,5 @@
+> **Final update — 15 October 2026: PHASE 17.1 COMPLETE.** Verified commit `e4ed6215c19f57705744a807a995eb85f44c0723`: 981/981 regression tests twice, 5/5 live proofs, Grafana queries/navigation and live-Collector performance completed. See [final verification report](phase-17-final-verification-report.md) and [retained results](phase-17-final-verification-results.json). The original local-audit report below is preserved as historical evidence; its INCOMPLETE status predates the successful Linux run.
+
 # Phase 17.1 stabilization report
 
 Status: **INCOMPLETE**. No Phase 18 work. This report records local work and prepares a dedicated verification path; it does not certify the live stack or full regression.

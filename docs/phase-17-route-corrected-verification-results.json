@@ -1,0 +1,1141 @@
+{
+  "phase": "17.1",
+  "status": "INCOMPLETE",
+  "runId": 38703243417,
+  "sourceCommit": "55a330a13726d21c6febe5879e6cc4ce2092a05f",
+  "sourceIdentity": "edd1f34687aa21c93f4299e7c86e8d21d0fdc474f4dd2e190f4047df635701de",
+  "stages": [
+    {
+      "name": "typecheck",
+      "status": "passed",
+      "started": "2026-10-15T08:06:03.945Z",
+      "finished": "2026-10-15T08:06:08.820Z"
+    },
+    {
+      "name": "compiled-preload",
+      "status": "passed",
+      "started": "2026-10-15T08:06:08.951Z",
+      "finished": "2026-10-15T08:06:09.820Z"
+    },
+    {
+      "name": "static-stack",
+      "status": "passed",
+      "started": "2026-10-15T08:06:09.936Z",
+      "finished": "2026-10-15T08:06:16.814Z"
+    },
+    {
+      "name": "harness",
+      "status": "passed",
+      "started": "2026-10-15T08:06:16.915Z",
+      "finished": "2026-10-15T08:06:18.393Z",
+      "tests": {
+        "total": 42,
+        "passed": 42,
+        "failed": 0,
+        "pending": 0,
+        "failedSuites": 0
+      }
+    },
+    {
+      "name": "observability-unit",
+      "status": "passed",
+      "started": "2026-10-15T08:06:18.513Z",
+      "finished": "2026-10-15T08:06:22.675Z",
+      "tests": {
+        "total": 33,
+        "passed": 33,
+        "failed": 0,
+        "pending": 0,
+        "failedSuites": 0
+      }
+    },
+    {
+      "name": "disabled-focused",
+      "status": "passed",
+      "started": "2026-10-15T08:06:22.776Z",
+      "finished": "2026-10-15T08:06:30.812Z",
+      "tests": {
+        "total": 228,
+        "passed": 228,
+        "failed": 0,
+        "pending": 0,
+        "failedSuites": 0
+      }
+    },
+    {
+      "name": "five-live-proofs-and-collector-performance",
+      "status": "failed",
+      "started": "2026-10-15T08:06:30.933Z",
+      "error": "five-live-proofs-and-collector-performance failed with exit 1",
+      "finished": "2026-10-15T08:08:24.215Z"
+    }
+  ],
+  "live": {
+    "project": "commerce-v2-observability-4e8a746039c0",
+    "started": "2026-10-15T08:06:30.975Z",
+    "checks": [
+      {
+        "name": "collector-otlp-http",
+        "passed": true,
+        "attempts": 1,
+        "elapsedMs": 49.48622199999954
+      },
+      {
+        "name": "tempo-ready",
+        "passed": true,
+        "attempts": 61,
+        "elapsedMs": 15093.967952
+      },
+      {
+        "name": "prometheus-config",
+        "passed": true,
+        "attempts": 1,
+        "elapsedMs": 5.616836000001058
+      },
+      {
+        "name": "grafana-health",
+        "passed": true,
+        "attempts": 1,
+        "elapsedMs": 2.6952650000021094
+      },
+      {
+        "name": "grafana-datasource-health",
+        "passed": true,
+        "attempts": 1,
+        "elapsedMs": 33.68619799999942
+      },
+      {
+        "name": "grafana-authentication",
+        "passed": true,
+        "status": 401
+      },
+      {
+        "name": "grafana-dashboard-provisioning",
+        "passed": true,
+        "attempts": 1,
+        "elapsedMs": 15.126327000001766
+      },
+      {
+        "name": "grafana-provisioning",
+        "datasources": 2,
+        "dashboards": 7
+      }
+    ],
+    "passed": false,
+    "cleanup": true,
+    "endpoints": {
+      "collector": "http://127.0.0.1:32768",
+      "tempo": "http://127.0.0.1:32770",
+      "prometheus": "http://127.0.0.1:32771",
+      "grafana": "http://127.0.0.1:32769"
+    },
+    "proofTests": {
+      "counts": {
+        "numTotalTests": 5,
+        "numPassedTests": 5,
+        "numFailedTests": 0,
+        "numPendingTests": 0,
+        "numTodoTests": 0,
+        "numFailedTestSuites": 0
+      },
+      "failures": [],
+      "unexecuted": [],
+      "suiteErrors": [],
+      "truncated": false,
+      "success": true
+    },
+    "error": "fetch failed",
+    "cause": "ECONNREFUSED",
+    "containers": [
+      {
+        "id": "8f5904559d72ab27bceffbc8d626cbba0cfc61b48bfb6de70c80157dff29924b",
+        "name": "/commerce-v2-observability-4e8a746039c0-tempo-1",
+        "service": "tempo",
+        "status": "running",
+        "running": true,
+        "oomKilled": false,
+        "exitCode": 0,
+        "health": "not configured",
+        "startedAt": "2026-10-15T08:08:07.423296446Z",
+        "finishedAt": "2026-10-15T08:08:04.708511736Z",
+        "restarts": 0,
+        "memoryLimitBytes": 536870912,
+        "nanoCpus": 1000000000
+      },
+      {
+        "id": "c971e4b0b5a23a7c1bd59ecd9ac839c45c34c83373d49ef131d2aa030b788ec1",
+        "name": "/commerce-v2-observability-4e8a746039c0-grafana-1",
+        "service": "grafana",
+        "status": "running",
+        "running": true,
+        "oomKilled": false,
+        "exitCode": 0,
+        "health": "not configured",
+        "startedAt": "2026-10-15T08:08:13.685628041Z",
+        "finishedAt": "2026-10-15T08:08:10.431820361Z",
+        "restarts": 0,
+        "memoryLimitBytes": 536870912,
+        "nanoCpus": 1000000000
+      },
+      {
+        "id": "8f28addec20b0f9bad1c8e4de42b91acf3daaa56bc728bf071b0b753cb6f9528",
+        "name": "/commerce-v2-observability-4e8a746039c0-otel-collector-1",
+        "service": "otel-collector",
+        "status": "running",
+        "running": true,
+        "oomKilled": false,
+        "exitCode": 0,
+        "health": "not configured",
+        "startedAt": "2026-10-15T08:07:54.358461311Z",
+        "finishedAt": "2026-10-15T08:07:51.681515376Z",
+        "restarts": 0,
+        "memoryLimitBytes": 536870912,
+        "nanoCpus": 1000000000
+      },
+      {
+        "id": "7cf012c645d34abd48f01ce2e007e6cfe2334a288130d23104cfd87cfa2b5738",
+        "name": "/commerce-v2-observability-4e8a746039c0-prometheus-1",
+        "service": "prometheus",
+        "status": "running",
+        "running": true,
+        "oomKilled": false,
+        "exitCode": 0,
+        "health": "not configured",
+        "startedAt": "2026-10-15T08:08:09.972398925Z",
+        "finishedAt": "2026-10-15T08:08:07.782718776Z",
+        "restarts": 0,
+        "memoryLimitBytes": 402653184,
+        "nanoCpus": 1000000000
+      }
+    ],
+    "resourceSample": [
+      {
+        "id": "8f5904559d72",
+        "cpu": "0.30%",
+        "memory": "23.09MiB / 512MiB",
+        "memoryPercent": "4.51%",
+        "pids": "8"
+      },
+      {
+        "id": "c971e4b0b5a2",
+        "cpu": "0.48%",
+        "memory": "281.3MiB / 512MiB",
+        "memoryPercent": "54.95%",
+        "pids": "17"
+      },
+      {
+        "id": "8f28addec20b",
+        "cpu": "0.04%",
+        "memory": "38.25MiB / 512MiB",
+        "memoryPercent": "7.47%",
+        "pids": "7"
+      },
+      {
+        "id": "7cf012c645d3",
+        "cpu": "0.16%",
+        "memory": "53.23MiB / 384MiB",
+        "memoryPercent": "13.86%",
+        "pids": "6"
+      }
+    ]
+  },
+  "flowProof": {
+    "topology": [
+      {
+        "name": "HTTP POST",
+        "spanId": "f278e97e50ea0220",
+        "parentSpanId": "",
+        "service": "observability-proof"
+      },
+      {
+        "name": "http POST",
+        "spanId": "b20c9a86fb9d0fd6",
+        "parentSpanId": "f278e97e50ea0220",
+        "service": "observability-proof"
+      },
+      {
+        "name": "HTTP POST",
+        "spanId": "3ad48ae6f12b2060",
+        "parentSpanId": "b20c9a86fb9d0fd6",
+        "service": "observability-proof"
+      },
+      {
+        "name": "postgresql SELECT",
+        "spanId": "8e00048b25b102b5",
+        "parentSpanId": "3ad48ae6f12b2060",
+        "service": "observability-proof"
+      },
+      {
+        "name": "http GET",
+        "spanId": "85a81a5cd3392ae6",
+        "parentSpanId": "3ad48ae6f12b2060",
+        "service": "observability-proof"
+      },
+      {
+        "name": "http GET",
+        "spanId": "15086487150763a6",
+        "parentSpanId": "3ad48ae6f12b2060",
+        "service": "observability-proof"
+      },
+      {
+        "name": "postgresql CONNECT",
+        "spanId": "a2f5385574e08a72",
+        "parentSpanId": "3ad48ae6f12b2060",
+        "service": "observability-proof"
+      },
+      {
+        "name": "postgresql BEGIN",
+        "spanId": "ed9698771f105b0c",
+        "parentSpanId": "3ad48ae6f12b2060",
+        "service": "observability-proof"
+      },
+      {
+        "name": "postgresql INSERT",
+        "spanId": "d0bffa44a94716cd",
+        "parentSpanId": "3ad48ae6f12b2060",
+        "service": "observability-proof"
+      },
+      {
+        "name": "postgresql INSERT",
+        "spanId": "c770b57d8c7891c4",
+        "parentSpanId": "3ad48ae6f12b2060",
+        "service": "observability-proof"
+      },
+      {
+        "name": "postgresql SELECT",
+        "spanId": "346534fe3aac6026",
+        "parentSpanId": "3ad48ae6f12b2060",
+        "service": "observability-proof"
+      },
+      {
+        "name": "postgresql INSERT",
+        "spanId": "6bae641dec5e157a",
+        "parentSpanId": "3ad48ae6f12b2060",
+        "service": "observability-proof"
+      },
+      {
+        "name": "postgresql INSERT",
+        "spanId": "683c99dfc7476c86",
+        "parentSpanId": "3ad48ae6f12b2060",
+        "service": "observability-proof"
+      },
+      {
+        "name": "postgresql INSERT",
+        "spanId": "0e21f34209beab81",
+        "parentSpanId": "3ad48ae6f12b2060",
+        "service": "observability-proof"
+      },
+      {
+        "name": "postgresql INSERT",
+        "spanId": "514cccadb5d6c5da",
+        "parentSpanId": "3ad48ae6f12b2060",
+        "service": "observability-proof"
+      },
+      {
+        "name": "postgresql UPDATE",
+        "spanId": "5a087f7d1ea9dfe2",
+        "parentSpanId": "3ad48ae6f12b2060",
+        "service": "observability-proof"
+      },
+      {
+        "name": "postgresql INSERT",
+        "spanId": "6a7edd98244b142b",
+        "parentSpanId": "3ad48ae6f12b2060",
+        "service": "observability-proof"
+      },
+      {
+        "name": "postgresql UPDATE",
+        "spanId": "cbfc2f0bdbcf0c68",
+        "parentSpanId": "3ad48ae6f12b2060",
+        "service": "observability-proof"
+      },
+      {
+        "name": "postgresql COMMIT",
+        "spanId": "7516d8ca3fb71f22",
+        "parentSpanId": "3ad48ae6f12b2060",
+        "service": "observability-proof"
+      },
+      {
+        "name": "postgresql SELECT",
+        "spanId": "a9d703c658a3b59d",
+        "parentSpanId": "3ad48ae6f12b2060",
+        "service": "observability-proof"
+      },
+      {
+        "name": "rabbitmq publish",
+        "spanId": "19c339dd38af79a5",
+        "parentSpanId": "3ad48ae6f12b2060",
+        "service": "observability-proof"
+      },
+      {
+        "name": "rabbitmq publish",
+        "spanId": "9054756261e73792",
+        "parentSpanId": "3ad48ae6f12b2060",
+        "service": "observability-proof"
+      },
+      {
+        "name": "rabbitmq process",
+        "spanId": "9cbc769b7cb055a0",
+        "parentSpanId": "19c339dd38af79a5",
+        "service": "observability-proof"
+      },
+      {
+        "name": "postgresql CONNECT",
+        "spanId": "c06cd8407f28d987",
+        "parentSpanId": "9cbc769b7cb055a0",
+        "service": "observability-proof"
+      },
+      {
+        "name": "postgresql BEGIN",
+        "spanId": "ee121aa2fac9e6d7",
+        "parentSpanId": "9cbc769b7cb055a0",
+        "service": "observability-proof"
+      },
+      {
+        "name": "postgresql INSERT",
+        "spanId": "2e5544c345c120a2",
+        "parentSpanId": "9cbc769b7cb055a0",
+        "service": "observability-proof"
+      },
+      {
+        "name": "postgresql OTHER",
+        "spanId": "2b2f36812e23f081",
+        "parentSpanId": "9cbc769b7cb055a0",
+        "service": "observability-proof"
+      },
+      {
+        "name": "postgresql SELECT",
+        "spanId": "2afb6e1caea49873",
+        "parentSpanId": "9cbc769b7cb055a0",
+        "service": "observability-proof"
+      },
+      {
+        "name": "postgresql INSERT",
+        "spanId": "9960af38bde76415",
+        "parentSpanId": "9cbc769b7cb055a0",
+        "service": "observability-proof"
+      },
+      {
+        "name": "postgresql SELECT",
+        "spanId": "183d93388892461c",
+        "parentSpanId": "9cbc769b7cb055a0",
+        "service": "observability-proof"
+      },
+      {
+        "name": "postgresql UPDATE",
+        "spanId": "036af28c0a94b102",
+        "parentSpanId": "9cbc769b7cb055a0",
+        "service": "observability-proof"
+      },
+      {
+        "name": "postgresql WITH",
+        "spanId": "efcac5ccb4770aa2",
+        "parentSpanId": "9cbc769b7cb055a0",
+        "service": "observability-proof"
+      },
+      {
+        "name": "postgresql UPDATE",
+        "spanId": "2611aafbbc2a805c",
+        "parentSpanId": "9cbc769b7cb055a0",
+        "service": "observability-proof"
+      },
+      {
+        "name": "postgresql SELECT",
+        "spanId": "569db399754a6f3f",
+        "parentSpanId": "9cbc769b7cb055a0",
+        "service": "observability-proof"
+      },
+      {
+        "name": "postgresql SELECT",
+        "spanId": "a45f690f94ac6a8b",
+        "parentSpanId": "9cbc769b7cb055a0",
+        "service": "observability-proof"
+      },
+      {
+        "name": "postgresql UPDATE",
+        "spanId": "4f0580ffe1a1c474",
+        "parentSpanId": "9cbc769b7cb055a0",
+        "service": "observability-proof"
+      },
+      {
+        "name": "postgresql UPDATE",
+        "spanId": "5affcbe8562479da",
+        "parentSpanId": "9cbc769b7cb055a0",
+        "service": "observability-proof"
+      },
+      {
+        "name": "postgresql INSERT",
+        "spanId": "0d101a03002998b6",
+        "parentSpanId": "9cbc769b7cb055a0",
+        "service": "observability-proof"
+      },
+      {
+        "name": "postgresql COMMIT",
+        "spanId": "4a400589f09757c3",
+        "parentSpanId": "9cbc769b7cb055a0",
+        "service": "observability-proof"
+      },
+      {
+        "name": "rabbitmq publish",
+        "spanId": "f1b09204d677e98a",
+        "parentSpanId": "9cbc769b7cb055a0",
+        "service": "observability-proof"
+      },
+      {
+        "name": "rabbitmq publish",
+        "spanId": "223b5a3a5a5afa2d",
+        "parentSpanId": "9cbc769b7cb055a0",
+        "service": "observability-proof"
+      },
+      {
+        "name": "rabbitmq process",
+        "spanId": "775ca61eeb68978c",
+        "parentSpanId": "223b5a3a5a5afa2d",
+        "service": "observability-proof"
+      },
+      {
+        "name": "postgresql CONNECT",
+        "spanId": "f2bba6dd0f4aac2d",
+        "parentSpanId": "775ca61eeb68978c",
+        "service": "observability-proof"
+      },
+      {
+        "name": "postgresql INSERT",
+        "spanId": "2f2658b3716fe149",
+        "parentSpanId": "775ca61eeb68978c",
+        "service": "observability-proof"
+      },
+      {
+        "name": "postgresql BEGIN",
+        "spanId": "4b02d676cdfa9e21",
+        "parentSpanId": "775ca61eeb68978c",
+        "service": "observability-proof"
+      },
+      {
+        "name": "postgresql SELECT",
+        "spanId": "30c63182a6f0d5f7",
+        "parentSpanId": "775ca61eeb68978c",
+        "service": "observability-proof"
+      },
+      {
+        "name": "postgresql UPDATE",
+        "spanId": "6a80de92efd07a4c",
+        "parentSpanId": "775ca61eeb68978c",
+        "service": "observability-proof"
+      },
+      {
+        "name": "postgresql INSERT",
+        "spanId": "ef660041e02acde7",
+        "parentSpanId": "775ca61eeb68978c",
+        "service": "observability-proof"
+      },
+      {
+        "name": "postgresql UPDATE",
+        "spanId": "2daa021c81ce9dc6",
+        "parentSpanId": "775ca61eeb68978c",
+        "service": "observability-proof"
+      },
+      {
+        "name": "postgresql INSERT",
+        "spanId": "ddb76d0e1dff5603",
+        "parentSpanId": "775ca61eeb68978c",
+        "service": "observability-proof"
+      },
+      {
+        "name": "postgresql UPDATE",
+        "spanId": "f4ba3d84cac18110",
+        "parentSpanId": "775ca61eeb68978c",
+        "service": "observability-proof"
+      },
+      {
+        "name": "postgresql SELECT",
+        "spanId": "5401bdeb2b9de6e2",
+        "parentSpanId": "775ca61eeb68978c",
+        "service": "observability-proof"
+      },
+      {
+        "name": "postgresql INSERT",
+        "spanId": "76f37e1293e0a59d",
+        "parentSpanId": "775ca61eeb68978c",
+        "service": "observability-proof"
+      },
+      {
+        "name": "postgresql UPDATE",
+        "spanId": "fc22bc32d3c0e378",
+        "parentSpanId": "775ca61eeb68978c",
+        "service": "observability-proof"
+      },
+      {
+        "name": "postgresql COMMIT",
+        "spanId": "a5366f15a6b41fa0",
+        "parentSpanId": "775ca61eeb68978c",
+        "service": "observability-proof"
+      },
+      {
+        "name": "rabbitmq publish",
+        "spanId": "9bb4d607bd59e2c8",
+        "parentSpanId": "775ca61eeb68978c",
+        "service": "observability-proof"
+      },
+      {
+        "name": "rabbitmq process",
+        "spanId": "f485b7a433a09ef4",
+        "parentSpanId": "9bb4d607bd59e2c8",
+        "service": "observability-proof"
+      },
+      {
+        "name": "postgresql CONNECT",
+        "spanId": "3f0095f0aa35794d",
+        "parentSpanId": "f485b7a433a09ef4",
+        "service": "observability-proof"
+      },
+      {
+        "name": "rabbitmq process",
+        "spanId": "01a948476c882a3c",
+        "parentSpanId": "f1b09204d677e98a",
+        "service": "observability-proof"
+      },
+      {
+        "name": "postgresql BEGIN",
+        "spanId": "5162844273722e21",
+        "parentSpanId": "f485b7a433a09ef4",
+        "service": "observability-proof"
+      },
+      {
+        "name": "postgresql CONNECT",
+        "spanId": "bee02ba70d1bc7be",
+        "parentSpanId": "01a948476c882a3c",
+        "service": "observability-proof"
+      },
+      {
+        "name": "postgresql BEGIN",
+        "spanId": "f01524871540e7d0",
+        "parentSpanId": "01a948476c882a3c",
+        "service": "observability-proof"
+      },
+      {
+        "name": "postgresql INSERT",
+        "spanId": "a920ecb98c8684ff",
+        "parentSpanId": "01a948476c882a3c",
+        "service": "observability-proof"
+      },
+      {
+        "name": "postgresql INSERT",
+        "spanId": "e47e78028b9986f5",
+        "parentSpanId": "f485b7a433a09ef4",
+        "service": "observability-proof"
+      },
+      {
+        "name": "postgresql INSERT",
+        "spanId": "86dd9a7e6a3bf446",
+        "parentSpanId": "f485b7a433a09ef4",
+        "service": "observability-proof"
+      },
+      {
+        "name": "postgresql SELECT",
+        "spanId": "23d518ce01cdfba2",
+        "parentSpanId": "f485b7a433a09ef4",
+        "service": "observability-proof"
+      },
+      {
+        "name": "postgresql SELECT",
+        "spanId": "486753490ca82e5d",
+        "parentSpanId": "01a948476c882a3c",
+        "service": "observability-proof"
+      },
+      {
+        "name": "postgresql INSERT",
+        "spanId": "2a5b990574edda01",
+        "parentSpanId": "f485b7a433a09ef4",
+        "service": "observability-proof"
+      },
+      {
+        "name": "postgresql COMMIT",
+        "spanId": "8630c5482659b943",
+        "parentSpanId": "01a948476c882a3c",
+        "service": "observability-proof"
+      },
+      {
+        "name": "postgresql COMMIT",
+        "spanId": "91da3187d6534938",
+        "parentSpanId": "f485b7a433a09ef4",
+        "service": "observability-proof"
+      },
+      {
+        "name": "postgresql CONNECT",
+        "spanId": "d413c93ab9203768",
+        "parentSpanId": "f485b7a433a09ef4",
+        "service": "observability-proof"
+      },
+      {
+        "name": "postgresql BEGIN",
+        "spanId": "4dc3da41c11cea6b",
+        "parentSpanId": "f485b7a433a09ef4",
+        "service": "observability-proof"
+      },
+      {
+        "name": "postgresql SELECT",
+        "spanId": "6e8bd9c4ac049207",
+        "parentSpanId": "f485b7a433a09ef4",
+        "service": "observability-proof"
+      },
+      {
+        "name": "postgresql UPDATE",
+        "spanId": "628c2eb87b141d2b",
+        "parentSpanId": "f485b7a433a09ef4",
+        "service": "observability-proof"
+      },
+      {
+        "name": "postgresql INSERT",
+        "spanId": "b2bd8ae08c435525",
+        "parentSpanId": "f485b7a433a09ef4",
+        "service": "observability-proof"
+      },
+      {
+        "name": "postgresql SELECT",
+        "spanId": "ae8f936e389683da",
+        "parentSpanId": "f485b7a433a09ef4",
+        "service": "observability-proof"
+      },
+      {
+        "name": "postgresql COMMIT",
+        "spanId": "0c61ad349c63f551",
+        "parentSpanId": "f485b7a433a09ef4",
+        "service": "observability-proof"
+      },
+      {
+        "name": "http POST",
+        "spanId": "3f64c95eeb74cc90",
+        "parentSpanId": "f485b7a433a09ef4",
+        "service": "observability-proof"
+      },
+      {
+        "name": "postgresql SELECT",
+        "spanId": "7a9d71e257140414",
+        "parentSpanId": "f485b7a433a09ef4",
+        "service": "observability-proof"
+      },
+      {
+        "name": "postgresql CONNECT",
+        "spanId": "7c4d71500ac3f73b",
+        "parentSpanId": "f485b7a433a09ef4",
+        "service": "observability-proof"
+      },
+      {
+        "name": "postgresql BEGIN",
+        "spanId": "ac76d7b527a17d02",
+        "parentSpanId": "f485b7a433a09ef4",
+        "service": "observability-proof"
+      },
+      {
+        "name": "postgresql UPDATE",
+        "spanId": "68ac528a557482d5",
+        "parentSpanId": "f485b7a433a09ef4",
+        "service": "observability-proof"
+      },
+      {
+        "name": "postgresql UPDATE",
+        "spanId": "8efe8d66aaa4eee2",
+        "parentSpanId": "f485b7a433a09ef4",
+        "service": "observability-proof"
+      },
+      {
+        "name": "postgresql SELECT",
+        "spanId": "c062c3c833b8a0b2",
+        "parentSpanId": "f485b7a433a09ef4",
+        "service": "observability-proof"
+      },
+      {
+        "name": "postgresql INSERT",
+        "spanId": "98b622d68b86e241",
+        "parentSpanId": "f485b7a433a09ef4",
+        "service": "observability-proof"
+      },
+      {
+        "name": "postgresql UPDATE",
+        "spanId": "ecc3d3ff08839edf",
+        "parentSpanId": "f485b7a433a09ef4",
+        "service": "observability-proof"
+      },
+      {
+        "name": "postgresql COMMIT",
+        "spanId": "d72f4a6642362d3b",
+        "parentSpanId": "f485b7a433a09ef4",
+        "service": "observability-proof"
+      },
+      {
+        "name": "postgresql CONNECT",
+        "spanId": "1afabb1f16ea3c9c",
+        "parentSpanId": "f485b7a433a09ef4",
+        "service": "observability-proof"
+      },
+      {
+        "name": "postgresql BEGIN",
+        "spanId": "cfd4f587de65640e",
+        "parentSpanId": "f485b7a433a09ef4",
+        "service": "observability-proof"
+      },
+      {
+        "name": "postgresql SELECT",
+        "spanId": "f72919cd9fe95d6d",
+        "parentSpanId": "f485b7a433a09ef4",
+        "service": "observability-proof"
+      },
+      {
+        "name": "postgresql SELECT",
+        "spanId": "75d5163a56925b79",
+        "parentSpanId": "f485b7a433a09ef4",
+        "service": "observability-proof"
+      },
+      {
+        "name": "postgresql COMMIT",
+        "spanId": "73adecef8dc2ae87",
+        "parentSpanId": "f485b7a433a09ef4",
+        "service": "observability-proof"
+      },
+      {
+        "name": "postgresql UPDATE",
+        "spanId": "b9936935bdd280a5",
+        "parentSpanId": "f485b7a433a09ef4",
+        "service": "observability-proof"
+      },
+      {
+        "name": "rabbitmq publish",
+        "spanId": "bf6415c9d6928ab0",
+        "parentSpanId": "f485b7a433a09ef4",
+        "service": "observability-proof"
+      },
+      {
+        "name": "rabbitmq process",
+        "spanId": "5c9600c74f8234d5",
+        "parentSpanId": "bf6415c9d6928ab0",
+        "service": "observability-proof"
+      },
+      {
+        "name": "postgresql CONNECT",
+        "spanId": "35161c4c0f3040eb",
+        "parentSpanId": "5c9600c74f8234d5",
+        "service": "observability-proof"
+      },
+      {
+        "name": "postgresql INSERT",
+        "spanId": "0c7a54818d3c349f",
+        "parentSpanId": "5c9600c74f8234d5",
+        "service": "observability-proof"
+      },
+      {
+        "name": "postgresql BEGIN",
+        "spanId": "6260d0b06b6b020c",
+        "parentSpanId": "5c9600c74f8234d5",
+        "service": "observability-proof"
+      },
+      {
+        "name": "postgresql SELECT",
+        "spanId": "25a183f5efefeb95",
+        "parentSpanId": "5c9600c74f8234d5",
+        "service": "observability-proof"
+      },
+      {
+        "name": "postgresql SELECT",
+        "spanId": "c6285e187d1364a9",
+        "parentSpanId": "5c9600c74f8234d5",
+        "service": "observability-proof"
+      },
+      {
+        "name": "postgresql UPDATE",
+        "spanId": "5308d1d09228d378",
+        "parentSpanId": "5c9600c74f8234d5",
+        "service": "observability-proof"
+      },
+      {
+        "name": "postgresql INSERT",
+        "spanId": "920af8a6da2ce5b4",
+        "parentSpanId": "5c9600c74f8234d5",
+        "service": "observability-proof"
+      },
+      {
+        "name": "postgresql UPDATE",
+        "spanId": "01c27c939c96c48e",
+        "parentSpanId": "5c9600c74f8234d5",
+        "service": "observability-proof"
+      },
+      {
+        "name": "postgresql INSERT",
+        "spanId": "6ac140aa01fe2542",
+        "parentSpanId": "5c9600c74f8234d5",
+        "service": "observability-proof"
+      },
+      {
+        "name": "postgresql UPDATE",
+        "spanId": "644ef01ed26e6d6f",
+        "parentSpanId": "5c9600c74f8234d5",
+        "service": "observability-proof"
+      },
+      {
+        "name": "postgresql INSERT",
+        "spanId": "b8aa80c6db365268",
+        "parentSpanId": "5c9600c74f8234d5",
+        "service": "observability-proof"
+      },
+      {
+        "name": "postgresql UPDATE",
+        "spanId": "27a3d48816e025d4",
+        "parentSpanId": "5c9600c74f8234d5",
+        "service": "observability-proof"
+      },
+      {
+        "name": "postgresql COMMIT",
+        "spanId": "dff539dd3f1dffec",
+        "parentSpanId": "5c9600c74f8234d5",
+        "service": "observability-proof"
+      },
+      {
+        "name": "rabbitmq publish",
+        "spanId": "d89319367958a7b0",
+        "parentSpanId": "5c9600c74f8234d5",
+        "service": "observability-proof"
+      },
+      {
+        "name": "rabbitmq process",
+        "spanId": "e9d64090976c740f",
+        "parentSpanId": "d89319367958a7b0",
+        "service": "observability-proof"
+      },
+      {
+        "name": "postgresql BEGIN",
+        "spanId": "762708b38cbc84d3",
+        "parentSpanId": "e9d64090976c740f",
+        "service": "observability-proof"
+      },
+      {
+        "name": "postgresql INSERT",
+        "spanId": "d7b36e5a91955595",
+        "parentSpanId": "e9d64090976c740f",
+        "service": "observability-proof"
+      },
+      {
+        "name": "postgresql CONNECT",
+        "spanId": "f646091128743892",
+        "parentSpanId": "e9d64090976c740f",
+        "service": "observability-proof"
+      },
+      {
+        "name": "postgresql SELECT",
+        "spanId": "7518ff623a236bd8",
+        "parentSpanId": "e9d64090976c740f",
+        "service": "observability-proof"
+      },
+      {
+        "name": "postgresql SELECT",
+        "spanId": "f7ad9e0794687936",
+        "parentSpanId": "e9d64090976c740f",
+        "service": "observability-proof"
+      },
+      {
+        "name": "postgresql SELECT",
+        "spanId": "7a05a582c7c765b2",
+        "parentSpanId": "e9d64090976c740f",
+        "service": "observability-proof"
+      },
+      {
+        "name": "postgresql WITH",
+        "spanId": "1a245b6a6878c8f3",
+        "parentSpanId": "e9d64090976c740f",
+        "service": "observability-proof"
+      },
+      {
+        "name": "postgresql SELECT",
+        "spanId": "66de09e81f5558bf",
+        "parentSpanId": "e9d64090976c740f",
+        "service": "observability-proof"
+      },
+      {
+        "name": "postgresql UPDATE",
+        "spanId": "d30e3d51b86c3fe6",
+        "parentSpanId": "e9d64090976c740f",
+        "service": "observability-proof"
+      },
+      {
+        "name": "postgresql UPDATE",
+        "spanId": "1e341d5b4f0edd74",
+        "parentSpanId": "e9d64090976c740f",
+        "service": "observability-proof"
+      },
+      {
+        "name": "postgresql SELECT",
+        "spanId": "0a95b5fb6509b6bd",
+        "parentSpanId": "e9d64090976c740f",
+        "service": "observability-proof"
+      },
+      {
+        "name": "postgresql COMMIT",
+        "spanId": "93721845a9d670fd",
+        "parentSpanId": "e9d64090976c740f",
+        "service": "observability-proof"
+      },
+      {
+        "name": "postgresql INSERT",
+        "spanId": "cf9c9ac3263650a0",
+        "parentSpanId": "e9d64090976c740f",
+        "service": "observability-proof"
+      },
+      {
+        "name": "rabbitmq publish",
+        "spanId": "6864fbcd5aa3e740",
+        "parentSpanId": "e9d64090976c740f",
+        "service": "observability-proof"
+      },
+      {
+        "name": "postgresql CONNECT",
+        "spanId": "45eec58160735a26",
+        "parentSpanId": "b3ff870236eec1bf",
+        "service": "observability-proof"
+      },
+      {
+        "name": "rabbitmq process",
+        "spanId": "b3ff870236eec1bf",
+        "parentSpanId": "6864fbcd5aa3e740",
+        "service": "observability-proof"
+      },
+      {
+        "name": "postgresql BEGIN",
+        "spanId": "5e18508979edf83a",
+        "parentSpanId": "b3ff870236eec1bf",
+        "service": "observability-proof"
+      },
+      {
+        "name": "postgresql INSERT",
+        "spanId": "820e6f4b189959c6",
+        "parentSpanId": "b3ff870236eec1bf",
+        "service": "observability-proof"
+      },
+      {
+        "name": "postgresql SELECT",
+        "spanId": "f7ac222d980021af",
+        "parentSpanId": "b3ff870236eec1bf",
+        "service": "observability-proof"
+      },
+      {
+        "name": "postgresql INSERT",
+        "spanId": "661b5889c63260d8",
+        "parentSpanId": "b3ff870236eec1bf",
+        "service": "observability-proof"
+      },
+      {
+        "name": "postgresql UPDATE",
+        "spanId": "9060bbd79248aaea",
+        "parentSpanId": "b3ff870236eec1bf",
+        "service": "observability-proof"
+      },
+      {
+        "name": "postgresql UPDATE",
+        "spanId": "12c34d60ca7cd040",
+        "parentSpanId": "b3ff870236eec1bf",
+        "service": "observability-proof"
+      },
+      {
+        "name": "postgresql UPDATE",
+        "spanId": "5334be36ebc6406a",
+        "parentSpanId": "b3ff870236eec1bf",
+        "service": "observability-proof"
+      },
+      {
+        "name": "postgresql SELECT",
+        "spanId": "be88e06442b7ce54",
+        "parentSpanId": "b3ff870236eec1bf",
+        "service": "observability-proof"
+      },
+      {
+        "name": "postgresql COMMIT",
+        "spanId": "0ba42ba731e6b0c6",
+        "parentSpanId": "b3ff870236eec1bf",
+        "service": "observability-proof"
+      },
+      {
+        "name": "postgresql INSERT",
+        "spanId": "8149defa5926eb35",
+        "parentSpanId": "b3ff870236eec1bf",
+        "service": "observability-proof"
+      },
+      {
+        "name": "rabbitmq publish",
+        "spanId": "6732f16fff36f34d",
+        "parentSpanId": "b3ff870236eec1bf",
+        "service": "observability-proof"
+      }
+    ],
+    "serviceName": "observability-proof",
+    "checkout": {
+      "traceId": "86a61648c2c7982953d14c2fa2d35467",
+      "requestId": "f39e15cc-e219-4bb0-9f6f-f79b985e110d",
+      "rootAndDependencies": true,
+      "committedStatus": "COMPLETED",
+      "charges": 1
+    },
+    "search": {
+      "traceId": "55d95bfcea8bfae71122435c7586571c",
+      "elasticsearch": true
+    },
+    "metrics": {
+      "http_server_requests_total": 7,
+      "http_server_errors_total": 1,
+      "http_server_request_duration_seconds_count": 7,
+      "http_client_request_duration_seconds_count": 3,
+      "messaging_operations_total": 6,
+      "business_observations_total": 7,
+      "dependency_operation_duration_seconds_count": 13
+    },
+    "redis": {
+      "traceId": "46273a2ae677c67dc36b44c62f527214",
+      "ping": true
+    }
+  },
+  "isolatedRestartDiagnostic": {
+    "project": "commerce-v2-observability-32ff065af5b8",
+    "image": "cached alpine:3.20",
+    "memoryLimitBytes": 16777216,
+    "rows": [
+      {
+        "fixedPort": false,
+        "before": "127.0.0.1:59658",
+        "after": "127.0.0.1:59660",
+        "portChanged": true,
+        "tmpfsMarkerSurvivedStopStart": false,
+        "elapsedSeconds": 8.351953624980524
+      },
+      {
+        "fixedPort": true,
+        "before": "127.0.0.1:59662",
+        "after": "127.0.0.1:59662",
+        "portChanged": false,
+        "tmpfsMarkerSurvivedStopStart": false,
+        "elapsedSeconds": 3.406715290970169
+      }
+    ],
+    "cleanup": true
+  },
+  "preparedCorrection": {
+    "parent": "55a330a13726d21c6febe5879e6cc4ce2092a05f",
+    "sourceIdentity": "9bcf86421b72dd5eea2111940d0d77d92081500b7d6251060f9a55017310841b",
+    "files": 416,
+    "paths": [
+      "scripts/observability-runner.mjs",
+      "scripts/observability-readiness.mjs",
+      "scripts/observability-restart.test.mjs",
+      "packages/observability/test/integration.proof.ts",
+      "packages/observability/test/grafana-proof.mjs",
+      "packages/observability/test/grafana-proof.d.mts",
+      "phase17-source-manifest.json"
+    ],
+    "productionChanged": false,
+    "workflowOrMainChanged": false,
+    "businessProofAssertionsRemoved": false,
+    "checks": {
+      "harness": "47/47 pass",
+      "typecheck": "pass",
+      "proofDiscovery": "same five cases",
+      "nativePortReservation": "pass",
+      "DockerRestartProbe": "ephemeral port changes; explicit port stable; tmpfs erased; owned cleanup verified"
+    }
+  }
+}

@@ -1,0 +1,306 @@
+{
+  "phase": "17.1",
+  "status": "INCOMPLETE",
+  "runId": 38700412537,
+  "commit": "be9c08777cb04da91e1816f9e7c3481deae2e80f",
+  "sourceIdentity": "3357866de9d910ed750ea56dcb8d4c529966b98b15f6cc2308e9e240a3268e45",
+  "gates": [
+    {
+      "name": "typecheck",
+      "status": "passed",
+      "started": "2026-10-15T07:41:22.649Z",
+      "finished": "2026-10-15T07:41:26.694Z"
+    },
+    {
+      "name": "compiled-preload",
+      "status": "passed",
+      "started": "2026-10-15T07:41:26.771Z",
+      "finished": "2026-10-15T07:41:27.468Z"
+    },
+    {
+      "name": "static-stack",
+      "status": "passed",
+      "started": "2026-10-15T07:41:27.536Z",
+      "finished": "2026-10-15T07:41:37.339Z"
+    },
+    {
+      "name": "harness",
+      "status": "passed",
+      "started": "2026-10-15T07:41:37.428Z",
+      "finished": "2026-10-15T07:41:38.815Z",
+      "tests": {
+        "total": 42,
+        "passed": 42,
+        "failed": 0,
+        "pending": 0,
+        "failedSuites": 0
+      }
+    },
+    {
+      "name": "observability-unit",
+      "status": "passed",
+      "started": "2026-10-15T07:41:38.891Z",
+      "finished": "2026-10-15T07:41:42.407Z",
+      "tests": {
+        "total": 32,
+        "passed": 32,
+        "failed": 0,
+        "pending": 0,
+        "failedSuites": 0
+      }
+    },
+    {
+      "name": "disabled-focused",
+      "status": "passed",
+      "started": "2026-10-15T07:41:42.486Z",
+      "finished": "2026-10-15T07:41:48.945Z",
+      "tests": {
+        "total": 228,
+        "passed": 228,
+        "failed": 0,
+        "pending": 0,
+        "failedSuites": 0
+      }
+    },
+    {
+      "name": "five-live-proofs-and-collector-performance",
+      "status": "failed",
+      "started": "2026-10-15T07:41:49.022Z",
+      "error": "five-live-proofs-and-collector-performance failed with exit 1",
+      "finished": "2026-10-15T07:43:38.520Z"
+    }
+  ],
+  "live": {
+    "project": "commerce-v2-observability-b280819821aa",
+    "started": "2026-10-15T07:41:49.059Z",
+    "checks": [
+      {
+        "name": "collector-otlp-http",
+        "passed": true,
+        "attempts": 1,
+        "elapsedMs": 35.07096399999864
+      },
+      {
+        "name": "tempo-ready",
+        "passed": true,
+        "attempts": 61,
+        "elapsedMs": 15065.547749000001
+      },
+      {
+        "name": "prometheus-config",
+        "passed": true,
+        "attempts": 1,
+        "elapsedMs": 4.798896000000241
+      },
+      {
+        "name": "grafana-health",
+        "passed": true,
+        "attempts": 1,
+        "elapsedMs": 2.69507600000361
+      },
+      {
+        "name": "grafana-datasource-health",
+        "passed": true,
+        "attempts": 1,
+        "elapsedMs": 30.99692099999811
+      },
+      {
+        "name": "grafana-authentication",
+        "passed": true,
+        "status": 401
+      },
+      {
+        "name": "grafana-dashboard-provisioning",
+        "passed": true,
+        "attempts": 1,
+        "elapsedMs": 14.370832000000519
+      },
+      {
+        "name": "grafana-provisioning",
+        "datasources": 2,
+        "dashboards": 7
+      }
+    ],
+    "passed": false,
+    "cleanup": true,
+    "endpoints": {
+      "collector": "http://127.0.0.1:32769",
+      "tempo": "http://127.0.0.1:32768",
+      "prometheus": "http://127.0.0.1:32770",
+      "grafana": "http://127.0.0.1:32771"
+    },
+    "proofTests": {
+      "counts": {
+        "numTotalTests": 5,
+        "numPassedTests": 0,
+        "numFailedTests": 5,
+        "numPendingTests": 0,
+        "numTodoTests": 0,
+        "numFailedTestSuites": 1
+      },
+      "failures": [
+        {
+          "file": "/home/runner/work/ecommerce_microservices_v2/ecommerce_microservices_v2/packages/observability/test/integration.proof.ts",
+          "name": "retrieves the actual Gateway checkout/RabbitMQ and Search dependency traces and metrics",
+          "status": "failed",
+          "errors": [
+            "AssertionError: expected undefined to be defined\n    at proveFlow (/home/runner/work/ecommerce_microservices_v2/ecommerce_microservices_v2/packages/observability/test/integration.proof.ts:107:129)\n    at process.processTicksAndRejections (node:internal/process/task_queues:104:5)\n    at async file:///home/runner/work/ecommerce_microservices_v2/ecommerce_microservices_v2/node_modules/vitest/dist/chunks/run.BTlFXlnv.js:2783:20"
+          ]
+        },
+        {
+          "file": "/home/runner/work/ecommerce_microservices_v2/ecommerce_microservices_v2/packages/observability/test/integration.proof.ts",
+          "name": "preserves committed checkout, one charge, inventory and ACKs during otel-collector outage",
+          "status": "failed",
+          "errors": [
+            "AssertionError: expected undefined to be defined\n    at proveFlow (/home/runner/work/ecommerce_microservices_v2/ecommerce_microservices_v2/packages/observability/test/integration.proof.ts:107:129)\n    at process.processTicksAndRejections (node:internal/process/task_queues:104:5)\n    at async file:///home/runner/work/ecommerce_microservices_v2/ecommerce_microservices_v2/node_modules/vitest/dist/chunks/run.BTlFXlnv.js:2783:20"
+          ]
+        },
+        {
+          "file": "/home/runner/work/ecommerce_microservices_v2/ecommerce_microservices_v2/packages/observability/test/integration.proof.ts",
+          "name": "preserves committed checkout, one charge, inventory and ACKs during tempo outage",
+          "status": "failed",
+          "errors": [
+            "AssertionError: expected undefined to be defined\n    at proveFlow (/home/runner/work/ecommerce_microservices_v2/ecommerce_microservices_v2/packages/observability/test/integration.proof.ts:107:129)\n    at process.processTicksAndRejections (node:internal/process/task_queues:104:5)\n    at async file:///home/runner/work/ecommerce_microservices_v2/ecommerce_microservices_v2/node_modules/vitest/dist/chunks/run.BTlFXlnv.js:2783:20"
+          ]
+        },
+        {
+          "file": "/home/runner/work/ecommerce_microservices_v2/ecommerce_microservices_v2/packages/observability/test/integration.proof.ts",
+          "name": "preserves committed checkout, one charge, inventory and ACKs during prometheus outage",
+          "status": "failed",
+          "errors": [
+            "AssertionError: expected undefined to be defined\n    at proveFlow (/home/runner/work/ecommerce_microservices_v2/ecommerce_microservices_v2/packages/observability/test/integration.proof.ts:107:129)\n    at process.processTicksAndRejections (node:internal/process/task_queues:104:5)\n    at async file:///home/runner/work/ecommerce_microservices_v2/ecommerce_microservices_v2/node_modules/vitest/dist/chunks/run.BTlFXlnv.js:2783:20"
+          ]
+        },
+        {
+          "file": "/home/runner/work/ecommerce_microservices_v2/ecommerce_microservices_v2/packages/observability/test/integration.proof.ts",
+          "name": "preserves committed checkout, one charge, inventory and ACKs during grafana outage",
+          "status": "failed",
+          "errors": [
+            "AssertionError: expected undefined to be defined\n    at proveFlow (/home/runner/work/ecommerce_microservices_v2/ecommerce_microservices_v2/packages/observability/test/integration.proof.ts:107:129)\n    at process.processTicksAndRejections (node:internal/process/task_queues:104:5)\n    at async file:///home/runner/work/ecommerce_microservices_v2/ecommerce_microservices_v2/node_modules/vitest/dist/chunks/run.BTlFXlnv.js:2783:20"
+          ]
+        }
+      ],
+      "unexecuted": [],
+      "suiteErrors": [],
+      "truncated": false,
+      "success": false
+    },
+    "error": "Proof child failed 1",
+    "containers": [
+      {
+        "id": "ea888ade075cf0a7204f519a784899214e9ab28066fc55c44ef77a56db788534",
+        "name": "/commerce-v2-observability-b280819821aa-prometheus-1",
+        "service": "prometheus",
+        "status": "running",
+        "running": true,
+        "oomKilled": false,
+        "exitCode": 0,
+        "health": "not configured",
+        "startedAt": "2026-10-15T07:43:27.58294793Z",
+        "finishedAt": "2026-10-15T07:43:26.307421361Z",
+        "restarts": 0,
+        "memoryLimitBytes": 402653184,
+        "nanoCpus": 1000000000
+      },
+      {
+        "id": "bd7af86db61735642a1c4a6c38dcdd533130b0700405fab6fb58a55b677c309e",
+        "name": "/commerce-v2-observability-b280819821aa-otel-collector-1",
+        "service": "otel-collector",
+        "status": "running",
+        "running": true,
+        "oomKilled": false,
+        "exitCode": 0,
+        "health": "not configured",
+        "startedAt": "2026-10-15T07:43:24.314330964Z",
+        "finishedAt": "2026-10-15T07:43:22.987130122Z",
+        "restarts": 0,
+        "memoryLimitBytes": 536870912,
+        "nanoCpus": 1000000000
+      },
+      {
+        "id": "deb6a03540ccc7bcd227c05f4dd05ad4db337b48d96d6833c8cc3c5af631d2b5",
+        "name": "/commerce-v2-observability-b280819821aa-grafana-1",
+        "service": "grafana",
+        "status": "running",
+        "running": true,
+        "oomKilled": false,
+        "exitCode": 0,
+        "health": "not configured",
+        "startedAt": "2026-10-15T07:43:29.205334802Z",
+        "finishedAt": "2026-10-15T07:43:27.926849468Z",
+        "restarts": 0,
+        "memoryLimitBytes": 536870912,
+        "nanoCpus": 1000000000
+      },
+      {
+        "id": "0205eb9b95f9d46766024663eaabbe83e5c0cfb31dcd906f554101a53869b562",
+        "name": "/commerce-v2-observability-b280819821aa-tempo-1",
+        "service": "tempo",
+        "status": "running",
+        "running": true,
+        "oomKilled": false,
+        "exitCode": 0,
+        "health": "not configured",
+        "startedAt": "2026-10-15T07:43:26.010038864Z",
+        "finishedAt": "2026-10-15T07:43:24.739799564Z",
+        "restarts": 0,
+        "memoryLimitBytes": 536870912,
+        "nanoCpus": 1000000000
+      }
+    ],
+    "resourceSample": [
+      {
+        "id": "ea888ade075c",
+        "cpu": "0.11%",
+        "memory": "45.02MiB / 384MiB",
+        "memoryPercent": "11.72%",
+        "pids": "6"
+      },
+      {
+        "id": "bd7af86db617",
+        "cpu": "0.04%",
+        "memory": "38.48MiB / 512MiB",
+        "memoryPercent": "7.52%",
+        "pids": "7"
+      },
+      {
+        "id": "deb6a03540cc",
+        "cpu": "0.36%",
+        "memory": "291.4MiB / 512MiB",
+        "memoryPercent": "56.92%",
+        "pids": "7"
+      },
+      {
+        "id": "0205eb9b95f9",
+        "cpu": "0.23%",
+        "memory": "22.89MiB / 512MiB",
+        "memoryPercent": "4.47%",
+        "pids": "8"
+      }
+    ]
+  },
+  "confirmedCause": "Express route array was joined into a union instead of recording matched registered route; all five proofs failed at Gateway /checkout log lookup",
+  "preparedCorrection": {
+    "parent": "be9c08777cb04da91e1816f9e7c3481deae2e80f",
+    "sourceIdentity": "edd1f34687aa21c93f4299e7c86e8d21d0fdc474f4dd2e190f4047df635701de",
+    "files": 413,
+    "paths": [
+      "package-lock.json",
+      "packages/observability/package.json",
+      "packages/observability/src/middleware.ts",
+      "packages/observability/test/observability.test.ts",
+      "phase17-source-manifest.json"
+    ],
+    "confirmedCause": "Express route array was joined into a union instead of recording matched registered route; all five proofs failed at Gateway /checkout log lookup",
+    "checks": {
+      "redRegression": "failed as expected before fix",
+      "observability": "33/33 pass",
+      "harness": "42/42 pass",
+      "typecheck": "pass",
+      "compiledPreload": "pass"
+    },
+    "dependency": "declare existing Express matcher path-to-regexp 8.4.2 directly; no version/tree change",
+    "proofAssertionsChanged": false,
+    "workflowOrMainChanges": false
+  }
+}
