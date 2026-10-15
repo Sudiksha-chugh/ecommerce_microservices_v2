@@ -1,0 +1,124 @@
+{
+  "status": "INCOMPLETE_AWAITING_DEDICATED_VERIFICATION",
+  "baseline": "c7d7074913853a2b53493da8d5cbfb9cb7065104",
+  "reconciledSource": "7281e5372d1f2aeb586ac016f409cdbc32bf6804",
+  "phase17VerifiedSource": "e4ed6215c19f57705744a807a995eb85f44c0723",
+  "date": "2026-10-15",
+  "localGates": {
+    "observabilityAndSql": {
+      "numTotalTests": 79,
+      "numPassedTests": 79,
+      "numFailedTests": 0,
+      "numFailedTestSuites": 0,
+      "numPendingTests": 0
+    },
+    "harness": {
+      "numTotalTests": 50,
+      "numPassedTests": 50,
+      "numFailedTests": 0,
+      "numFailedTestSuites": 0,
+      "numPendingTests": 0
+    },
+    "disabledFocused": {
+      "numTotalTests": 228,
+      "numPassedTests": 228,
+      "numFailedTests": 0,
+      "numFailedTestSuites": 0,
+      "numPendingTests": 0
+    },
+    "postgresql": {
+      "passed": true,
+      "cleanup": true,
+      "counts": {
+        "numTotalTests": 9,
+        "numPassedTests": 9,
+        "numFailedTests": 0,
+        "numPendingTests": 0,
+        "numTodoTests": 0,
+        "numFailedTestSuites": 0
+      }
+    },
+    "typecheck": true,
+    "compiledPreload": true,
+    "dashboardPromql": {
+      "dashboards": 8,
+      "expressions": 19,
+      "promtool": "passed"
+    },
+    "sqlPerformance": {
+      "passed": true,
+      "runs": 15,
+      "measuredQueries": 30000,
+      "warmupQueries": 1500,
+      "errors": 0,
+      "summaries": [
+        {
+          "mode": "disabled",
+          "runs": 3,
+          "p50Ms": 0.711667000000034,
+          "p95Ms": 1.7512500000000273,
+          "p99Ms": 3.6298329999999623,
+          "throughput": 5872.040877484435,
+          "cpuMsPerRequest": 0.0722855
+        },
+        {
+          "mode": "sdk-only",
+          "runs": 3,
+          "p50Ms": 0.7191660000000866,
+          "p95Ms": 2.8433339999999134,
+          "p99Ms": 5.379374999999982,
+          "throughput": 4840.621531641727,
+          "cpuMsPerRequest": 0.119974
+        },
+        {
+          "mode": "sql-sampled",
+          "runs": 3,
+          "p50Ms": 0.8646249999999895,
+          "p95Ms": 3.3110419999999863,
+          "p99Ms": 7.355792000000065,
+          "throughput": 3762.9468915004104,
+          "cpuMsPerRequest": 0.152894
+        },
+        {
+          "mode": "sql-full",
+          "runs": 3,
+          "p50Ms": 0.8521660000000111,
+          "p95Ms": 2.3897920000000568,
+          "p99Ms": 4.973458999999991,
+          "throughput": 4428.764560983467,
+          "cpuMsPerRequest": 0.16140000000000002
+        },
+        {
+          "mode": "sql-export-outage",
+          "runs": 3,
+          "p50Ms": 0.7817499999999882,
+          "p95Ms": 2.061125000000061,
+          "p99Ms": 4.3117919999999685,
+          "throughput": 4995.8425223009735,
+          "cpuMsPerRequest": 0.13459800000000002
+        }
+      ],
+      "exportTarget": "unavailable_loopback",
+      "limitations": "Local fixture microbenchmark; sampled memory at completion, no production-capacity claim. SDK-only includes the existing operation spans. Modes without a supplied Collector use an unavailable endpoint; only the explicit outage mode proves the forced outage condition when a live Collector is supplied."
+    }
+  },
+  "preservation": {
+    "originalBranch": "backend",
+    "originalHead": "e501bc4b9a6ba1e346aa64d9d43da1609c5f455c",
+    "indexUnchanged": true,
+    "actualEnvironmentsHashIdentical": 8,
+    "originalNonDocumentationVerifiedFilesChanged": [],
+    "phase18Worktree": "/private/tmp/commerce-v2-phase18"
+  },
+  "pending": [
+    "Actual Collector ingestion of SQL metrics and eight-dashboard/nineteen-query Grafana proof",
+    "Five existing checkout and real telemetry-backend outage proofs with SQL enabled",
+    "Dedicated Linux SQL performance measurements using the live Collector",
+    "Two independent complete regressions with identical discovery and zero failed/skipped/unexecuted cases"
+  ],
+  "historicalLocalCorrections": [
+    "Permission test was strengthened to require SQLSTATE 42501 independent of read-only defaults; it initially failed because Pool.query replaced an errored connection. It now pins one connection.",
+    "One earlier benchmark worker failed without retained details; its cause remains unknown. The benchmark now retains bounded redacted failure evidence and the outer gate marks performance failure incomplete. Later frozen-source local gates passed; historical failure is not reclassified as a pass.",
+    "Privilege audit added explicit column, sequence, maintenance and grant-option checks, with real PostgreSQL regressions."
+  ]
+}

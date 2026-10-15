@@ -1,0 +1,5 @@
+import {it,expect} from 'vitest';
+import {sqlBenchmarkResult} from './sql-benchmark-evidence.mjs';
+const sample={mode:'sql-sampled',requests:2000,concurrency:5,warmupRequests:100,warmupMs:1,elapsedMs:100,p50Ms:1,p95Ms:2,p99Ms:3,throughput:20000,cpuMsPerRequest:.1,rssBytes:1000,heapUsedBytes:100,errors:0,warmupErrors:0};
+it('preserves failed query counts and bounded redacted worker diagnostics',()=>{const result=sqlBenchmarkResult(JSON.stringify({...sample,errors:4,unapproved:'private value'}),'PASSWORD=secret\n'+'x'.repeat(9000),1,'sql-sampled');expect(result.errors).toBe(4);expect(result.exitCode).toBe(1);expect(result.diagnostic.length).toBeLessThanOrEqual(4096);expect(JSON.stringify(result)).not.toMatch(/secret|private value|unapproved/);});
+it('rejects missing or invalid benchmark evidence rather than treating worker exit as success',()=>{for(const value of ['',JSON.stringify({...sample,elapsedMs:0}),JSON.stringify({...sample,p95Ms:0}),JSON.stringify({...sample,requests:1})])expect(sqlBenchmarkResult(value,'',0,'sql-sampled').error).toBe('invalid_worker_result');expect(sqlBenchmarkResult(JSON.stringify(sample),'',0,'sql-sampled').errors).toBe(0);});

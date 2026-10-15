@@ -1,4 +1,4 @@
-import {httpTelemetry} from '@ecommerce/observability';
+import {httpTelemetry,mountSqlReporting} from '@ecommerce/observability';
 import {verifyInternalRequest} from '@ecommerce/security';
 import type {SagaKeys} from '@ecommerce/messaging';
 import type {SagaRepository} from './saga/repository.js';
@@ -10,7 +10,7 @@ import { errorHandler } from './middleware/error-handler.js';
 import { createOrderBodySchema, idempotencyKeySchema, orderIdSchema, paginationSchema } from './order-validation.js';
 
 export function createApp(orders: OrderService, verify: TokenVerifier, messagingReadiness: () => string = () => 'disabled', checkout?: {repository:SagaRepository;keys:SagaKeys;refundsEnabled?:boolean;lookupKey?:string},internal?:{key:string;lookup:(orderId:string)=>Promise<unknown>}) {
-  const app = express();app.use(httpTelemetry('orders-service')); app.disable('x-powered-by');
+  const app = express();app.use(httpTelemetry('orders-service')); app.disable('x-powered-by');mountSqlReporting(app,verify);
   app.get('/internal/orders/:orderId/notification-context',async(req,res)=>{
     res.set('Cache-Control','no-store');
     const key=internal?.key??checkout?.lookupKey;

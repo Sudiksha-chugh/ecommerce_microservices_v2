@@ -1,0 +1,2 @@
+import {startSqlDiagnostics} from '../packages/observability/src/sql-diagnostic-server.ts';
+try{const instance=await startSqlDiagnostics();if(instance){let closing=false;for(const signal of ['SIGINT','SIGTERM'])process.on(signal,()=>{if(closing)return;closing=true;void instance.close().catch(()=>{process.exitCode=1;});});}}catch{console.error(JSON.stringify({component:'sql-diagnostics',outcome:'startup_rejected'}));process.exitCode=1;}

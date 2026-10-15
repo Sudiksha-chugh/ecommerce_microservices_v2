@@ -1,4 +1,4 @@
-import {httpTelemetry} from '@ecommerce/observability';
+import {httpTelemetry,mountSqlReporting} from '@ecommerce/observability';
 import express from 'express';
 import {z} from 'zod';
 import type {Identity,TokenVerifier} from '@ecommerce/security';
@@ -7,7 +7,7 @@ import {notificationTransitions} from './domain/state-machine.js';
 const uuid=z.uuid();
 const query=z.strictObject({limit:z.coerce.number().int().min(1).max(100).default(20),offset:z.coerce.number().int().min(0).max(10000).default(0),status:z.enum(Object.keys(notificationTransitions) as [string,...string[]]).optional(),type:z.enum(['ORDER_CONFIRMED','ORDER_CANCELLED','PAYMENT_SUCCEEDED','PAYMENT_FAILED','REFUND_SUCCEEDED','REFUND_FAILED','REFUND_PENDING']).optional()});
 export function createNotificationApp(repository:NotificationRepository,verify:TokenVerifier,readiness:()=>string=()=> 'disabled',lookupSupported=true){
- const app=express();app.use(httpTelemetry('notification-service'));app.disable('x-powered-by');app.get('/health',(_req,res)=>res.json({status:'ok',service:'notification-service'}));
+ const app=express();app.use(httpTelemetry('notification-service'));app.disable('x-powered-by');mountSqlReporting(app,verify);app.get('/health',(_req,res)=>res.json({status:'ok',service:'notification-service'}));
  app.use('/internal/notifications',async(req,res,next)=>{res.set('Cache-Control','no-store');try{res.locals.identity=await verify(req.headers.authorization);}catch{res.set('WWW-Authenticate','Bearer').status(401).json({error:{message:'Unauthorized'}});return;}if((res.locals.identity as Identity).role!=='admin'){res.status(403).json({error:{message:'Forbidden'}});return;}next();});
  app.get('/internal/notifications/health',(_req,res)=>res.json({status:'ok'}));
  app.get('/internal/notifications/readiness',async(_req,res)=>{try{await repository.pool.query('SELECT 1');const messaging=readiness();res.status(['ready','disabled'].includes(messaging)?200:503).json({database:'ready',messaging});}catch{res.status(503).json({database:'unavailable'});}});
