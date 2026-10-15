@@ -1,5 +1,5 @@
 {
-  "identity": "3357866de9d910ed750ea56dcb8d4c529966b98b15f6cc2308e9e240a3268e45",
+  "identity": "edd1f34687aa21c93f4299e7c86e8d21d0fdc474f4dd2e190f4047df635701de",
   "files": [
     {
       "path": ".dockerignore",
@@ -1179,7 +1179,7 @@
     },
     {
       "path": "package-lock.json",
-      "sha256": "8e3123c36b8ddc34fe30fb367fa7bf79ead963f09d8c70cf46d5d1bc8f2162b9"
+      "sha256": "3dbbc5c21e7475e74407b4c60352381213a52d03cbe715ce42d132f375a49098"
     },
     {
       "path": "package.json",
@@ -1375,7 +1375,7 @@
     },
     {
       "path": "packages/observability/package.json",
-      "sha256": "b3a9c45016024e20a89d7d783db86d9d79f4ed602fc9374206a2ea2a0f4dde6b"
+      "sha256": "3bfbe20181d952a42b5dff5b45dbc2c1d8a6d69251b5aec7a039848a4f28f2e3"
     },
     {
       "path": "packages/observability/src/commits.ts",
@@ -1407,7 +1407,7 @@
     },
     {
       "path": "packages/observability/src/middleware.ts",
-      "sha256": "9da0328af5197bffe1d9e5ef3ae3dbd45f943a017034f342ed30fd38ae6db6c5"
+      "sha256": "ac7856f3dd69639ad6b290bf888247f413123cc5398b93a66698c84c9c7db556"
     },
     {
       "path": "packages/observability/test/disabled-fixture.ts",
@@ -1427,7 +1427,7 @@
     },
     {
       "path": "packages/observability/test/observability.test.ts",
-      "sha256": "e1286d847c1f833d55c261d2ca0ffb30d930720a8639d9fb5f2d67d6b569b12d"
+      "sha256": "683f3b91ccf0308fbe093199295c1c24c881dae19dc7535e833d9578fc973341"
     },
     {
       "path": "packages/observability/test/proof-assertions.test.ts",
