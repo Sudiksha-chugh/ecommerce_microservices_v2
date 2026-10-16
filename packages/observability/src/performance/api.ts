@@ -1,0 +1,4 @@
+import {diagnosticRouter,type DiagnosticVerifier} from '../diagnostic-router.js';
+import {requestSchema,reportSchema} from './schemas.js';
+import {PerformanceInvestigation,PerformanceBusy,InvalidPerformanceRequest} from './engine.js';
+export function performanceReporting(verify:DiagnosticVerifier,engine:PerformanceInvestigation,now=Date.now){return diagnosticRouter(verify,{limits:engine.limits,health:()=>engine.health(),capabilities:()=>engine.capabilities(),analyze:async raw=>{const report=reportSchema.parse(await engine.analyze(raw));if(Buffer.byteLength(JSON.stringify(report))>engine.limits.reportBytes)throw new Error('Bounded performance response exceeded');return report;}},requestSchema,error=>error instanceof PerformanceBusy?{status:429,error:'busy'}:error instanceof InvalidPerformanceRequest?{status:400,error:'invalid_investigation'}:{status:503,error:'diagnostics_unavailable'},now);}

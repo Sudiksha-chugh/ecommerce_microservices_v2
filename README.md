@@ -611,3 +611,7 @@ Phase 19 adds a read-only SQL optimization advisor with deterministic advice and
 ### Phase 20 incident diagnostics
 
 Opt-in, loopback-only incident investigation reuses Prometheus, Tempo and existing admin JWT verification. Deterministic evidence-backed reports work with AI disabled; missing logs and backend failures produce explicit partial coverage. See [architecture, configuration and security](docs/phase-20-ai-incident-analysis.md) and [verification results](docs/phase-20-verification-report.md). Run `npm run test:incidents` for offline tests.
+
+### Phase 21 performance diagnostics
+
+Opt-in internal performance investigations correlate bounded Prometheus, Tempo and available sampled SQL evidence with deterministic findings and an estimated dominant trace envelope. AI defaults off; engineers review recommendations. See [architecture, limits and operations](docs/phase-21-ai-performance-investigation.md) and [verification](docs/phase-21-verification-report.md). Run `npm run test:performance` for offline tests.

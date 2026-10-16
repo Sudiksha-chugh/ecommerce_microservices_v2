@@ -105,11 +105,11 @@ export class PrometheusCollector implements Collector {
     }
 }
 const attr = z.object({ key: z.string().max(256), value: z.object({ stringValue: z.string().max(8192).optional() }).passthrough() });
-const span = z.object({ traceId: z.string().max(64), spanId: z.string().max(32), parentSpanId: z.string().max(32).optional(), startTimeUnixNano: z.string().regex(/^\d{1,20}$/), endTimeUnixNano: z.string().regex(/^\d{1,20}$/), status: z.object({ code: z.union([z.number().int().min(0).max(2), z.enum(['STATUS_CODE_UNSET', 'STATUS_CODE_OK', 'STATUS_CODE_ERROR'])]) }).passthrough().optional() }).passthrough();
+const span = z.object({ traceId: z.string().max(64), spanId: z.string().max(32), parentSpanId: z.string().max(32).optional(), startTimeUnixNano: z.string().regex(/^\d{1,20}$/), endTimeUnixNano: z.string().regex(/^\d{1,20}$/), status: z.object({ code: z.union([z.number().int().min(0).max(2), z.enum(['STATUS_CODE_UNSET', 'STATUS_CODE_OK', 'STATUS_CODE_ERROR'])]).optional() }).passthrough().optional() }).passthrough();
 const batch = z.object({ resource: z.object({ attributes: z.array(attr).max(128) }), scopeSpans: z.array(z.object({ spans: z.array(span).max(1000) })).max(128) });
 // Tempo 2.x JSON uses batches; resourceSpans is accepted for OTLP-compatible fixtures.
-const tempo = z.union([z.object({ batches: z.array(batch).max(128) }), z.object({ resourceSpans: z.array(batch).max(128) })]);
-function hexId(value: string, bytes: number): string | undefined { if (new RegExp('^[a-f0-9]{' + bytes * 2 + '}$').test(value) && !/^0+$/.test(value))
+export const tempo = z.union([z.object({ batches: z.array(batch).max(128) }), z.object({ resourceSpans: z.array(batch).max(128) })]);
+export function hexId(value: string, bytes: number): string | undefined { if (new RegExp('^[a-f0-9]{' + bytes * 2 + '}$').test(value) && !/^0+$/.test(value))
     return value; const b = Buffer.from(value, 'base64'); return b.length === bytes && b.toString('base64') === value && !b.every(n => n === 0) ? b.toString('hex') : undefined; }
 export function parseTempo(raw: unknown, input: Investigation, limits: Limits): {
     evidence: Evidence[];

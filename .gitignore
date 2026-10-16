@@ -36,3 +36,5 @@ verification-evidence/
 !.env.sql-advisor.example
 
 !.env.incident-analysis.example
+
+!.env.performance-investigation.example

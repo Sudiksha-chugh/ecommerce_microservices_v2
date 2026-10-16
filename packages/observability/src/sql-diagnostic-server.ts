@@ -1,3 +1,5 @@
+import {performanceReporting} from './performance/api.js';
+import {configuredPerformanceAnalysis} from './performance/server.js';
 import {incidentReporting} from './incident/api.js';
 import {configuredIncidentAnalysis} from './incident/server.js';
 import {readFile} from 'node:fs/promises';
@@ -24,7 +26,7 @@ export async function startSqlDiagnostics(env:NodeJS.ProcessEnv=process.env){
  pool.on('error',()=>{});
  const diagnostics=new SqlDiagnostics(pool,service);
  const config=advisorConfig(env),advisor=new SqlAdvisor(config,configuredAdvisorProvider(config,env));
- const app=express();if(env.INCIDENT_DIAGNOSTICS_ENABLED==='true')app.use('/internal/incidents',incidentReporting(verify,configuredIncidentAnalysis(env)));app.use('/internal/sql-advisor',sqlAdvisorReporting(verify,advisor,diagnostics));app.disable('x-powered-by');app.use('/internal/sql',sqlReporting(verify,diagnostics));app.use((_req,res)=>res.status(404).json({error:'not_found'}));
+ const app=express();if(env.PERFORMANCE_DIAGNOSTICS_ENABLED==='true')app.use('/internal/performance',performanceReporting(verify,configuredPerformanceAnalysis(env)));if(env.INCIDENT_DIAGNOSTICS_ENABLED==='true')app.use('/internal/incidents',incidentReporting(verify,configuredIncidentAnalysis(env)));app.use('/internal/sql-advisor',sqlAdvisorReporting(verify,advisor,diagnostics));app.disable('x-powered-by');app.use('/internal/sql',sqlReporting(verify,diagnostics));app.use((_req,res)=>res.status(404).json({error:'not_found'}));
  const server=app.listen(port,'127.0.0.1');server.maxConnections=8;server.requestTimeout=5000;server.headersTimeout=5000;server.keepAliveTimeout=1000;
  await new Promise<void>((resolve,reject)=>{server.once('listening',resolve);server.once('error',reject);}).catch(async()=>{await pool.end();throw new Error('Diagnostic listener unavailable');});
  return {port,close:async()=>{server.closeAllConnections();await new Promise<void>(resolve=>server.close(()=>resolve()));await pool.end();}};

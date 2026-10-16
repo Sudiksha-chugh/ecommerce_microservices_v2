@@ -6,7 +6,8 @@
   "exports": {
     ".": "./src/index.ts",
     "./bootstrap": "./bootstrap.mjs",
-    "./incident": "./src/incident/index.ts"
+    "./incident": "./src/incident/index.ts",
+    "./performance": "./src/performance/index.ts"
   },
   "dependencies": {
     "@opentelemetry/api": "1.9.0",
