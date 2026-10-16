@@ -64,6 +64,7 @@ async function crash(mode:string,db:typeof orders,extra:Record<string,string>={}
 }
 let telemetry:Awaited<ReturnType<typeof initializeTelemetry>>;
 beforeAll(async()=>{
+ if(process.env.OTEL_SQL_ENABLED==='true')process.env.OTEL_SQL_SAMPLE_RATIO='1'; // Deterministic fixture sampling only.
  telemetry=await initializeTelemetry({...process.env,OTEL_ENABLED:'true',OTEL_SERVICE_NAME:'observability-proof',OTEL_TRACES_SAMPLER_ARG:'1',OTEL_METRIC_EXPORT_INTERVAL:'1000'});
  orders=await isolated('orders');inventory=await isolated('inventory');payments=await isolated('payments');
  for(const db of [orders,inventory,payments])db.pool=instrumentPg(db.pool);
@@ -116,6 +117,13 @@ async function proveFlow(outage?:'otel-collector'|'tempo'|'prometheus'|'grafana'
    // Explicit fixture-only error/slow observations. No automatic EXPLAIN in a business path.
    await expect(orders.pool.query('SELECT 1 / 0')).rejects.toBeDefined();
    await orders.pool.query('SELECT pg_catalog.pg_sleep(0.3)');await telemetry.flush();
+   // Exercise the real failure path required by the existing advisor-error panel.
+   // This provider is local to the fixture; no external AI request or direct metric injection.
+   const {SqlAdvisor,advisorConfig,advisorCandidates}=await import('../src/sql-advisor.js');
+   const candidates=advisorCandidates();expect(candidates.length).toBeGreaterThan(0);
+   const advisor=new SqlAdvisor(advisorConfig({SQL_ADVISOR_AI_ENABLED:'true'}),{identity:'controlled-proof-failure',analyze:async()=>{throw new Error('fixture_provider_unavailable');}});
+   const failure=await advisor.analyze(candidates[0]!);expect(failure.enrichment).toBe('failed');expect(failure.failure).toBe('unavailable');
+   proof.sqlAdvisorFailure={enrichment:failure.enrichment,reason:failure.failure};await telemetry.flush();
    const sqlMetrics:Record<string,number>={};for(const name of ['sql_query_executions_total','sql_query_errors_total','sql_query_slow_total','sql_query_duration_seconds_count'])await vi.waitFor(async()=>{await telemetry.flush();const r=await fetch(process.env.OBS_PROMETHEUS_URL+'/api/v1/query?query='+encodeURIComponent(name),{signal:AbortSignal.timeout(2000)});const data=await r.json() as {status:string;data:{result:{metric:Record<string,string>;value:[number,string]}[]}};expect(data.status).toBe('success');expect(data.data.result.length).toBeGreaterThan(0);expect(data.data.result.length).toBeLessThanOrEqual(128);expect(data.data.result.some(s=>Number(s.value[1])>0)).toBe(true);for(const series of data.data.result){expect(series.metric.service_name).toBe('observability-proof');expect(Object.keys(series.metric).join(' ')).not.toMatch(/fingerprint|statement|query_text|request.?id|trace.?id|user.?id/i);}sqlMetrics[name]=data.data.result.length;},{timeout:20000,interval:1000});proof.sqlMetrics=sqlMetrics;
   }
   const search=logs.filter(l=>l.component==='http-request'&&l.service==='search-service'&&l.route==='/search/products').at(-1);expect(search?.traceId).toBeDefined();

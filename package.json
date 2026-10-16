@@ -83,7 +83,9 @@
     "sql:diagnostics": "node --import ./packages/observability/bootstrap.mjs --import tsx scripts/sql-diagnostics.mjs",
     "test:sql": "vitest run packages/observability/test/sql",
     "test:sql:integration": "node scripts/sql-integration-runner.mjs",
-    "test:sql-advisor": "vitest run packages/observability/test/advisor"
+    "test:sql-advisor": "vitest run packages/observability/test/advisor",
+    "test:incidents": "vitest run packages/observability/test/incident",
+    "incident:diagnostics": "node --import ./packages/observability/bootstrap.mjs --import tsx scripts/incident-diagnostics.mjs"
   },
   "devDependencies": {
     "@types/express": "^5.0.0",

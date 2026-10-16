@@ -1,7 +1,7 @@
 import {createHash} from 'node:crypto';
 import {z} from 'zod';
 import {metrics} from '@opentelemetry/api';
-import {operation} from './context.js';
+import {operation,enabled} from './context.js';
 import type {SqlDiagnostics} from './sql-diagnostics.js';
 import {sqlTelemetrySnapshot} from './sql-telemetry.js';
 
@@ -55,9 +55,12 @@ export function advisorConfig(env:NodeJS.ProcessEnv=process.env):AdvisorConfig {
  const n=(key:string,d:number,max:number)=>{const v=Number(env[key]??d);if(!Number.isInteger(v)||v<1||v>max)throw new Error('Invalid advisor configuration');return v;};
  return {enabled:env.SQL_ADVISOR_AI_ENABLED==='true',timeoutMs:n('SQL_ADVISOR_TIMEOUT_MS',3000,10000),maxConcurrent:n('SQL_ADVISOR_MAX_CONCURRENT',2,4),cacheTtlMs:n('SQL_ADVISOR_CACHE_TTL_MS',60000,3600000),cacheEntries:n('SQL_ADVISOR_CACHE_ENTRIES',32,128),requestsPerMinute:n('SQL_ADVISOR_REQUESTS_PER_MINUTE',10,60),maxOutputTokens:n('SQL_ADVISOR_MAX_OUTPUT_TOKENS',2000,4000),tokensPerMinute:n('SQL_ADVISOR_TOKENS_PER_MINUTE',100000,1000000)};
 }
-const meter=metrics.getMeter('ecommerce.sql-advisor','1');
-const requests=meter.createCounter('sql_advisor_requests_total'),errors=meter.createCounter('sql_advisor_provider_errors_total'),invalid=meter.createCounter('sql_advisor_validation_failures_total'),fallback=meter.createCounter('sql_advisor_fallback_total'),inflight=meter.createUpDownCounter('sql_advisor_inflight_requests'),duration=meter.createHistogram('sql_advisor_analysis_duration_seconds',{unit:'s'});
-function safeMetric(fn:()=>void){try{fn();}catch{/* Observability cannot affect diagnostics. */}}
+function createInstruments(){
+ const meter=metrics.getMeter('ecommerce.sql-advisor','1');
+ return {requests:meter.createCounter('sql_advisor_requests_total'),errors:meter.createCounter('sql_advisor_provider_errors_total'),invalid:meter.createCounter('sql_advisor_validation_failures_total'),fallback:meter.createCounter('sql_advisor_fallback_total'),inflight:meter.createUpDownCounter('sql_advisor_inflight_requests'),duration:meter.createHistogram('sql_advisor_analysis_duration_seconds',{unit:'s'})};
+}
+let instruments:ReturnType<typeof createInstruments>|undefined;
+function safeMetric(fn:(value:ReturnType<typeof createInstruments>)=>void){if(!enabled())return;try{fn(instruments??=createInstruments());}catch{/* Observability cannot affect diagnostics. */}}
 export interface AnalysisResult {recommendation:Recommendation;enrichment:'disabled'|'success'|'failed';failure?:AdvisorFailure}
 export class SqlAdvisor {
  private cache=new Map<string,{expires:number;value:AnalysisResult}>();private pending=new Map<string,Promise<AnalysisResult>>();private admissions:number[]=[];private providerActive=0;private failures=0;private openUntil=0;
@@ -70,24 +73,24 @@ export class SqlAdvisor {
  }
  health(){return {aiEnabled:this.config.enabled,circuitOpen:this.now()<this.openUntil,inflight:this.pending.size};}
  async analyze(raw:AdvisorSnapshot):Promise<AnalysisResult>{
-  const input=snapshotSchema.parse(raw),base=baseline(input);safeMetric(()=>requests.add(1));
+  const input=snapshotSchema.parse(raw),base=baseline(input);safeMetric(({requests})=>requests.add(1));
   if(!this.config.enabled)return {recommendation:base,enrichment:'disabled'};
   const key=createHash('sha256').update(JSON.stringify([1,this.provider!.identity,input])).digest('hex'),now=this.now();
   for(const [k,v] of this.cache)if(v.expires<=now)this.cache.delete(k);
   const hit=this.cache.get(key);if(hit)return structuredClone(hit.value);const pending=this.pending.get(key);if(pending)return structuredClone(await pending);
-  const failed=(failure:AdvisorFailure):AnalysisResult=>{try{console.info(JSON.stringify({component:'sql-advisor',outcome:'enrichment_failed',reason:failure}));}catch{}safeMetric(()=>fallback.add(1,{reason:failure}));return {recommendation:base,enrichment:'failed',failure};};
+  const failed=(failure:AdvisorFailure):AnalysisResult=>{try{console.info(JSON.stringify({component:'sql-advisor',outcome:'enrichment_failed',reason:failure}));}catch{}safeMetric(({fallback})=>fallback.add(1,{reason:failure}));return {recommendation:base,enrichment:'failed',failure};};
   this.admissions=this.admissions.filter(t=>t>now-60000);
   if(now<this.openUntil)return failed('circuit_open');if(this.pending.size>=this.config.maxConcurrent||this.providerActive>=this.config.maxConcurrent)return failed('busy');
   // Reserve a conservative input allowance plus the full output allocation for every attempt.
   if(this.admissions.length>=this.config.requestsPerMinute||(this.admissions.length+1)*(this.config.maxOutputTokens+32768)>this.config.tokensPerMinute)return failed('budget');
   this.admissions.push(now);
-  const job=(async()=>{const controller=new AbortController();let timer:ReturnType<typeof setTimeout>|undefined;const start=performance.now();safeMetric(()=>inflight.add(1));
+  const job=(async()=>{const controller=new AbortController();let timer:ReturnType<typeof setTimeout>|undefined;const start=performance.now();safeMetric(({inflight})=>inflight.add(1));
    return operation('sql-advisor.analyze',{},async()=>{try{
     const output=await Promise.race([Promise.resolve().then(()=>{this.providerActive++;return this.provider!.analyze(structuredClone(input),structuredClone(base),controller.signal);}).finally(()=>{this.providerActive--;}),new Promise<never>((_,reject)=>{timer=setTimeout(()=>{controller.abort();reject(new AdvisorProviderError('timeout'));},this.config.timeoutMs);})]);
-    let recommendation:Recommendation;try{recommendation=validateEnrichment(output,base);}catch{safeMetric(()=>invalid.add(1));throw new AdvisorProviderError('invalid_response');}
+    let recommendation:Recommendation;try{recommendation=validateEnrichment(output,base);}catch{safeMetric(({invalid})=>invalid.add(1));throw new AdvisorProviderError('invalid_response');}
     this.failures=0;const result:AnalysisResult={recommendation,enrichment:'success'};if(this.cache.size>=this.config.cacheEntries)this.cache.delete(this.cache.keys().next().value!);this.cache.set(key,{expires:this.now()+this.config.cacheTtlMs,value:structuredClone(result)});return result;
-   }catch(error){const code=error instanceof AdvisorProviderError?error.code:'unavailable';safeMetric(()=>errors.add(1,{reason:code}));if(++this.failures>=3)this.openUntil=this.now()+30000;return failed(code);
-   }finally{clearTimeout(timer);controller.abort();safeMetric(()=>{inflight.add(-1);duration.record((performance.now()-start)/1000);});}});
+   }catch(error){const code=error instanceof AdvisorProviderError?error.code:'unavailable';safeMetric(({errors})=>errors.add(1,{reason:code}));if(++this.failures>=3)this.openUntil=this.now()+30000;return failed(code);
+   }finally{clearTimeout(timer);controller.abort();safeMetric(({inflight,duration})=>{inflight.add(-1);duration.record((performance.now()-start)/1000);});}});
   })();this.pending.set(key,job);try{return structuredClone(await job);}finally{this.pending.delete(key);}
  }
 }

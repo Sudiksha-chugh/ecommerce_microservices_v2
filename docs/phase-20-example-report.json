@@ -1,0 +1,372 @@
+{
+  "schemaVersion": 1,
+  "incidentId": "checkout-20",
+  "status": "partial",
+  "summary": "Observed dependency failure, http errors, http latency, span slow affecting api-gateway, orders-service, payments-service. Validate the linked evidence before attributing a cause",
+  "severity": "high",
+  "affectedServices": [
+    "api-gateway",
+    "orders-service",
+    "payments-service"
+  ],
+  "timeWindow": {
+    "start": "2026-10-15T10:00:00.000Z",
+    "end": "2026-10-15T10:05:00.000Z"
+  },
+  "analysisTimestamp": "2026-10-15T10:05:00.000Z",
+  "analysisMode": "deterministic",
+  "aiStatus": "disabled",
+  "observations": [
+    {
+      "evidenceId": "e_2c963f53b373345820ec3689",
+      "source": "metrics",
+      "service": "api-gateway",
+      "startTime": "2026-10-15T10:02:00.000Z",
+      "endTime": "2026-10-15T10:02:00.000Z",
+      "signal": "http_errors",
+      "value": 0.15,
+      "observation": "Reviewed diagnostic observation",
+      "reference": "prometheus:http_errors",
+      "collectionStatus": "collected",
+      "quality": "measured",
+      "sanitization": "allowlisted"
+    },
+    {
+      "evidenceId": "e_2f7722cea0d4217b32be750d",
+      "source": "traces",
+      "service": "orders-service",
+      "startTime": "2026-10-15T10:02:00.000Z",
+      "endTime": "2026-10-15T10:02:03.000Z",
+      "signal": "span_slow",
+      "value": 3,
+      "observation": "Trace span duration in seconds",
+      "reference": "tempo:1234567890abcdef1234567890abcdef:1111111111111111",
+      "traceId": "1234567890abcdef1234567890abcdef",
+      "spanId": "1111111111111111",
+      "collectionStatus": "collected",
+      "quality": "measured",
+      "sanitization": "allowlisted"
+    },
+    {
+      "evidenceId": "e_fcd95a24e637846bbb4ab38c",
+      "source": "traces",
+      "service": "orders-service",
+      "startTime": "2026-10-15T10:02:00.000Z",
+      "endTime": "2026-10-15T10:02:03.000Z",
+      "signal": "span_error",
+      "value": 0,
+      "observation": "Trace span error status indicator",
+      "reference": "tempo:1234567890abcdef1234567890abcdef:1111111111111111",
+      "traceId": "1234567890abcdef1234567890abcdef",
+      "spanId": "1111111111111111",
+      "collectionStatus": "collected",
+      "quality": "measured",
+      "sanitization": "allowlisted"
+    },
+    {
+      "evidenceId": "e_908a5a6a5a199f10507eea34",
+      "source": "traces",
+      "service": "payments-service",
+      "startTime": "2026-10-15T10:02:00.000Z",
+      "endTime": "2026-10-15T10:02:02.000Z",
+      "signal": "dependency_failure",
+      "value": 1,
+      "observation": "Downstream trace span error status indicator",
+      "reference": "tempo:1234567890abcdef1234567890abcdef:2222222222222222",
+      "relatedService": "orders-service",
+      "traceId": "1234567890abcdef1234567890abcdef",
+      "spanId": "2222222222222222",
+      "parentSpanId": "1111111111111111",
+      "collectionStatus": "collected",
+      "quality": "measured",
+      "sanitization": "allowlisted"
+    },
+    {
+      "evidenceId": "e_9e1f7807bef3ea28445f7adf",
+      "source": "traces",
+      "service": "payments-service",
+      "startTime": "2026-10-15T10:02:00.000Z",
+      "endTime": "2026-10-15T10:02:02.000Z",
+      "signal": "span_slow",
+      "value": 2,
+      "observation": "Trace span duration in seconds",
+      "reference": "tempo:1234567890abcdef1234567890abcdef:2222222222222222",
+      "relatedService": "orders-service",
+      "traceId": "1234567890abcdef1234567890abcdef",
+      "spanId": "2222222222222222",
+      "parentSpanId": "1111111111111111",
+      "collectionStatus": "collected",
+      "quality": "measured",
+      "sanitization": "allowlisted"
+    },
+    {
+      "evidenceId": "e_a6da43c8f0c2be0f8967b8cc",
+      "source": "metrics",
+      "service": "payments-service",
+      "startTime": "2026-10-15T10:02:00.000Z",
+      "endTime": "2026-10-15T10:02:00.000Z",
+      "signal": "http_latency",
+      "value": 3,
+      "observation": "Reviewed diagnostic observation",
+      "reference": "prometheus:http_latency",
+      "collectionStatus": "collected",
+      "quality": "measured",
+      "sanitization": "allowlisted"
+    }
+  ],
+  "findings": [
+    {
+      "findingId": "f_eabd85537461c6c8cca8ead9",
+      "category": "dependency_failure",
+      "severity": "high",
+      "confidence": "medium",
+      "affectedServices": [
+        "payments-service"
+      ],
+      "evidenceIds": [
+        "e_908a5a6a5a199f10507eea34"
+      ],
+      "explanation": "A downstream span with an observed parent relationship reports an error status",
+      "limitations": [
+        "Thresholds identify symptoms and do not establish a cause",
+        "A previous window is descriptive and is not a validated healthy baseline"
+      ],
+      "classification": "observed_symptom"
+    },
+    {
+      "findingId": "f_e643d41fe00f9e8598bae238",
+      "category": "http_errors",
+      "severity": "medium",
+      "confidence": "medium",
+      "affectedServices": [
+        "api-gateway"
+      ],
+      "evidenceIds": [
+        "e_2c963f53b373345820ec3689"
+      ],
+      "explanation": "HTTP server error ratio crosses the five percent review threshold",
+      "limitations": [
+        "Thresholds identify symptoms and do not establish a cause",
+        "A previous window is descriptive and is not a validated healthy baseline"
+      ],
+      "classification": "observed_symptom"
+    },
+    {
+      "findingId": "f_17b60042f25980bf8bc50b82",
+      "category": "http_latency",
+      "severity": "medium",
+      "confidence": "medium",
+      "affectedServices": [
+        "payments-service"
+      ],
+      "evidenceIds": [
+        "e_a6da43c8f0c2be0f8967b8cc"
+      ],
+      "explanation": "HTTP request latency crosses the one second review threshold",
+      "limitations": [
+        "Thresholds identify symptoms and do not establish a cause",
+        "A previous window is descriptive and is not a validated healthy baseline"
+      ],
+      "classification": "observed_symptom"
+    },
+    {
+      "findingId": "f_f54c3c2c849bae3c0eafff30",
+      "category": "multi_service_degradation",
+      "severity": "high",
+      "confidence": "medium",
+      "affectedServices": [
+        "api-gateway",
+        "orders-service",
+        "payments-service"
+      ],
+      "evidenceIds": [
+        "e_2c963f53b373345820ec3689",
+        "e_2f7722cea0d4217b32be750d",
+        "e_908a5a6a5a199f10507eea34",
+        "e_9e1f7807bef3ea28445f7adf",
+        "e_a6da43c8f0c2be0f8967b8cc"
+      ],
+      "explanation": "Linked services have temporally overlapping degradation observations",
+      "limitations": [
+        "Temporal correlation does not prove causality",
+        "Static relationships describe possible dependencies rather than observed calls"
+      ],
+      "classification": "observed_symptom"
+    },
+    {
+      "findingId": "f_07f754f0b1956dde3e612a6d",
+      "category": "span_slow",
+      "severity": "medium",
+      "confidence": "medium",
+      "affectedServices": [
+        "orders-service"
+      ],
+      "evidenceIds": [
+        "e_2f7722cea0d4217b32be750d"
+      ],
+      "explanation": "Observed span duration crosses the one second review threshold",
+      "limitations": [
+        "Thresholds identify symptoms and do not establish a cause",
+        "A previous window is descriptive and is not a validated healthy baseline"
+      ],
+      "classification": "observed_symptom"
+    },
+    {
+      "findingId": "f_34c457bce8a53db6bbef1c49",
+      "category": "span_slow",
+      "severity": "medium",
+      "confidence": "medium",
+      "affectedServices": [
+        "payments-service"
+      ],
+      "evidenceIds": [
+        "e_9e1f7807bef3ea28445f7adf"
+      ],
+      "explanation": "Observed span duration crosses the one second review threshold",
+      "limitations": [
+        "Thresholds identify symptoms and do not establish a cause",
+        "A previous window is descriptive and is not a validated healthy baseline"
+      ],
+      "classification": "observed_symptom"
+    }
+  ],
+  "rootCauseHypotheses": [
+    {
+      "hypothesisId": "h_d6687c6a29efea68e6cf3d70",
+      "candidateComponent": "payments-service",
+      "classification": "root_cause_hypothesis",
+      "supportingEvidenceIds": [
+        "e_908a5a6a5a199f10507eea34",
+        "e_9e1f7807bef3ea28445f7adf",
+        "e_a6da43c8f0c2be0f8967b8cc"
+      ],
+      "contradictingEvidenceIds": [],
+      "confidence": "medium",
+      "reasoningSummary": "Observed downstream degradation may contribute to dependent symptoms",
+      "missingEvidence": [
+        "No explicit root cause verification has been performed",
+        "Representative external dependency and resource utilization evidence is unavailable"
+      ],
+      "validationSteps": [
+        "Inspect representative failed traces and service diagnostics",
+        "Compare observed latency with a representative healthy workload",
+        "Check dependency timing and contrary observations before deciding on a cause"
+      ]
+    },
+    {
+      "hypothesisId": "h_80982361d2eed96de8704e13",
+      "candidateComponent": "orders-service",
+      "classification": "root_cause_hypothesis",
+      "supportingEvidenceIds": [
+        "e_2f7722cea0d4217b32be750d"
+      ],
+      "contradictingEvidenceIds": [],
+      "confidence": "low",
+      "reasoningSummary": "Service degradation is a candidate contributing factor",
+      "missingEvidence": [
+        "No explicit root cause verification has been performed",
+        "Representative external dependency and resource utilization evidence is unavailable"
+      ],
+      "validationSteps": [
+        "Inspect representative failed traces and service diagnostics",
+        "Compare observed latency with a representative healthy workload",
+        "Check dependency timing and contrary observations before deciding on a cause"
+      ]
+    },
+    {
+      "hypothesisId": "h_49f319ab824424ccbc357d6d",
+      "candidateComponent": "api-gateway",
+      "classification": "root_cause_hypothesis",
+      "supportingEvidenceIds": [
+        "e_2c963f53b373345820ec3689"
+      ],
+      "contradictingEvidenceIds": [],
+      "confidence": "low",
+      "reasoningSummary": "Service degradation is a candidate contributing factor",
+      "missingEvidence": [
+        "No explicit root cause verification has been performed",
+        "Representative external dependency and resource utilization evidence is unavailable"
+      ],
+      "validationSteps": [
+        "Inspect representative failed traces and service diagnostics",
+        "Compare observed latency with a representative healthy workload",
+        "Check dependency timing and contrary observations before deciding on a cause"
+      ]
+    }
+  ],
+  "recommendedActions": [
+    "Review ranked hypotheses and their supporting and contradicting evidence",
+    "Inspect representative failed traces and dependency diagnostics"
+  ],
+  "dependencies": [
+    {
+      "from": "api-gateway",
+      "to": "orders-service",
+      "kind": "static",
+      "evidenceIds": []
+    },
+    {
+      "from": "api-gateway",
+      "to": "payments-service",
+      "kind": "static",
+      "evidenceIds": []
+    },
+    {
+      "from": "orders-service",
+      "to": "payments-service",
+      "kind": "observed",
+      "evidenceIds": [
+        "e_2f7722cea0d4217b32be750d",
+        "e_908a5a6a5a199f10507eea34",
+        "e_9e1f7807bef3ea28445f7adf",
+        "e_fcd95a24e637846bbb4ab38c"
+      ]
+    },
+    {
+      "from": "orders-service",
+      "to": "payments-service",
+      "kind": "static",
+      "evidenceIds": []
+    }
+  ],
+  "coverage": {
+    "metrics": "available",
+    "traces": "available",
+    "logs": "unavailable"
+  },
+  "sourceStatuses": [
+    {
+      "source": "metrics",
+      "status": "available",
+      "reason": "ok",
+      "collectedAt": "2026-10-15T10:05:00.000Z"
+    },
+    {
+      "source": "traces",
+      "status": "available",
+      "reason": "ok",
+      "collectedAt": "2026-10-15T10:05:00.000Z"
+    },
+    {
+      "source": "logs",
+      "status": "unavailable",
+      "reason": "empty",
+      "collectedAt": "2026-10-15T10:05:00.000Z"
+    }
+  ],
+  "freshness": {
+    "snapshotVersion": "72230249e10e1b30d16e53b1",
+    "collectedAt": "2026-10-15T10:05:00.000Z",
+    "latestEvidenceAt": "2026-10-15T10:02:03.000Z",
+    "stale": false,
+    "cache": "miss",
+    "cacheExpiresAt": null
+  },
+  "limitations": [
+    "Correlation and temporal order do not establish causality",
+    "Traces are sampled and one trace cannot establish incident wide coverage",
+    "Service availability and queue depth metrics are not exported by the current stack",
+    "No automatic root cause verification or remediation is performed",
+    "logs coverage is unavailable due to empty"
+  ]
+}

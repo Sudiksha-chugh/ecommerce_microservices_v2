@@ -34,3 +34,5 @@ verification-evidence/
 .secrets/
 
 !.env.sql-advisor.example
+
+!.env.incident-analysis.example

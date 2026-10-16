@@ -607,3 +607,7 @@ Use Node.js 24 and `npm run test:search` for isolated real Elasticsearch/PG/Rabb
 SQL telemetry is separately opt-in and disabled by default. See [the SQL telemetry and safe diagnostics runbook](docs/phase-18-sql-telemetry-runbook.md) for bounded collection, authenticated internal reporting, approved read-only generic plans, the Grafana dashboard and required verification gates. No automatic index/query modification, AI integration or production rollout is included. [Phase 18 verification](docs/phase-18-verification-report.md) passed the live stack, security/integration/performance gates and two independent full regressions of 1,027 tests.
 
 Phase 19 adds a read-only SQL optimization advisor with deterministic advice and optional AI enrichment. See [configuration, privacy boundaries and API contract](docs/phase-19-ai-sql-advisor.md). AI is disabled by default.
+
+### Phase 20 incident diagnostics
+
+Opt-in, loopback-only incident investigation reuses Prometheus, Tempo and existing admin JWT verification. Deterministic evidence-backed reports work with AI disabled; missing logs and backend failures produce explicit partial coverage. See [architecture, configuration and security](docs/phase-20-ai-incident-analysis.md) and [verification results](docs/phase-20-verification-report.md). Run `npm run test:incidents` for offline tests.

@@ -1,11 +1,13 @@
+import {SqlAdvisor,advisorConfig} from '../../src/sql-advisor.js';
 import {it,expect} from 'vitest';
 import {InMemorySpanExporter} from '@opentelemetry/sdk-trace-base';
 import {InMemoryMetricExporter,PeriodicExportingMetricReader,AggregationTemporality} from '@opentelemetry/sdk-metrics';
 import {initializeTelemetry} from '../../bootstrap.mjs';
 it('exports fixed metric labels, sanitized spans and safe structured failure logs',async()=>{
+ // Import and disabled use before SDK startup must not permanently cache no-op instruments.
+ expect((await new SqlAdvisor(advisorConfig({})).analyze({version:1,fingerprint:'q_'+'a'.repeat(24),operation:'SELECT',sampledCount:0,p95UpperMs:null,maxMs:0,plan:[]})).enrichment).toBe('disabled');
  const spans=new InMemorySpanExporter(),exporter=new InMemoryMetricExporter(AggregationTemporality.CUMULATIVE);
  const state=await initializeTelemetry({OTEL_ENABLED:'true',OTEL_SERVICE_NAME:'advisor-test',OTEL_TRACES_SAMPLER_ARG:'1'},{spanExporter:spans,metricReader:new PeriodicExportingMetricReader({exporter,exportIntervalMillis:10000})});
- const {SqlAdvisor,advisorConfig}=await import('../../src/sql-advisor.js');
  const original=console.info,logs:string[]=[];console.info=(v:string)=>{logs.push(v);};
  try{
   const advisor=new SqlAdvisor({...advisorConfig({}),enabled:true},{identity:'test',analyze:async()=>{throw Error('secret-private-value');}});
