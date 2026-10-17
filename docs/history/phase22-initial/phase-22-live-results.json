@@ -1,0 +1,369 @@
+{
+  "schemaVersion": 1,
+  "sourceRevision": "6f8edf87888149a6594addd99f1d432a6c6d5db3",
+  "sourceDigest": "fc5b61fd947f7eab44f8eadd5ff839415a3b7605be3d208f2fed2aff48cedd4b",
+  "fixture": {
+    "runId": "3c601f3842049165ec1a1364",
+    "project": "phase22-3c601f3842049165ec1a1364",
+    "marker": "ecommerce-phase22",
+    "resources": [
+      "postgres",
+      "rabbitmq",
+      "redis",
+      "elasticsearch"
+    ]
+  },
+  "reports": [
+    {
+      "schemaVersion": 1,
+      "scenarioId": "redis-owned-outage",
+      "sourceRevision": "6f8edf87888149a6594addd99f1d432a6c6d5db3",
+      "sourceDigest": "fc5b61fd947f7eab44f8eadd5ff839415a3b7605be3d208f2fed2aff48cedd4b",
+      "fixture": {
+        "runId": "3c601f3842049165ec1a1364",
+        "project": "phase22-3c601f3842049165ec1a1364",
+        "marker": "ecommerce-phase22",
+        "resources": [
+          "postgres",
+          "rabbitmq",
+          "redis",
+          "elasticsearch"
+        ]
+      },
+      "status": "passed",
+      "fault": {
+        "type": "unavailable",
+        "target": "redis"
+      },
+      "startedAt": "2026-10-17T07:30:37.314Z",
+      "endedAt": "2026-10-17T07:30:38.038Z",
+      "durationMs": 724,
+      "recovery": {
+        "status": "passed",
+        "durationMs": 30,
+        "verified": true
+      },
+      "cleanup": {
+        "status": "passed",
+        "durationMs": 354,
+        "verified": true
+      },
+      "invariants": [
+        {
+          "id": "no-false-success",
+          "kind": "immediate",
+          "recoveryHorizonMs": 0,
+          "status": "passed",
+          "evidence": {
+            "observed": 0,
+            "limit": 0,
+            "complete": true,
+            "elapsedMs": 341
+          },
+          "detail": "assertion-satisfied"
+        },
+        {
+          "id": "eventual-recovery",
+          "kind": "eventual",
+          "recoveryHorizonMs": 20000,
+          "status": "passed",
+          "evidence": {
+            "observed": 0,
+            "limit": 0,
+            "complete": true,
+            "elapsedMs": 341
+          },
+          "detail": "assertion-satisfied"
+        }
+      ],
+      "limitations": []
+    },
+    {
+      "schemaVersion": 1,
+      "scenarioId": "rabbitmq-owned-outage",
+      "sourceRevision": "6f8edf87888149a6594addd99f1d432a6c6d5db3",
+      "sourceDigest": "fc5b61fd947f7eab44f8eadd5ff839415a3b7605be3d208f2fed2aff48cedd4b",
+      "fixture": {
+        "runId": "3c601f3842049165ec1a1364",
+        "project": "phase22-3c601f3842049165ec1a1364",
+        "marker": "ecommerce-phase22",
+        "resources": [
+          "postgres",
+          "rabbitmq",
+          "redis",
+          "elasticsearch"
+        ]
+      },
+      "status": "passed",
+      "fault": {
+        "type": "unavailable",
+        "target": "rabbitmq"
+      },
+      "startedAt": "2026-10-17T07:30:38.040Z",
+      "endedAt": "2026-10-17T07:30:38.827Z",
+      "durationMs": 787,
+      "recovery": {
+        "status": "passed",
+        "durationMs": 26,
+        "verified": true
+      },
+      "cleanup": {
+        "status": "passed",
+        "durationMs": 282,
+        "verified": true
+      },
+      "invariants": [
+        {
+          "id": "no-false-success",
+          "kind": "immediate",
+          "recoveryHorizonMs": 0,
+          "status": "passed",
+          "evidence": {
+            "observed": 0,
+            "limit": 0,
+            "complete": true,
+            "elapsedMs": 479
+          },
+          "detail": "assertion-satisfied"
+        },
+        {
+          "id": "eventual-recovery",
+          "kind": "eventual",
+          "recoveryHorizonMs": 20000,
+          "status": "passed",
+          "evidence": {
+            "observed": 0,
+            "limit": 0,
+            "complete": true,
+            "elapsedMs": 479
+          },
+          "detail": "assertion-satisfied"
+        }
+      ],
+      "limitations": []
+    },
+    {
+      "schemaVersion": 1,
+      "scenarioId": "elasticsearch-owned-outage",
+      "sourceRevision": "6f8edf87888149a6594addd99f1d432a6c6d5db3",
+      "sourceDigest": "fc5b61fd947f7eab44f8eadd5ff839415a3b7605be3d208f2fed2aff48cedd4b",
+      "fixture": {
+        "runId": "3c601f3842049165ec1a1364",
+        "project": "phase22-3c601f3842049165ec1a1364",
+        "marker": "ecommerce-phase22",
+        "resources": [
+          "postgres",
+          "rabbitmq",
+          "redis",
+          "elasticsearch"
+        ]
+      },
+      "status": "passed",
+      "fault": {
+        "type": "unavailable",
+        "target": "elasticsearch"
+      },
+      "startedAt": "2026-10-17T07:30:38.827Z",
+      "endedAt": "2026-10-17T07:30:39.886Z",
+      "durationMs": 1059,
+      "recovery": {
+        "status": "passed",
+        "durationMs": 32,
+        "verified": true
+      },
+      "cleanup": {
+        "status": "passed",
+        "durationMs": 307,
+        "verified": true
+      },
+      "invariants": [
+        {
+          "id": "no-false-success",
+          "kind": "immediate",
+          "recoveryHorizonMs": 0,
+          "status": "passed",
+          "evidence": {
+            "observed": 0,
+            "limit": 0,
+            "complete": true,
+            "elapsedMs": 719
+          },
+          "detail": "assertion-satisfied"
+        },
+        {
+          "id": "eventual-recovery",
+          "kind": "eventual",
+          "recoveryHorizonMs": 20000,
+          "status": "passed",
+          "evidence": {
+            "observed": 0,
+            "limit": 0,
+            "complete": true,
+            "elapsedMs": 719
+          },
+          "detail": "assertion-satisfied"
+        }
+      ],
+      "limitations": []
+    },
+    {
+      "schemaVersion": 1,
+      "scenarioId": "postgres-owned-outage",
+      "sourceRevision": "6f8edf87888149a6594addd99f1d432a6c6d5db3",
+      "sourceDigest": "fc5b61fd947f7eab44f8eadd5ff839415a3b7605be3d208f2fed2aff48cedd4b",
+      "fixture": {
+        "runId": "3c601f3842049165ec1a1364",
+        "project": "phase22-3c601f3842049165ec1a1364",
+        "marker": "ecommerce-phase22",
+        "resources": [
+          "postgres",
+          "rabbitmq",
+          "redis",
+          "elasticsearch"
+        ]
+      },
+      "status": "passed",
+      "fault": {
+        "type": "unavailable",
+        "target": "postgres"
+      },
+      "startedAt": "2026-10-17T07:30:39.887Z",
+      "endedAt": "2026-10-17T07:30:41.824Z",
+      "durationMs": 1937,
+      "recovery": {
+        "status": "passed",
+        "durationMs": 25,
+        "verified": true
+      },
+      "cleanup": {
+        "status": "passed",
+        "durationMs": 344,
+        "verified": true
+      },
+      "invariants": [
+        {
+          "id": "no-false-success",
+          "kind": "immediate",
+          "recoveryHorizonMs": 0,
+          "status": "passed",
+          "evidence": {
+            "observed": 0,
+            "limit": 0,
+            "complete": true,
+            "elapsedMs": 1569
+          },
+          "detail": "assertion-satisfied"
+        },
+        {
+          "id": "eventual-recovery",
+          "kind": "eventual",
+          "recoveryHorizonMs": 20000,
+          "status": "passed",
+          "evidence": {
+            "observed": 0,
+            "limit": 0,
+            "complete": true,
+            "elapsedMs": 1569
+          },
+          "detail": "assertion-satisfied"
+        }
+      ],
+      "limitations": []
+    }
+  ],
+  "checks": [
+    {
+      "id": "postgres-order-outbox-atomic-rollback",
+      "status": "passed",
+      "durationMs": 31,
+      "evidence": {
+        "orders": 0,
+        "outboxEvents": 0
+      }
+    },
+    {
+      "id": "postgres-order-concurrent-idempotency",
+      "status": "passed",
+      "durationMs": 18,
+      "evidence": {
+        "distinctOrders": 1,
+        "committedOutboxEvents": 1,
+        "concurrentRequests": 6
+      }
+    },
+    {
+      "id": "inventory-last-unit-confirm-retry-release",
+      "status": "passed",
+      "durationMs": 78,
+      "evidence": {
+        "contenders": 6,
+        "successfulReservations": 1,
+        "stockAfterConfirmation": 0,
+        "reservedAfterConfirmation": 0
+      }
+    },
+    {
+      "id": "rabbitmq-duplicate-redelivery-consumer-restart",
+      "status": "passed",
+      "durationMs": 89,
+      "evidence": {
+        "duplicateDeliveries": 6,
+        "redeliveredAfterChannelCrash": 1,
+        "businessEffects": 1
+      }
+    },
+    {
+      "id": "outbox-confirm-before-mark-ambiguity-restart",
+      "status": "passed",
+      "durationMs": 176,
+      "evidence": {
+        "confirmedDeliveries": 2,
+        "publishedOutboxEvents": 1
+      }
+    },
+    {
+      "id": "elasticsearch-duplicate-and-stale-version",
+      "status": "passed",
+      "durationMs": 578,
+      "evidence": {
+        "newestVersion": 2,
+        "staleVersionSubmitted": 1,
+        "duplicateWrites": 1
+      }
+    },
+    {
+      "id": "payment-ambiguous-success-concurrent-reconciliation",
+      "status": "passed",
+      "durationMs": 111,
+      "evidence": {
+        "successfulProviderCharges": 1,
+        "concurrentRequests": 5
+      }
+    },
+    {
+      "id": "refund-ambiguous-success-restart-idempotency",
+      "status": "passed",
+      "durationMs": 186,
+      "evidence": {
+        "successfulProviderRefunds": 1,
+        "distinctRefundIntents": 1,
+        "concurrentRequests": 5
+      }
+    },
+    {
+      "id": "checkout-inventory-process-crash-redelivery-compensation",
+      "status": "passed",
+      "durationMs": 389,
+      "evidence": {
+        "crashedProcesses": 1,
+        "reservationEffects": 1,
+        "restoredAvailableStock": 1,
+        "invalidSagaTransitions": 0
+      }
+    }
+  ],
+  "cleanup": {
+    "verified": true
+  },
+  "status": "passed"
+}

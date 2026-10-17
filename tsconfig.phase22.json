@@ -1,0 +1,1 @@
+{"extends":"./tsconfig.json","include":["apps/**/*.ts","packages/**/*.ts","tests/**/*.ts","vitest.config.ts"]}

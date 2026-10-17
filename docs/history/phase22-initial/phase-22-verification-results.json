@@ -1,0 +1,879 @@
+{
+  "schemaVersion": 1,
+  "verdict": "PHASE 22 VERIFICATION INCOMPLETE",
+  "sourceRevision": "6f8edf87888149a6594addd99f1d432a6c6d5db3",
+  "sourceDigest": "fc5b61fd947f7eab44f8eadd5ff839415a3b7605be3d208f2fed2aff48cedd4b",
+  "sourceScope": "apps, packages, tests, contracts, scripts, infrastructure; root package/tsconfig/vitest/compose files; generated docs excluded",
+  "branch": "phase22/resilience-contract-testing",
+  "phase21Integrated": true,
+  "originalSourceWorktreeModified": false,
+  "commitsCreated": 0,
+  "pushesPerformed": 0,
+  "runtime": "Node v24.21.0",
+  "dockerServer": "29.8.0",
+  "typecheck": {
+    "command": "/Users/sudikshachugh/.nvm/versions/node/v24.21.0/bin/node node_modules/typescript/bin/tsc --noEmit -p tsconfig.json",
+    "exitCode": 0
+  },
+  "commands": [
+    "/Users/sudikshachugh/.nvm/versions/node/v24.21.0/bin/node node_modules/vitest/vitest.mjs run --config vitest.phase22.config.mjs --reporter=json --outputFile=/private/tmp/phase22-targeted-final.json",
+    "/Users/sudikshachugh/.nvm/versions/node/v24.21.0/bin/node --import tsx scripts/resilience-live.mjs",
+    "INTEGRATION_EXECUTION=host INTEGRATION_REPEAT=2 /Users/sudikshachugh/.nvm/versions/node/v24.21.0/bin/node scripts/integration-runner.mjs --reporter=json --outputFile=/private/tmp/phase22-regression-final.json",
+    "SQL_VERIFICATION_REPORT_DIR=/private/tmp/phase22-sql /Users/sudikshachugh/.nvm/versions/node/v24.21.0/bin/node scripts/sql-integration-runner.mjs",
+    "/Users/sudikshachugh/.nvm/versions/node/v24.21.0/bin/node node_modules/vitest/vitest.mjs run packages/observability/test --reporter=json --outputFile=/private/tmp/phase22-observability.json",
+    "/Users/sudikshachugh/.nvm/versions/node/v24.21.0/bin/node /private/tmp/phase22-interruption.mjs"
+  ],
+  "runs": {
+    "targeted": {
+      "file": "/private/tmp/phase22-targeted-final.json",
+      "sha256": "045f09fa5852781bd91e6bcaed7d74106576806b3b18e0a8cdf8e0b7ba658b78",
+      "success": true,
+      "total": 122,
+      "passed": 122,
+      "failed": 0,
+      "skipped": 0,
+      "todo": 0,
+      "startTimeEpochMs": 1792221962837
+    },
+    "observability": {
+      "file": "/private/tmp/phase22-observability.json",
+      "sha256": "957806658180124d7a213279bf010957c926e71e8625eb96ff483967daf59c0d",
+      "success": true,
+      "total": 431,
+      "passed": 431,
+      "failed": 0,
+      "skipped": 0,
+      "todo": 0,
+      "startTimeEpochMs": 1792222371665
+    },
+    "regression1": {
+      "file": "/private/tmp/phase22-regression-final.json",
+      "sha256": "ed1f466859e1dbff00beae3c3ac6d2d431074c066be4d62ca4b444777289615c",
+      "success": true,
+      "total": 1501,
+      "passed": 1501,
+      "failed": 0,
+      "skipped": 0,
+      "todo": 0,
+      "startTimeEpochMs": 1792222203984
+    },
+    "regression2": {
+      "file": "/private/tmp/phase22-regression-final-repeat2.json",
+      "sha256": "cc781e87a05fd16cf86fb43dd26d9e2b6f5d695a40d7b9b903e9e486bab88131",
+      "success": true,
+      "total": 1501,
+      "passed": 1501,
+      "failed": 0,
+      "skipped": 0,
+      "todo": 0,
+      "startTimeEpochMs": 1792222296145
+    }
+  },
+  "finalRegressionGroups": {
+    "observability": {
+      "total": 431,
+      "passed": 431,
+      "failed": 0,
+      "unexecuted": 0
+    },
+    "rateLimiting": {
+      "total": 89,
+      "passed": 89,
+      "failed": 0,
+      "unexecuted": 0
+    },
+    "search": {
+      "total": 138,
+      "passed": 138,
+      "failed": 0,
+      "unexecuted": 0
+    },
+    "framework": {
+      "total": 48,
+      "passed": 48,
+      "failed": 0,
+      "unexecuted": 0
+    },
+    "contracts": {
+      "total": 68,
+      "passed": 68,
+      "failed": 0,
+      "unexecuted": 0
+    },
+    "networkAndCart": {
+      "total": 6,
+      "passed": 6,
+      "failed": 0,
+      "unexecuted": 0
+    }
+  },
+  "postgresIntegration": {
+    "project": "commerce-v2-sql-f89557afd827",
+    "passed": true,
+    "cleanup": true,
+    "tests": {
+      "counts": {
+        "numTotalTests": 10,
+        "numPassedTests": 10,
+        "numFailedTests": 0,
+        "numPendingTests": 0,
+        "numTodoTests": 0,
+        "numFailedTestSuites": 0
+      },
+      "failures": [],
+      "unexecuted": [],
+      "suiteErrors": [],
+      "truncated": false,
+      "success": true
+    }
+  },
+  "live": {
+    "file": "phase-22-live-results.json",
+    "fixture": {
+      "runId": "3c601f3842049165ec1a1364",
+      "project": "phase22-3c601f3842049165ec1a1364",
+      "marker": "ecommerce-phase22",
+      "resources": [
+        "postgres",
+        "rabbitmq",
+        "redis",
+        "elasticsearch"
+      ]
+    },
+    "sourceDigest": "fc5b61fd947f7eab44f8eadd5ff839415a3b7605be3d208f2fed2aff48cedd4b",
+    "status": "passed",
+    "outageScenarios": 4,
+    "businessChecks": 9,
+    "cleanup": {
+      "verified": true
+    }
+  },
+  "interruption": {
+    "status": "passed",
+    "signal": "SIGTERM",
+    "fixture": {
+      "runId": "0a0b4276e79c02ef78f43971",
+      "project": "phase22-0a0b4276e79c02ef78f43971",
+      "marker": "ecommerce-phase22",
+      "resources": [
+        "postgres",
+        "rabbitmq",
+        "redis",
+        "elasticsearch"
+      ]
+    },
+    "childExitCode": 1,
+    "ownedResourcesExistedBeforeSignal": true,
+    "cleanupVerified": true,
+    "manualRecoveryIdempotent": true,
+    "sourceDigest": "fc5b61fd947f7eab44f8eadd5ff839415a3b7605be3d208f2fed2aff48cedd4b"
+  },
+  "regressionFixture": {
+    "project": "commerce-v2-stabilization-242a8729f995",
+    "cleanupVerified": true,
+    "execution": "two fresh Vitest processes using shared owned stores; each suite creates its own isolated schemas/fixtures",
+    "images": [
+      "postgres:17",
+      "rabbitmq:4.2-management",
+      "redis:8",
+      "docker.elastic.co/elasticsearch/elasticsearch:8.15.0"
+    ]
+  },
+  "priorFailures": [
+    {
+      "stage": "first live setup",
+      "project": "phase22-3a5e813b29078040aaf1051c",
+      "outcome": "failed",
+      "reason": "Inventory pool copy omitted non-enumerable password",
+      "cleanupVerified": true,
+      "resolution": "Explicit test-only credential supplied"
+    },
+    {
+      "stage": "second live experiment",
+      "project": "phase22-89d02377110c26066e112497",
+      "outcome": "failed",
+      "reason": "Established Redis socket reply was not bounded by queue command timeout",
+      "successfulBusinessChecksBeforeFailure": 6,
+      "cleanupVerified": true,
+      "resolution": "CartRepository now bounds full response; unit and real pause checks pass"
+    },
+    {
+      "stage": "prefinal regression",
+      "firstRun": {
+        "passed": 1417,
+        "failed": 0,
+        "skipped": 0
+      },
+      "secondRun": {
+        "passed": 1416,
+        "failed": 1,
+        "skipped": 0
+      },
+      "reason": "Fault-budget deadline mislabeled execution-failed; assertion required deadline-exceeded",
+      "cleanupVerified": true,
+      "resolution": "Runner classifies fault signal expiry as deadline-exceeded; assertion retained"
+    },
+    {
+      "stage": "intermediate targeted",
+      "passed": 113,
+      "failed": 1,
+      "reason": "Same fault-budget classification failure",
+      "resolution": "Fixed before final 122/122 checks"
+    }
+  ],
+  "knownLimitations": [
+    "Only four dependency-outage scenarios have shared concrete fault-controller adapters; other accepted enum categories require trusted local adapters.",
+    "Not every requested per-operation PostgreSQL disconnect/timeout boundary has an independently cataloged live scenario.",
+    "HTTP provider contracts cover read response shapes, authorization and error expectations, not every mutation request/response.",
+    "DNS-specific and partition-specific adapters were not added or live-verified; real network timeout/reset/partial-response tests passed.",
+    "No per-scenario Prometheus/Tempo backend evidence was collected; existing instrumentation/tests were reused.",
+    "Cancellation cannot undo arbitrary uncooperative third-party effects; SIGKILL/host/daemon failure requires ownership-checked manual recovery.",
+    "JSON Schema conversion cannot encode every Zod refinement; runtime validator rejection tests remain necessary.",
+    "Live payment/refund restart checks reconstruct services over persisted state; real process-crash financial cases are evidenced separately by the existing regression."
+  ],
+  "acceptance": {
+    "phase21Integrated": true,
+    "ownedFixturesOnly": true,
+    "strictScenarioValidation": true,
+    "boundedFaultsAndRunner": true,
+    "verifiedCleanup": true,
+    "postgresFailureEvidence": true,
+    "rabbitmqFailureEvidence": true,
+    "redisFailureEvidence": true,
+    "elasticsearchFailureEvidence": true,
+    "duplicateDeliveryEvidence": true,
+    "outboxRecoveryEvidence": true,
+    "sagaInterruptionEvidence": true,
+    "paymentIdempotencyEvidence": true,
+    "refundIdempotencyEvidence": true,
+    "inventoryConcurrencyEvidence": true,
+    "networkTimeoutEvidence": true,
+    "httpContractVerification": true,
+    "eventContractVerification": true,
+    "incompatibleChangesRejected": true,
+    "evidenceAwareInvariantResults": true,
+    "liveOwnedVerification": true,
+    "typecheck": true,
+    "fullRegressionTwice": true,
+    "completeRequestedFaultMatrix": false,
+    "completeRequestedContractBreadth": false,
+    "completeScenarioTelemetryEvidence": false
+  },
+  "selectedExistingIntegrationEvidence": [
+    {
+      "file": "apps/api-gateway/test/inventory.test.ts",
+      "test": "Gateway Inventory HTTP forwarding returns 502 when Inventory is disconnected",
+      "status": "passed"
+    },
+    {
+      "file": "apps/api-gateway/test/payments.test.ts",
+      "test": "Gateway Payments HTTP forwarding forwards post /payments/11111111-1111-4111-8111-111111111111/reconcile with headers, exact body bytes and status",
+      "status": "passed"
+    },
+    {
+      "file": "apps/api-gateway/test/payments.test.ts",
+      "test": "Gateway Payments HTTP forwarding returns 502 when Payments is disconnected",
+      "status": "passed"
+    },
+    {
+      "file": "apps/inventory-service/test/inventory.test.ts",
+      "test": "Inventory stock and dependency handling maps Catalog timeout to 504",
+      "status": "passed"
+    },
+    {
+      "file": "apps/inventory-service/test/inventory.test.ts",
+      "test": "Reservation validation and idempotency reserves all products with one deadline and returns stable reordered replay",
+      "status": "passed"
+    },
+    {
+      "file": "apps/inventory-service/test/inventory.test.ts",
+      "test": "Concurrent inventory operations allows only one contender for the last unit",
+      "status": "passed"
+    },
+    {
+      "file": "apps/inventory-service/test/inventory.test.ts",
+      "test": "Concurrent inventory operations never oversells under contention",
+      "status": "passed"
+    },
+    {
+      "file": "apps/inventory-service/test/inventory.test.ts",
+      "test": "Concurrent inventory operations serializes identical concurrent requests without extending TTL",
+      "status": "passed"
+    },
+    {
+      "file": "apps/inventory-service/test/inventory.test.ts",
+      "test": "Concurrent inventory operations serializes conflicting concurrent order requests",
+      "status": "passed"
+    },
+    {
+      "file": "apps/inventory-service/test/inventory.test.ts",
+      "test": "Concurrent inventory operations locks multi-product requests consistently despite reversed input",
+      "status": "passed"
+    },
+    {
+      "file": "apps/inventory-service/test/inventory.test.ts",
+      "test": "Concurrent inventory operations keeps concurrent absolute stock updates safe",
+      "status": "passed"
+    },
+    {
+      "file": "apps/inventory-service/test/inventory.test.ts",
+      "test": "Concurrent inventory operations serializes stock reductions against reservation",
+      "status": "passed"
+    },
+    {
+      "file": "apps/inventory-service/test/inventory.test.ts",
+      "test": "Confirmation, release, and terminal states serializes repeated concurrent confirm",
+      "status": "passed"
+    },
+    {
+      "file": "apps/inventory-service/test/inventory.test.ts",
+      "test": "Confirmation, release, and terminal states serializes repeated concurrent release",
+      "status": "passed"
+    },
+    {
+      "file": "apps/inventory-service/test/inventory.test.ts",
+      "test": "Confirmation, release, and terminal states expires and commits a late confirmation even before worker runs",
+      "status": "passed"
+    },
+    {
+      "file": "apps/inventory-service/test/inventory.test.ts",
+      "test": "Database-driven expiration and workers expires naturally after the configured TTL without changing its database deadline",
+      "status": "passed"
+    },
+    {
+      "file": "apps/inventory-service/test/inventory.test.ts",
+      "test": "Database-driven expiration and workers supports multiple concurrent workers without double release",
+      "status": "passed"
+    },
+    {
+      "file": "apps/payments-service/test/payments.test.ts",
+      "test": "Payment intents and principal-scoped idempotency returns the original payment on an identical retry",
+      "status": "passed"
+    },
+    {
+      "file": "apps/payments-service/test/payments.test.ts",
+      "test": "Payment intents and principal-scoped idempotency serializes concurrent identical creation",
+      "status": "passed"
+    },
+    {
+      "file": "apps/payments-service/test/payments.test.ts",
+      "test": "Payment intents and principal-scoped idempotency serializes conflicting concurrent creation",
+      "status": "passed"
+    },
+    {
+      "file": "apps/payments-service/test/payments.test.ts",
+      "test": "Processing and persisted state machine serializes concurrent processing requests",
+      "status": "passed"
+    },
+    {
+      "file": "apps/payments-service/test/payments.test.ts",
+      "test": "Processing and persisted state machine reconciles a charge after timeout without resubmission",
+      "status": "passed"
+    },
+    {
+      "file": "apps/payments-service/test/payments.test.ts",
+      "test": "Processing and persisted state machine reconciles a charge after lost-response without resubmission",
+      "status": "passed"
+    },
+    {
+      "file": "apps/payments-service/test/payments.test.ts",
+      "test": "Processing and persisted state machine reconciles concurrent callers without double mutation",
+      "status": "passed"
+    },
+    {
+      "file": "apps/payments-service/test/payments.test.ts",
+      "test": "Processing and persisted state machine validates reconcile paths and operation bodies",
+      "status": "passed"
+    },
+    {
+      "file": "apps/payments-service/test/payments.test.ts",
+      "test": "Processing and persisted state machine rejects reconciliation before processing without creating an attempt",
+      "status": "passed"
+    },
+    {
+      "file": "apps/payments-service/test/payments.test.ts",
+      "test": "Reconciliation worker and real process crash recovery recovers a killed Payments process after provider commit, then survives a second restart",
+      "status": "passed"
+    },
+    {
+      "file": "apps/payments-service/test/payments.test.ts",
+      "test": "Reconciliation worker and real process crash recovery recovers an expired processing claim through concurrent worker instances",
+      "status": "passed"
+    },
+    {
+      "file": "apps/payments-service/test/payments.test.ts",
+      "test": "Reconciliation worker and real process crash recovery logs worker storage failures generically and continues after recovery",
+      "status": "passed"
+    },
+    {
+      "file": "apps/payments-service/test/payments.test.ts",
+      "test": "Reconciliation worker and real process crash recovery runs a bounded worker and stops scheduling on shutdown",
+      "status": "passed"
+    },
+    {
+      "file": "apps/payments-service/test/payments.test.ts",
+      "test": "Independent JWT and owner-level status access requires authentication on post /payments/f7e38fef-8d48-49ab-8099-a521a6560713/reconcile",
+      "status": "passed"
+    },
+    {
+      "file": "apps/payments-service/test/payments.test.ts",
+      "test": "Independent JWT and owner-level status access forbids customers writing /payments/f7e38fef-8d48-49ab-8099-a521a6560713/reconcile",
+      "status": "passed"
+    },
+    {
+      "file": "apps/orders-service/test/checkout.test.ts",
+      "test": "Durable checkout with real service databases and provider compensates a definitive decline after release commits",
+      "status": "passed"
+    },
+    {
+      "file": "apps/orders-service/test/checkout.test.ts",
+      "test": "Durable checkout with real service databases and provider protects lost-response payments, reconciles with the original key and never charges twice",
+      "status": "passed"
+    },
+    {
+      "file": "apps/orders-service/test/checkout.test.ts",
+      "test": "Durable checkout with real service databases and provider deduplicates concurrent checkout requests and every delivered step",
+      "status": "passed"
+    },
+    {
+      "file": "apps/orders-service/test/checkout.test.ts",
+      "test": "Durable checkout with real service databases and provider rejects wrong operations and signatures without committing inbox records",
+      "status": "passed"
+    },
+    {
+      "file": "apps/orders-service/test/checkout.test.ts",
+      "test": "Durable checkout with real service databases and provider serializes concurrent checkouts against the last unit",
+      "status": "passed"
+    },
+    {
+      "file": "apps/orders-service/test/checkout.test.ts",
+      "test": "Durable checkout with real service databases and provider replays a committed reservation after a consumer dies before ACK",
+      "status": "passed"
+    },
+    {
+      "file": "apps/orders-service/test/checkout.test.ts",
+      "test": "Durable checkout with real service databases and provider recovers an inventory consumer crash before commit with no orphan effects",
+      "status": "passed"
+    },
+    {
+      "file": "apps/orders-service/test/checkout.test.ts",
+      "test": "Durable checkout with real service databases and provider recovers a provider-success worker crash by lookup, without another charge",
+      "status": "passed"
+    },
+    {
+      "file": "apps/orders-service/test/checkout.test.ts",
+      "test": "Durable checkout with real service databases and provider recovers creation committed before an Orders process dies",
+      "status": "passed"
+    },
+    {
+      "file": "apps/orders-service/test/checkout.test.ts",
+      "test": "Durable checkout with real service databases and provider recovers compensation after a committed release crashes before acknowledgment",
+      "status": "passed"
+    },
+    {
+      "file": "apps/orders-service/test/checkout.test.ts",
+      "test": "Durable checkout with real service databases and provider stops automated recovery at its retry bound without assuming unknown payment failure",
+      "status": "passed"
+    },
+    {
+      "file": "apps/orders-service/test/checkout.test.ts",
+      "test": "Durable checkout with real service databases and provider keeps compensation pending when its local transaction rolls back and releases on retry",
+      "status": "passed"
+    },
+    {
+      "file": "apps/orders-service/test/checkout.test.ts",
+      "test": "Durable checkout with real service databases and provider republishes a definitive payment outcome on transport retry without repeating provider work",
+      "status": "passed"
+    },
+    {
+      "file": "apps/orders-service/test/checkout.test.ts",
+      "test": "Real RabbitMQ checkout delivery and outage recovery completes checkout over RabbitMQ with duplicate deliveries and committed outbox restart recovery",
+      "status": "passed"
+    },
+    {
+      "file": "apps/orders-service/test/refund-compensation.test.ts",
+      "test": "Refund amount reservation and provider idempotency refunds a captured payment in full and commits its outcome outbox atomically",
+      "status": "passed"
+    },
+    {
+      "file": "apps/orders-service/test/refund-compensation.test.ts",
+      "test": "Refund amount reservation and provider idempotency supports several partial refunds whose sum equals captured amount",
+      "status": "passed"
+    },
+    {
+      "file": "apps/orders-service/test/refund-compensation.test.ts",
+      "test": "Refund amount reservation and provider idempotency includes requested, processing, unknown and manual-review refunds in capacity",
+      "status": "passed"
+    },
+    {
+      "file": "apps/orders-service/test/refund-compensation.test.ts",
+      "test": "Refund amount reservation and provider idempotency serializes concurrent refund requests on captured payment balance",
+      "status": "passed"
+    },
+    {
+      "file": "apps/orders-service/test/refund-compensation.test.ts",
+      "test": "Refund amount reservation and provider idempotency deduplicates concurrent identical keys and rejects conflicting retries",
+      "status": "passed"
+    },
+    {
+      "file": "apps/orders-service/test/refund-compensation.test.ts",
+      "test": "Refund amount reservation and provider idempotency rejects non-captured payments, mismatched currencies, zero, fractional and excessive amounts",
+      "status": "passed"
+    },
+    {
+      "file": "apps/orders-service/test/refund-compensation.test.ts",
+      "test": "Refund amount reservation and provider idempotency releases refund capacity only after definitive provider decline",
+      "status": "passed"
+    },
+    {
+      "file": "apps/orders-service/test/refund-compensation.test.ts",
+      "test": "Refund amount reservation and provider idempotency reconciles lost-response using the same operation without another refund",
+      "status": "passed"
+    },
+    {
+      "file": "apps/orders-service/test/refund-compensation.test.ts",
+      "test": "Refund amount reservation and provider idempotency reconciles timeout using the same operation without another refund",
+      "status": "passed"
+    },
+    {
+      "file": "apps/orders-service/test/refund-compensation.test.ts",
+      "test": "Refund amount reservation and provider idempotency keeps permanently unknown refunds reserved and escalates without assuming failure",
+      "status": "passed"
+    },
+    {
+      "file": "apps/orders-service/test/refund-compensation.test.ts",
+      "test": "Refund amount reservation and provider idempotency reconciles a definitive failure and allows new capacity without retrying the old operation",
+      "status": "passed"
+    },
+    {
+      "file": "apps/orders-service/test/refund-compensation.test.ts",
+      "test": "Refund amount reservation and provider idempotency fences stale lease responses and never rewrites definitive success",
+      "status": "passed"
+    },
+    {
+      "file": "apps/orders-service/test/refund-compensation.test.ts",
+      "test": "Refund amount reservation and provider idempotency provider itself deduplicates concurrent refund calls and protects captured balance",
+      "status": "passed"
+    },
+    {
+      "file": "apps/orders-service/test/refund-compensation.test.ts",
+      "test": "Refund amount reservation and provider idempotency restores provider lookup after a provider app restart using persisted state",
+      "status": "passed"
+    },
+    {
+      "file": "apps/orders-service/test/refund-compensation.test.ts",
+      "test": "Cancellation coordinates payment, refunds and inventory in the checkout Saga cancels before reservation with no payment initiation and waits for release",
+      "status": "passed"
+    },
+    {
+      "file": "apps/orders-service/test/refund-compensation.test.ts",
+      "test": "Cancellation coordinates payment, refunds and inventory in the checkout Saga cancels an inventory failure without charging or inventing a reservation",
+      "status": "passed"
+    },
+    {
+      "file": "apps/orders-service/test/refund-compensation.test.ts",
+      "test": "Cancellation coordinates payment, refunds and inventory in the checkout Saga waits for a delayed payment command rather than assuming it was never accepted",
+      "status": "passed"
+    },
+    {
+      "file": "apps/orders-service/test/refund-compensation.test.ts",
+      "test": "Cancellation coordinates payment, refunds and inventory in the checkout Saga releases on definitive payment failure without a refund",
+      "status": "passed"
+    },
+    {
+      "file": "apps/orders-service/test/refund-compensation.test.ts",
+      "test": "Cancellation coordinates payment, refunds and inventory in the checkout Saga keeps ambiguous payments protected during cancellation then refunds delayed success",
+      "status": "passed"
+    },
+    {
+      "file": "apps/orders-service/test/refund-compensation.test.ts",
+      "test": "Cancellation coordinates payment, refunds and inventory in the checkout Saga restores confirmed stock exactly once only after a successful full cancellation refund",
+      "status": "passed"
+    },
+    {
+      "file": "apps/orders-service/test/refund-compensation.test.ts",
+      "test": "Cancellation coordinates payment, refunds and inventory in the checkout Saga blocks stale confirmation after compensation and does not restore an unrelated order",
+      "status": "passed"
+    },
+    {
+      "file": "apps/orders-service/test/refund-compensation.test.ts",
+      "test": "Cancellation coordinates payment, refunds and inventory in the checkout Saga deduplicates concurrent cancellation keys and rejects conflicting reuse across orders",
+      "status": "passed"
+    },
+    {
+      "file": "apps/orders-service/test/refund-compensation.test.ts",
+      "test": "Cancellation coordinates payment, refunds and inventory in the checkout Saga blocks completed cancellation on definitive refund failure, preserving financial and inventory state",
+      "status": "passed"
+    },
+    {
+      "file": "apps/orders-service/test/refund-compensation.test.ts",
+      "test": "Cancellation coordinates payment, refunds and inventory in the checkout Saga blocks cancellation on unknown refund and resumes on definitive reconciliation",
+      "status": "passed"
+    },
+    {
+      "file": "apps/orders-service/test/refund-compensation.test.ts",
+      "test": "Cancellation coordinates payment, refunds and inventory in the checkout Saga automatically compensates paid but durably impossible fulfillment, not delayed confirmation",
+      "status": "passed"
+    },
+    {
+      "file": "apps/orders-service/test/refund-compensation.test.ts",
+      "test": "Cancellation coordinates payment, refunds and inventory in the checkout Saga retains manual review for unknown fulfillment without automatically refunding",
+      "status": "passed"
+    },
+    {
+      "file": "apps/orders-service/test/refund-compensation.test.ts",
+      "test": "Cancellation coordinates payment, refunds and inventory in the checkout Saga handles duplicate and out-of-order refund outcomes without repeating compensation",
+      "status": "passed"
+    },
+    {
+      "file": "apps/orders-service/test/refund-compensation.test.ts",
+      "test": "Cancellation coordinates payment, refunds and inventory in the checkout Saga validates refund linkage and amount before accepting outcome events",
+      "status": "passed"
+    },
+    {
+      "file": "apps/orders-service/test/refund-compensation.test.ts",
+      "test": "Cancellation coordinates payment, refunds and inventory in the checkout Saga does not automatically issue a second full refund when prior partials consumed capacity",
+      "status": "passed"
+    },
+    {
+      "file": "apps/orders-service/test/refund-compensation.test.ts",
+      "test": "Cancellation coordinates payment, refunds and inventory in the checkout Saga allows existing recovery to resume cancellation with stable operation IDs",
+      "status": "passed"
+    },
+    {
+      "file": "apps/orders-service/test/refund-compensation.test.ts",
+      "test": "Refund and cancellation API security requires admin creation and reconciliation, and limits refund visibility to owner or admin",
+      "status": "passed"
+    },
+    {
+      "file": "apps/orders-service/test/refund-compensation.test.ts",
+      "test": "Refund and cancellation API security returns 409 on conflicting admin idempotency and rejects arbitrary reason or extra fields",
+      "status": "passed"
+    },
+    {
+      "file": "apps/orders-service/test/refund-compensation.test.ts",
+      "test": "Refund and cancellation API security enforces cancellation ownership, allows admin cancellation, and rejects customer amounts",
+      "status": "passed"
+    },
+    {
+      "file": "apps/orders-service/test/refund-compensation.test.ts",
+      "test": "Refund and cancellation API security rejects unsigned commands and mismatched refund operations transactionally",
+      "status": "passed"
+    },
+    {
+      "file": "apps/orders-service/test/refund-compensation.test.ts",
+      "test": "Refund and cancellation API security forwards cancellation and refund endpoints through Gateway with exact authorization and statuses",
+      "status": "passed"
+    },
+    {
+      "file": "apps/orders-service/test/refund-compensation.test.ts",
+      "test": "Refund and cancellation API security lists standalone admin partial refund outcomes for the owning order without automatic stock changes",
+      "status": "passed"
+    },
+    {
+      "file": "apps/orders-service/test/refund-compensation.test.ts",
+      "test": "Real process crashes and persistent financial recovery recovers a refund intent crash before commit",
+      "status": "passed"
+    },
+    {
+      "file": "apps/orders-service/test/refund-compensation.test.ts",
+      "test": "Real process crashes and persistent financial recovery recovers a refund intent crash after commit",
+      "status": "passed"
+    },
+    {
+      "file": "apps/orders-service/test/refund-compensation.test.ts",
+      "test": "Real process crashes and persistent financial recovery recovers refund-after-provider from the original durable provider operation",
+      "status": "passed"
+    },
+    {
+      "file": "apps/orders-service/test/refund-compensation.test.ts",
+      "test": "Real process crashes and persistent financial recovery recovers refund-before-outcome-commit from the original durable provider operation",
+      "status": "passed"
+    },
+    {
+      "file": "apps/orders-service/test/refund-compensation.test.ts",
+      "test": "Real process crashes and persistent financial recovery recovers refund-after-outcome-commit from the original durable provider operation",
+      "status": "passed"
+    },
+    {
+      "file": "apps/orders-service/test/refund-compensation.test.ts",
+      "test": "Real process crashes and persistent financial recovery recovers refund acceptance committed before consumer ACK",
+      "status": "passed"
+    },
+    {
+      "file": "apps/orders-service/test/refund-compensation.test.ts",
+      "test": "Real process crashes and persistent financial recovery recovers Orders refund outcome committed before ACK without another compensation command",
+      "status": "passed"
+    },
+    {
+      "file": "apps/orders-service/test/refund-compensation.test.ts",
+      "test": "Real process crashes and persistent financial recovery recovers Inventory compensation crash before commit without double stock restoration",
+      "status": "passed"
+    },
+    {
+      "file": "apps/orders-service/test/refund-compensation.test.ts",
+      "test": "Real process crashes and persistent financial recovery recovers Inventory compensation crash after commit without double stock restoration",
+      "status": "passed"
+    },
+    {
+      "file": "apps/orders-service/test/refund-compensation.test.ts",
+      "test": "Real process crashes and persistent financial recovery recovers cancellation committed before Orders restart and a crashed recovery claim",
+      "status": "passed"
+    },
+    {
+      "file": "apps/orders-service/test/refund-compensation.test.ts",
+      "test": "Real process crashes and persistent financial recovery preserves a durable provider refund when PostgreSQL outcome persistence fails and recovers by lookup",
+      "status": "passed"
+    },
+    {
+      "file": "apps/orders-service/test/refund-compensation.test.ts",
+      "test": "Real process crashes and persistent financial recovery recovers a disconnected database client during reconciliation without losing reserved capacity",
+      "status": "passed"
+    },
+    {
+      "file": "apps/orders-service/test/refund-compensation.test.ts",
+      "test": "RabbitMQ distributed refund and compensation recovers publisher outage, duplicate outcomes and consumer-before-ACK failure end to end",
+      "status": "passed"
+    },
+    {
+      "file": "apps/orders-service/test/refund-compensation.test.ts",
+      "test": "Operator resolution and inventory lifecycle distinctions allows an operator to resolve manual refund review by lookup and resumes cancellation safely",
+      "status": "passed"
+    },
+    {
+      "file": "apps/orders-service/test/refund-compensation.test.ts",
+      "test": "Operator resolution and inventory lifecycle distinctions rejects restoration of confirmed stock without a successful refund operation",
+      "status": "passed"
+    },
+    {
+      "file": "apps/orders-service/test/refund-compensation.test.ts",
+      "test": "Operator resolution and inventory lifecycle distinctions keeps paid-but-unfulfilled compensation recoverable on refund decline",
+      "status": "passed"
+    },
+    {
+      "file": "apps/orders-service/test/refund-compensation.test.ts",
+      "test": "Operator resolution and inventory lifecycle distinctions keeps paid-but-unfulfilled compensation recoverable on refund ambiguous",
+      "status": "passed"
+    },
+    {
+      "file": "apps/orders-service/test/refund-compensation.test.ts",
+      "test": "Operator resolution and inventory lifecycle distinctions keeps new refund and cancellation operations disabled when no opt-in services are supplied",
+      "status": "passed"
+    },
+    {
+      "file": "apps/orders-service/test/refund-compensation.test.ts",
+      "test": "Database disconnection during refund reconciliation persistence rolls back an interrupted result transaction and recovers the same provider refund by lookup",
+      "status": "passed"
+    },
+    {
+      "file": "apps/orders-service/test/refund-compensation.test.ts",
+      "test": "Durable refund rejection does not turn a rejected refund command into a new financial operation when capacity later becomes available",
+      "status": "passed"
+    },
+    {
+      "file": "apps/search-service/test/integration.test.ts",
+      "test": "isolated multi-service Search integration Catalog transactional source and version contracts constraint failure cannot commit an orphan outbox row or version increment",
+      "status": "passed"
+    },
+    {
+      "file": "apps/search-service/test/integration.test.ts",
+      "test": "isolated multi-service Search integration Catalog transactional source and version contracts concurrent committed updates cannot reuse product versions",
+      "status": "passed"
+    },
+    {
+      "file": "apps/search-service/test/integration.test.ts",
+      "test": "isolated multi-service Search integration Catalog transactional source and version contracts publisher confirms mark only committed routable outbox events",
+      "status": "passed"
+    },
+    {
+      "file": "apps/search-service/test/integration.test.ts",
+      "test": "isolated multi-service Search integration projection, duplicate and stale-event protection concurrent consumers cannot roll back a newer version",
+      "status": "passed"
+    },
+    {
+      "file": "apps/search-service/test/integration.test.ts",
+      "test": "isolated multi-service Search integration projection, duplicate and stale-event protection inbox commit failure after Elasticsearch success is recoverable",
+      "status": "passed"
+    },
+    {
+      "file": "apps/search-service/test/integration.test.ts",
+      "test": "isolated multi-service Search integration projection, duplicate and stale-event protection dead-letters invalid-json through real broker topology",
+      "status": "passed"
+    },
+    {
+      "file": "apps/search-service/test/integration.test.ts",
+      "test": "isolated multi-service Search integration projection, duplicate and stale-event protection dead-letters unsupported-version through real broker topology",
+      "status": "passed"
+    },
+    {
+      "file": "apps/search-service/test/integration.test.ts",
+      "test": "isolated multi-service Search integration projection, duplicate and stale-event protection dead-letters forged-signature through real broker topology",
+      "status": "passed"
+    },
+    {
+      "file": "apps/search-service/test/integration.test.ts",
+      "test": "isolated multi-service Search integration rebuild and reconciliation under concurrent writes fully rebuilds existing products through the private Catalog API",
+      "status": "passed"
+    },
+    {
+      "file": "apps/search-service/test/integration.test.ts",
+      "test": "isolated multi-service Search integration rebuild and reconciliation under concurrent writes concurrent update/delete/create and older snapshot replay cannot lose committed changes",
+      "status": "passed"
+    },
+    {
+      "file": "apps/search-service/test/integration.test.ts",
+      "test": "isolated multi-service Search integration rebuild and reconciliation under concurrent writes captures committed changes through catch-up even when RabbitMQ deliveries are delayed",
+      "status": "passed"
+    },
+    {
+      "file": "apps/search-service/test/integration.test.ts",
+      "test": "isolated multi-service Search integration rebuild and reconciliation under concurrent writes continues serving the old alias during a candidate rebuild and switches atomically",
+      "status": "passed"
+    },
+    {
+      "file": "apps/search-service/test/integration.test.ts",
+      "test": "isolated multi-service Search integration rebuild and reconciliation under concurrent writes SIGKILL before-alias resumes durable rebuild and retains old index",
+      "status": "passed"
+    },
+    {
+      "file": "apps/search-service/test/integration.test.ts",
+      "test": "isolated multi-service Search integration rebuild and reconciliation under concurrent writes SIGKILL after-alias resumes durable rebuild and retains old index",
+      "status": "passed"
+    },
+    {
+      "file": "apps/search-service/test/integration.test.ts",
+      "test": "isolated multi-service Search integration rebuild and reconciliation under concurrent writes reconciliation detects and repairs missing and stale projections",
+      "status": "passed"
+    },
+    {
+      "file": "apps/search-service/test/integration.test.ts",
+      "test": "isolated multi-service Search integration rebuild and reconciliation under concurrent writes reconciliation repairs wrongly visible deleted products from durable authoritative tombstones",
+      "status": "passed"
+    },
+    {
+      "file": "apps/search-service/test/integration.test.ts",
+      "test": "isolated multi-service Search integration rebuild and reconciliation under concurrent writes does not create duplicate concurrent rebuilds",
+      "status": "passed"
+    },
+    {
+      "file": "apps/search-service/test/integration.test.ts",
+      "test": "isolated multi-service Search integration rebuild and reconciliation under concurrent writes export interruption leaves resumable progress and the public alias unchanged",
+      "status": "passed"
+    },
+    {
+      "file": "apps/search-service/test/integration.test.ts",
+      "test": "isolated multi-service Search integration real Elasticsearch and broker failure injection Elasticsearch unavailable at startup reports degraded and never returns a misleading empty page",
+      "status": "passed"
+    },
+    {
+      "file": "apps/search-service/test/integration.test.ts",
+      "test": "isolated multi-service Search integration real Elasticsearch and broker failure injection transient Elasticsearch rejection preserves committed Catalog changes and retries through real RabbitMQ",
+      "status": "passed"
+    },
+    {
+      "file": "apps/search-service/test/integration.test.ts",
+      "test": "isolated multi-service Search integration real Elasticsearch and broker failure injection actual RabbitMQ TCP disconnect recovers an unacknowledged event",
+      "status": "passed"
+    }
+  ]
+}

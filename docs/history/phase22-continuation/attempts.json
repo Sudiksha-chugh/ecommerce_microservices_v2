@@ -1,0 +1,33 @@
+[
+  {
+    "stage": "initial continuation exports",
+    "tests": {
+      "total": 308,
+      "passed": 290,
+      "failed": 18
+    },
+    "reason": "New adapter/telemetry modules were not re-exported; corrected before final verification",
+    "liveStartup": "import rejected before fixture creation"
+  },
+  {
+    "stage": "telemetry validation live attempt",
+    "status": "failed",
+    "reason": "Metric attribute allowlist was incorrectly required in full rather than optional per series",
+    "cleanupVerified": true,
+    "resolution": "Use partial allowed metric attributes and collect genuine SDK observations"
+  },
+  {
+    "stage": "development targeted suite",
+    "passed": 308,
+    "total": 308,
+    "historicalOnly": true
+  },
+  {
+    "stage": "pre-final source candidate",
+    "passed": 315,
+    "total": 315,
+    "sourceDigest": "4af98e6260fbe4a5308d61badfc06b844446f4e7245c4390a34ae8c2aa1d37bf",
+    "resolution": "Added shutdown-unavailable reporting and its test before final freeze",
+    "historicalOnly": true
+  }
+]

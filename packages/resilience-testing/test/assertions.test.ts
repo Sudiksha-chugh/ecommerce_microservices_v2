@@ -1,0 +1,10 @@
+import {it,expect} from 'vitest';
+import {noDuplicateEffects,noOverselling,noLostOutbox,validTransitions} from '../src/index.js';
+import {allowed,type SagaState} from '../../../apps/orders-service/src/saga/state-machine.js';
+it('detects duplicate financial/inventory side effects by operation identity',()=>expect(noDuplicateEffects([{identity:'operation',effects:1},{identity:'operation',effects:1}],true)?.observed).toBe(1));
+it('does not manufacture financial evidence for missing operations',()=>expect(noDuplicateEffects([],true)).toBeUndefined());
+it('detects negative, oversold and inconsistent stock snapshots',()=>expect(noOverselling([{total:0,reserved:1,available:-1},{total:2,reserved:0,available:1}],true)?.observed).toBe(2));
+it('detects lost committed outbox events',()=>expect(noLostOutbox(['committed'],[],true)?.observed).toBe(1));
+it('retains missing outbox evidence as unavailable',()=>expect(noLostOutbox(undefined,[],false)).toBeUndefined());
+it('uses the actual saga state machine for persisted transition verification',()=>expect(validTransitions([{from:'PAYMENT_PENDING',to:'COMPLETED'}],(from,to)=>allowed(from as SagaState,to as SagaState),true)?.observed).toBe(1));
+it('preserves completeness for partial financial snapshots',()=>expect(noDuplicateEffects([{identity:'payment',effects:1}],false)?.complete).toBe(false));

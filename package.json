@@ -87,7 +87,10 @@
     "test:incidents": "vitest run packages/observability/test/incident",
     "incident:diagnostics": "node --import ./packages/observability/bootstrap.mjs --import tsx scripts/incident-diagnostics.mjs",
     "test:performance": "vitest run packages/observability/test/performance",
-    "performance:diagnostics": "node --import ./packages/observability/bootstrap.mjs --import tsx scripts/incident-diagnostics.mjs"
+    "performance:diagnostics": "node --import ./packages/observability/bootstrap.mjs --import tsx scripts/incident-diagnostics.mjs",
+    "test:resilience": "vitest run --config vitest.phase22.config.mjs",
+    "test:contracts": "vitest run tests/contracts",
+    "resilience:live": "node --import tsx scripts/resilience-live.mjs"
   },
   "devDependencies": {
     "@types/express": "^5.0.0",
@@ -97,6 +100,9 @@
     "supertest": "^7.0.0",
     "tsx": "^4.20.0",
     "typescript": "^5.9.0",
-    "vitest": "^5.0.3"
+    "vitest": "^5.0.3",
+    "@opentelemetry/api": "1.9.0",
+    "@opentelemetry/sdk-metrics": "2.12.0",
+    "@opentelemetry/sdk-trace-base": "2.12.0"
   }
 }

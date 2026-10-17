@@ -1,0 +1,22 @@
+{
+  "schemaVersion": 1,
+  "sourceRevision": "6f8edf87888149a6594addd99f1d432a6c6d5db3",
+  "sourceDigest": "fc5b61fd947f7eab44f8eadd5ff839415a3b7605be3d208f2fed2aff48cedd4b",
+  "fixture": {
+    "runId": "0a0b4276e79c02ef78f43971",
+    "project": "phase22-0a0b4276e79c02ef78f43971",
+    "marker": "ecommerce-phase22",
+    "resources": [
+      "postgres",
+      "rabbitmq",
+      "redis",
+      "elasticsearch"
+    ]
+  },
+  "reports": [],
+  "checks": [],
+  "cleanup": {
+    "verified": true
+  },
+  "status": "failed"
+}

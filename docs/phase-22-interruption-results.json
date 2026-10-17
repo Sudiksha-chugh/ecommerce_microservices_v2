@@ -1,0 +1,1889 @@
+{
+  "schemaVersion": 1,
+  "sourceRevision": "6f8edf87888149a6594addd99f1d432a6c6d5db3",
+  "sourceDigest": "7266a5da741edfcdf64f5e9dca48f80b69537ca62e940cf6dfe910b7f3940688",
+  "fixture": {
+    "runId": "621d8c5fac3a5653935cec90",
+    "project": "phase22-621d8c5fac3a5653935cec90",
+    "marker": "ecommerce-phase22",
+    "resources": [
+      "postgres",
+      "rabbitmq",
+      "redis",
+      "elasticsearch",
+      "orders",
+      "payments",
+      "inventory",
+      "consumer",
+      "outbox",
+      "network"
+    ]
+  },
+  "reports": [],
+  "checks": [
+    {
+      "id": "postgres-order-outbox-atomic-rollback",
+      "status": "passed",
+      "durationMs": 41,
+      "evidence": {
+        "orders": 0,
+        "outboxEvents": 0
+      }
+    },
+    {
+      "id": "postgres-order-concurrent-idempotency",
+      "status": "passed",
+      "durationMs": 21,
+      "evidence": {
+        "distinctOrders": 1,
+        "committedOutboxEvents": 1,
+        "concurrentRequests": 6
+      }
+    },
+    {
+      "id": "inventory-last-unit-confirm-retry-release",
+      "status": "passed",
+      "durationMs": 95,
+      "evidence": {
+        "contenders": 6,
+        "successfulReservations": 1,
+        "stockAfterConfirmation": 0,
+        "reservedAfterConfirmation": 0
+      }
+    },
+    {
+      "id": "rabbitmq-duplicate-redelivery-consumer-restart",
+      "status": "passed",
+      "durationMs": 129,
+      "evidence": {
+        "duplicateDeliveries": 6,
+        "redeliveredAfterChannelCrash": 1,
+        "businessEffects": 1
+      }
+    },
+    {
+      "id": "outbox-confirm-before-mark-ambiguity-restart",
+      "status": "passed",
+      "durationMs": 193,
+      "evidence": {
+        "confirmedDeliveries": 2,
+        "publishedOutboxEvents": 1
+      }
+    },
+    {
+      "id": "elasticsearch-duplicate-and-stale-version",
+      "status": "passed",
+      "durationMs": 471,
+      "evidence": {
+        "newestVersion": 2,
+        "staleVersionSubmitted": 1,
+        "duplicateWrites": 1
+      }
+    },
+    {
+      "id": "payment-ambiguous-success-concurrent-reconciliation",
+      "status": "passed",
+      "durationMs": 107,
+      "evidence": {
+        "successfulProviderCharges": 1,
+        "concurrentRequests": 5
+      }
+    },
+    {
+      "id": "refund-ambiguous-success-restart-idempotency",
+      "status": "passed",
+      "durationMs": 212,
+      "evidence": {
+        "successfulProviderRefunds": 1,
+        "distinctRefundIntents": 1,
+        "concurrentRequests": 5
+      }
+    },
+    {
+      "id": "checkout-inventory-process-crash-redelivery-compensation",
+      "status": "passed",
+      "durationMs": 454,
+      "evidence": {
+        "crashedProcesses": 1,
+        "reservationEffects": 1,
+        "restoredAvailableStock": 1,
+        "invalidSagaTransitions": 0
+      }
+    }
+  ],
+  "cleanup": {
+    "verified": true
+  },
+  "status": "failed",
+  "matrix": [
+    {
+      "scenarioId": "service-process-restart",
+      "status": "failed",
+      "fixture": {
+        "runId": "621d8c5fac3a5653935cec90",
+        "project": "phase22-621d8c5fac3a5653935cec90",
+        "marker": "ecommerce-phase22",
+        "resources": [
+          "postgres",
+          "rabbitmq",
+          "redis",
+          "elasticsearch",
+          "orders",
+          "payments",
+          "inventory",
+          "consumer",
+          "outbox",
+          "network"
+        ]
+      },
+      "startedAt": "2026-10-17T11:29:41.314Z",
+      "endedAt": "2026-10-17T11:29:41.567Z",
+      "evidence": {},
+      "invariants": [],
+      "telemetry": {
+        "status": "unavailable",
+        "scope": "phase17-sdk-in-process-export",
+        "activatedAt": null,
+        "removedAt": null,
+        "recoveryDurationMs": 0,
+        "traces": [],
+        "metrics": [
+          {
+            "name": "resilience.scenarios",
+            "value": 1,
+            "attributes": {
+              "fault": "restart",
+              "target": "orders",
+              "outcome": "error"
+            }
+          },
+          {
+            "name": "resilience.duration",
+            "value": 252,
+            "attributes": {
+              "fault": "restart",
+              "target": "orders",
+              "outcome": "error"
+            }
+          },
+          {
+            "name": "dependency.operation.duration",
+            "value": 0.0006207910000011752,
+            "attributes": {
+              "db.system.name": "postgresql",
+              "operation": "SELECT",
+              "outcome": "success"
+            }
+          },
+          {
+            "name": "dependency.operation.duration",
+            "value": 0.001124374999999428,
+            "attributes": {
+              "db.system.name": "postgresql",
+              "operation": "CREATE",
+              "outcome": "success"
+            }
+          }
+        ],
+        "reason": "sdk-unavailable"
+      },
+      "cleanup": {
+        "verified": false
+      }
+    }
+  ],
+  "telemetry": [
+    {
+      "scenarioId": "postgres-order-outbox-atomic-rollback",
+      "status": "passed",
+      "telemetry": {
+        "status": "verified",
+        "scope": "phase17-sdk-in-process-export",
+        "activatedAt": "2026-10-17T11:29:39.529Z",
+        "removedAt": "2026-10-17T11:29:39.566Z",
+        "recoveryDurationMs": 0,
+        "traces": [
+          {
+            "traceId": "68f0cd5c0bc80ce3810d11c4b29dd070",
+            "spanId": "e6b81faa96671584",
+            "name": "postgresql CREATE"
+          },
+          {
+            "traceId": "68f0cd5c0bc80ce3810d11c4b29dd070",
+            "spanId": "47d2fe6ead1028f9",
+            "name": "postgresql CREATE"
+          },
+          {
+            "traceId": "68f0cd5c0bc80ce3810d11c4b29dd070",
+            "spanId": "ca4676418d5c55d4",
+            "name": "postgresql CONNECT"
+          },
+          {
+            "traceId": "68f0cd5c0bc80ce3810d11c4b29dd070",
+            "spanId": "da7ae93afb200958",
+            "name": "postgresql BEGIN"
+          },
+          {
+            "traceId": "68f0cd5c0bc80ce3810d11c4b29dd070",
+            "spanId": "6ab5ba977d975fd8",
+            "name": "postgresql INSERT"
+          },
+          {
+            "traceId": "68f0cd5c0bc80ce3810d11c4b29dd070",
+            "spanId": "e3f95be98500be36",
+            "name": "postgresql INSERT"
+          },
+          {
+            "traceId": "68f0cd5c0bc80ce3810d11c4b29dd070",
+            "spanId": "8cac21d4521198b7",
+            "name": "postgresql SELECT"
+          },
+          {
+            "traceId": "68f0cd5c0bc80ce3810d11c4b29dd070",
+            "spanId": "0dc61ba6abf0dfe8",
+            "name": "postgresql INSERT"
+          },
+          {
+            "traceId": "68f0cd5c0bc80ce3810d11c4b29dd070",
+            "spanId": "49fd6ddf1e52aff8",
+            "name": "postgresql ROLLBACK"
+          },
+          {
+            "traceId": "68f0cd5c0bc80ce3810d11c4b29dd070",
+            "spanId": "871f17a11693b31f",
+            "name": "postgresql SELECT"
+          },
+          {
+            "traceId": "68f0cd5c0bc80ce3810d11c4b29dd070",
+            "spanId": "f4bfbcca33a321a3",
+            "name": "postgresql SELECT"
+          },
+          {
+            "traceId": "68f0cd5c0bc80ce3810d11c4b29dd070",
+            "spanId": "20702fce9e79ef1b",
+            "name": "postgresql DROP"
+          },
+          {
+            "traceId": "68f0cd5c0bc80ce3810d11c4b29dd070",
+            "spanId": "d437baba12b7ee28",
+            "name": "resilience.scenario"
+          }
+        ],
+        "metrics": [
+          {
+            "name": "resilience.scenarios",
+            "value": 1,
+            "attributes": {
+              "fault": "interrupt",
+              "target": "postgres",
+              "outcome": "success"
+            }
+          },
+          {
+            "name": "resilience.duration",
+            "value": 37,
+            "attributes": {
+              "fault": "interrupt",
+              "target": "postgres",
+              "outcome": "success"
+            }
+          },
+          {
+            "name": "dependency.operation.duration",
+            "value": 0.0042718329999997876,
+            "attributes": {
+              "db.system.name": "postgresql",
+              "operation": "SELECT",
+              "outcome": "error"
+            }
+          },
+          {
+            "name": "dependency.operation.duration",
+            "value": 0.038025749000001725,
+            "attributes": {
+              "db.system.name": "postgresql",
+              "operation": "SELECT",
+              "outcome": "success"
+            }
+          },
+          {
+            "name": "dependency.operation.duration",
+            "value": 0.0440671259999981,
+            "attributes": {
+              "db.system.name": "elasticsearch",
+              "operation": "GET",
+              "outcome": "error"
+            }
+          },
+          {
+            "name": "dependency.operation.duration",
+            "value": 0.10741716700000142,
+            "attributes": {
+              "db.system.name": "elasticsearch",
+              "operation": "GET",
+              "outcome": "success"
+            }
+          },
+          {
+            "name": "dependency.operation.duration",
+            "value": 0.07268279299999995,
+            "attributes": {
+              "db.system.name": "postgresql",
+              "operation": "CREATE",
+              "outcome": "success"
+            }
+          },
+          {
+            "name": "dependency.operation.duration",
+            "value": 0.0067484170000007004,
+            "attributes": {
+              "db.system.name": "postgresql",
+              "operation": "ALTER",
+              "outcome": "success"
+            }
+          },
+          {
+            "name": "dependency.operation.duration",
+            "value": 0.0007296669999996084,
+            "attributes": {
+              "db.system.name": "postgresql",
+              "operation": "CONNECT",
+              "outcome": "success"
+            }
+          },
+          {
+            "name": "dependency.operation.duration",
+            "value": 0.001125500000000102,
+            "attributes": {
+              "db.system.name": "postgresql",
+              "operation": "BEGIN",
+              "outcome": "success"
+            }
+          },
+          {
+            "name": "dependency.operation.duration",
+            "value": 0.008449915999999575,
+            "attributes": {
+              "db.system.name": "postgresql",
+              "operation": "INSERT",
+              "outcome": "success"
+            }
+          },
+          {
+            "name": "dependency.operation.duration",
+            "value": 0.0019920839999995224,
+            "attributes": {
+              "db.system.name": "postgresql",
+              "operation": "INSERT",
+              "outcome": "error"
+            }
+          },
+          {
+            "name": "dependency.operation.duration",
+            "value": 0.0008964169999999285,
+            "attributes": {
+              "db.system.name": "postgresql",
+              "operation": "ROLLBACK",
+              "outcome": "success"
+            }
+          },
+          {
+            "name": "dependency.operation.duration",
+            "value": 0.0013213329999998678,
+            "attributes": {
+              "db.system.name": "postgresql",
+              "operation": "DROP",
+              "outcome": "success"
+            }
+          }
+        ],
+        "reason": "collected"
+      }
+    },
+    {
+      "scenarioId": "postgres-order-concurrent-idempotency",
+      "status": "passed",
+      "telemetry": {
+        "status": "verified",
+        "scope": "phase17-sdk-in-process-export",
+        "activatedAt": "2026-10-17T11:29:39.570Z",
+        "removedAt": "2026-10-17T11:29:39.589Z",
+        "recoveryDurationMs": 0,
+        "traces": [
+          {
+            "traceId": "8dcf3c3b2b1c8f01359593268dcb5726",
+            "spanId": "6bc14525669e68b7",
+            "name": "postgresql ROLLBACK"
+          },
+          {
+            "traceId": "8dcf3c3b2b1c8f01359593268dcb5726",
+            "spanId": "af9a2b1456f11598",
+            "name": "postgresql SELECT"
+          },
+          {
+            "traceId": "8dcf3c3b2b1c8f01359593268dcb5726",
+            "spanId": "10dda4b63567351a",
+            "name": "postgresql INSERT"
+          },
+          {
+            "traceId": "8dcf3c3b2b1c8f01359593268dcb5726",
+            "spanId": "8efcc9693b85e7b9",
+            "name": "postgresql ROLLBACK"
+          },
+          {
+            "traceId": "8dcf3c3b2b1c8f01359593268dcb5726",
+            "spanId": "53950ebd69ce78b9",
+            "name": "postgresql SELECT"
+          },
+          {
+            "traceId": "8dcf3c3b2b1c8f01359593268dcb5726",
+            "spanId": "6a6475a6fac3f13a",
+            "name": "postgresql ROLLBACK"
+          },
+          {
+            "traceId": "8dcf3c3b2b1c8f01359593268dcb5726",
+            "spanId": "746b5782e5b2cf54",
+            "name": "postgresql SELECT"
+          },
+          {
+            "traceId": "8dcf3c3b2b1c8f01359593268dcb5726",
+            "spanId": "b4e8324a0da3ceb9",
+            "name": "postgresql SELECT"
+          },
+          {
+            "traceId": "8dcf3c3b2b1c8f01359593268dcb5726",
+            "spanId": "cc7b62b93c16c815",
+            "name": "postgresql SELECT"
+          },
+          {
+            "traceId": "8dcf3c3b2b1c8f01359593268dcb5726",
+            "spanId": "c21f8064ea348428",
+            "name": "postgresql SELECT"
+          },
+          {
+            "traceId": "8dcf3c3b2b1c8f01359593268dcb5726",
+            "spanId": "8859c754955865b2",
+            "name": "postgresql SELECT"
+          },
+          {
+            "traceId": "8dcf3c3b2b1c8f01359593268dcb5726",
+            "spanId": "e622f99cc42b9f90",
+            "name": "postgresql SELECT"
+          },
+          {
+            "traceId": "8dcf3c3b2b1c8f01359593268dcb5726",
+            "spanId": "895c5b28a4f93971",
+            "name": "postgresql SELECT"
+          },
+          {
+            "traceId": "8dcf3c3b2b1c8f01359593268dcb5726",
+            "spanId": "e32e459d0a89609a",
+            "name": "postgresql SELECT"
+          },
+          {
+            "traceId": "8dcf3c3b2b1c8f01359593268dcb5726",
+            "spanId": "923ac6f7a274de75",
+            "name": "postgresql SELECT"
+          },
+          {
+            "traceId": "8dcf3c3b2b1c8f01359593268dcb5726",
+            "spanId": "b671e6102675b81c",
+            "name": "resilience.scenario"
+          }
+        ],
+        "metrics": [
+          {
+            "name": "resilience.scenarios",
+            "value": 1,
+            "attributes": {
+              "fault": "interrupt",
+              "target": "postgres",
+              "outcome": "success"
+            }
+          },
+          {
+            "name": "resilience.duration",
+            "value": 19,
+            "attributes": {
+              "fault": "interrupt",
+              "target": "postgres",
+              "outcome": "success"
+            }
+          },
+          {
+            "name": "dependency.operation.duration",
+            "value": 0.018219039999996307,
+            "attributes": {
+              "db.system.name": "postgresql",
+              "operation": "SELECT",
+              "outcome": "success"
+            }
+          },
+          {
+            "name": "dependency.operation.duration",
+            "value": 0.050153832000003604,
+            "attributes": {
+              "db.system.name": "postgresql",
+              "operation": "CONNECT",
+              "outcome": "success"
+            }
+          },
+          {
+            "name": "dependency.operation.duration",
+            "value": 0.005002542000000176,
+            "attributes": {
+              "db.system.name": "postgresql",
+              "operation": "BEGIN",
+              "outcome": "success"
+            }
+          },
+          {
+            "name": "dependency.operation.duration",
+            "value": 0.004392792999999073,
+            "attributes": {
+              "db.system.name": "postgresql",
+              "operation": "INSERT",
+              "outcome": "success"
+            }
+          },
+          {
+            "name": "dependency.operation.duration",
+            "value": 0.00977629000000161,
+            "attributes": {
+              "db.system.name": "postgresql",
+              "operation": "INSERT",
+              "outcome": "error"
+            }
+          },
+          {
+            "name": "dependency.operation.duration",
+            "value": 0.004054998999996314,
+            "attributes": {
+              "db.system.name": "postgresql",
+              "operation": "ROLLBACK",
+              "outcome": "success"
+            }
+          },
+          {
+            "name": "dependency.operation.duration",
+            "value": 0.0009431669999994483,
+            "attributes": {
+              "db.system.name": "postgresql",
+              "operation": "COMMIT",
+              "outcome": "success"
+            }
+          },
+          {
+            "name": "business.observations",
+            "value": 1,
+            "attributes": {
+              "operation": "order_created",
+              "outcome": "success"
+            }
+          }
+        ],
+        "reason": "collected"
+      }
+    },
+    {
+      "scenarioId": "inventory-last-unit-confirm-retry-release",
+      "status": "passed",
+      "telemetry": {
+        "status": "verified",
+        "scope": "phase17-sdk-in-process-export",
+        "activatedAt": "2026-10-17T11:29:39.591Z",
+        "removedAt": "2026-10-17T11:29:39.685Z",
+        "recoveryDurationMs": 0,
+        "traces": [
+          {
+            "traceId": "3332b16921a034076545bcefd27e2d2d",
+            "spanId": "6aed1bc93d020e08",
+            "name": "postgresql SELECT"
+          },
+          {
+            "traceId": "3332b16921a034076545bcefd27e2d2d",
+            "spanId": "8a6177bb1e437552",
+            "name": "postgresql COMMIT"
+          },
+          {
+            "traceId": "3332b16921a034076545bcefd27e2d2d",
+            "spanId": "d019965154a365f2",
+            "name": "postgresql SELECT"
+          },
+          {
+            "traceId": "3332b16921a034076545bcefd27e2d2d",
+            "spanId": "3be5475f5593e4e0",
+            "name": "postgresql SELECT"
+          },
+          {
+            "traceId": "3332b16921a034076545bcefd27e2d2d",
+            "spanId": "99e407efc20a961c",
+            "name": "postgresql COMMIT"
+          },
+          {
+            "traceId": "3332b16921a034076545bcefd27e2d2d",
+            "spanId": "0214170d06101ea1",
+            "name": "postgresql SELECT"
+          },
+          {
+            "traceId": "3332b16921a034076545bcefd27e2d2d",
+            "spanId": "9827a38714d90a9d",
+            "name": "postgresql SELECT"
+          },
+          {
+            "traceId": "3332b16921a034076545bcefd27e2d2d",
+            "spanId": "508a9bb81bb740bf",
+            "name": "postgresql COMMIT"
+          },
+          {
+            "traceId": "3332b16921a034076545bcefd27e2d2d",
+            "spanId": "56da363b5fa7e425",
+            "name": "postgresql SELECT"
+          },
+          {
+            "traceId": "3332b16921a034076545bcefd27e2d2d",
+            "spanId": "a8bb3b4395b9eac5",
+            "name": "postgresql CONNECT"
+          },
+          {
+            "traceId": "3332b16921a034076545bcefd27e2d2d",
+            "spanId": "a019193acb9113fc",
+            "name": "postgresql BEGIN"
+          },
+          {
+            "traceId": "3332b16921a034076545bcefd27e2d2d",
+            "spanId": "a823fd8753cd7a60",
+            "name": "postgresql SELECT"
+          },
+          {
+            "traceId": "3332b16921a034076545bcefd27e2d2d",
+            "spanId": "748a331e18f0407f",
+            "name": "postgresql SELECT"
+          },
+          {
+            "traceId": "3332b16921a034076545bcefd27e2d2d",
+            "spanId": "436f485e3d7964cd",
+            "name": "postgresql ROLLBACK"
+          },
+          {
+            "traceId": "3332b16921a034076545bcefd27e2d2d",
+            "spanId": "149a56d5860b135f",
+            "name": "postgresql SELECT"
+          },
+          {
+            "traceId": "3332b16921a034076545bcefd27e2d2d",
+            "spanId": "96f09b4d116af44b",
+            "name": "resilience.scenario"
+          }
+        ],
+        "metrics": [
+          {
+            "name": "resilience.scenarios",
+            "value": 1,
+            "attributes": {
+              "fault": "interrupt",
+              "target": "inventory",
+              "outcome": "success"
+            }
+          },
+          {
+            "name": "resilience.duration",
+            "value": 94,
+            "attributes": {
+              "fault": "interrupt",
+              "target": "inventory",
+              "outcome": "success"
+            }
+          },
+          {
+            "name": "dependency.operation.duration",
+            "value": 0.1332979540000015,
+            "attributes": {
+              "db.system.name": "postgresql",
+              "operation": "SELECT",
+              "outcome": "success"
+            }
+          },
+          {
+            "name": "dependency.operation.duration",
+            "value": 0.2334194590000061,
+            "attributes": {
+              "db.system.name": "postgresql",
+              "operation": "CONNECT",
+              "outcome": "success"
+            }
+          },
+          {
+            "name": "dependency.operation.duration",
+            "value": 0.0380828350000047,
+            "attributes": {
+              "db.system.name": "postgresql",
+              "operation": "BEGIN",
+              "outcome": "success"
+            }
+          },
+          {
+            "name": "dependency.operation.duration",
+            "value": 0.029552084000000832,
+            "attributes": {
+              "db.system.name": "postgresql",
+              "operation": "INSERT",
+              "outcome": "success"
+            }
+          },
+          {
+            "name": "dependency.operation.duration",
+            "value": 0.0046869580000002305,
+            "attributes": {
+              "db.system.name": "postgresql",
+              "operation": "ROLLBACK",
+              "outcome": "success"
+            }
+          },
+          {
+            "name": "dependency.operation.duration",
+            "value": 0.006298543000000791,
+            "attributes": {
+              "db.system.name": "postgresql",
+              "operation": "COMMIT",
+              "outcome": "success"
+            }
+          },
+          {
+            "name": "dependency.operation.duration",
+            "value": 0.0056012919999975565,
+            "attributes": {
+              "db.system.name": "postgresql",
+              "operation": "UPDATE",
+              "outcome": "success"
+            }
+          },
+          {
+            "name": "dependency.operation.duration",
+            "value": 0.006007708000001003,
+            "attributes": {
+              "db.system.name": "postgresql",
+              "operation": "WITH",
+              "outcome": "success"
+            }
+          }
+        ],
+        "reason": "collected"
+      }
+    },
+    {
+      "scenarioId": "rabbitmq-duplicate-redelivery-consumer-restart",
+      "status": "passed",
+      "telemetry": {
+        "status": "verified",
+        "scope": "phase17-sdk-in-process-export",
+        "activatedAt": "2026-10-17T11:29:39.687Z",
+        "removedAt": "2026-10-17T11:29:39.814Z",
+        "recoveryDurationMs": 0,
+        "traces": [
+          {
+            "traceId": "4c427f4d59a3e851a2c41d6e11b453d5",
+            "spanId": "a40ca2c6c42fb6e6",
+            "name": "postgresql BEGIN"
+          },
+          {
+            "traceId": "4c427f4d59a3e851a2c41d6e11b453d5",
+            "spanId": "ae6dfb9c32f554b1",
+            "name": "postgresql INSERT"
+          },
+          {
+            "traceId": "4c427f4d59a3e851a2c41d6e11b453d5",
+            "spanId": "6825e3e919d88286",
+            "name": "postgresql SELECT"
+          },
+          {
+            "traceId": "4c427f4d59a3e851a2c41d6e11b453d5",
+            "spanId": "705df603c4dd5f5a",
+            "name": "postgresql COMMIT"
+          },
+          {
+            "traceId": "4c427f4d59a3e851a2c41d6e11b453d5",
+            "spanId": "8853a2792dfe30c2",
+            "name": "postgresql CONNECT"
+          },
+          {
+            "traceId": "4c427f4d59a3e851a2c41d6e11b453d5",
+            "spanId": "2b3d651de66b19c1",
+            "name": "postgresql BEGIN"
+          },
+          {
+            "traceId": "4c427f4d59a3e851a2c41d6e11b453d5",
+            "spanId": "adf040c11206d8b3",
+            "name": "postgresql INSERT"
+          },
+          {
+            "traceId": "4c427f4d59a3e851a2c41d6e11b453d5",
+            "spanId": "2d99c1241a06084b",
+            "name": "postgresql SELECT"
+          },
+          {
+            "traceId": "4c427f4d59a3e851a2c41d6e11b453d5",
+            "spanId": "684a72bfa82991b4",
+            "name": "postgresql COMMIT"
+          },
+          {
+            "traceId": "4c427f4d59a3e851a2c41d6e11b453d5",
+            "spanId": "74bc8769b11e9cdb",
+            "name": "postgresql CONNECT"
+          },
+          {
+            "traceId": "4c427f4d59a3e851a2c41d6e11b453d5",
+            "spanId": "41d0590822661ba5",
+            "name": "postgresql BEGIN"
+          },
+          {
+            "traceId": "4c427f4d59a3e851a2c41d6e11b453d5",
+            "spanId": "871029c9c4cfa4c3",
+            "name": "postgresql INSERT"
+          },
+          {
+            "traceId": "4c427f4d59a3e851a2c41d6e11b453d5",
+            "spanId": "bfb3f3f8d3576550",
+            "name": "postgresql SELECT"
+          },
+          {
+            "traceId": "4c427f4d59a3e851a2c41d6e11b453d5",
+            "spanId": "e496e710a37b2b29",
+            "name": "postgresql COMMIT"
+          },
+          {
+            "traceId": "4c427f4d59a3e851a2c41d6e11b453d5",
+            "spanId": "56dc06226ab4bf3e",
+            "name": "postgresql SELECT"
+          },
+          {
+            "traceId": "4c427f4d59a3e851a2c41d6e11b453d5",
+            "spanId": "d78ca68a3d34ded9",
+            "name": "resilience.scenario"
+          }
+        ],
+        "metrics": [
+          {
+            "name": "resilience.scenarios",
+            "value": 1,
+            "attributes": {
+              "fault": "interrupt",
+              "target": "rabbitmq",
+              "outcome": "success"
+            }
+          },
+          {
+            "name": "resilience.duration",
+            "value": 127,
+            "attributes": {
+              "fault": "interrupt",
+              "target": "rabbitmq",
+              "outcome": "success"
+            }
+          },
+          {
+            "name": "dependency.operation.duration",
+            "value": 0.007186957999998411,
+            "attributes": {
+              "db.system.name": "postgresql",
+              "operation": "SELECT",
+              "outcome": "success"
+            }
+          },
+          {
+            "name": "dependency.operation.duration",
+            "value": 0.002930499999998573,
+            "attributes": {
+              "db.system.name": "postgresql",
+              "operation": "CREATE",
+              "outcome": "success"
+            }
+          },
+          {
+            "name": "dependency.operation.duration",
+            "value": 0.0003550000000050457,
+            "attributes": {
+              "db.system.name": "postgresql",
+              "operation": "CONNECT",
+              "outcome": "success"
+            }
+          },
+          {
+            "name": "dependency.operation.duration",
+            "value": 0.007060166000001117,
+            "attributes": {
+              "db.system.name": "postgresql",
+              "operation": "BEGIN",
+              "outcome": "success"
+            }
+          },
+          {
+            "name": "dependency.operation.duration",
+            "value": 0.009591040999999675,
+            "attributes": {
+              "db.system.name": "postgresql",
+              "operation": "INSERT",
+              "outcome": "success"
+            }
+          },
+          {
+            "name": "dependency.operation.duration",
+            "value": 0.007603790000001028,
+            "attributes": {
+              "db.system.name": "postgresql",
+              "operation": "COMMIT",
+              "outcome": "success"
+            }
+          }
+        ],
+        "reason": "collected"
+      }
+    },
+    {
+      "scenarioId": "outbox-confirm-before-mark-ambiguity-restart",
+      "status": "passed",
+      "telemetry": {
+        "status": "verified",
+        "scope": "phase17-sdk-in-process-export",
+        "activatedAt": "2026-10-17T11:29:39.816Z",
+        "removedAt": "2026-10-17T11:29:40.007Z",
+        "recoveryDurationMs": 0,
+        "traces": [
+          {
+            "traceId": "c42ef6b2d2d7c222cc7361b5d144ed9f",
+            "spanId": "ace8a1630352c4fd",
+            "name": "postgresql CONNECT"
+          },
+          {
+            "traceId": "c42ef6b2d2d7c222cc7361b5d144ed9f",
+            "spanId": "3d48af25220bbc38",
+            "name": "postgresql BEGIN"
+          },
+          {
+            "traceId": "c42ef6b2d2d7c222cc7361b5d144ed9f",
+            "spanId": "ddfbd38553d93158",
+            "name": "postgresql WITH"
+          },
+          {
+            "traceId": "c42ef6b2d2d7c222cc7361b5d144ed9f",
+            "spanId": "ee90244ff2a7bc6e",
+            "name": "postgresql WITH"
+          },
+          {
+            "traceId": "c42ef6b2d2d7c222cc7361b5d144ed9f",
+            "spanId": "135fb61e6778730d",
+            "name": "postgresql COMMIT"
+          },
+          {
+            "traceId": "c42ef6b2d2d7c222cc7361b5d144ed9f",
+            "spanId": "38961e992e9e32e2",
+            "name": "postgresql SELECT"
+          },
+          {
+            "traceId": "c42ef6b2d2d7c222cc7361b5d144ed9f",
+            "spanId": "8355ed2a3811cd2b",
+            "name": "postgresql CONNECT"
+          },
+          {
+            "traceId": "c42ef6b2d2d7c222cc7361b5d144ed9f",
+            "spanId": "25eba13d7020f6db",
+            "name": "postgresql BEGIN"
+          },
+          {
+            "traceId": "c42ef6b2d2d7c222cc7361b5d144ed9f",
+            "spanId": "08e5acba5187d652",
+            "name": "postgresql WITH"
+          },
+          {
+            "traceId": "c42ef6b2d2d7c222cc7361b5d144ed9f",
+            "spanId": "53b21e1567a9e0cb",
+            "name": "postgresql WITH"
+          },
+          {
+            "traceId": "c42ef6b2d2d7c222cc7361b5d144ed9f",
+            "spanId": "e0e04ba9f20a18ea",
+            "name": "postgresql COMMIT"
+          },
+          {
+            "traceId": "c42ef6b2d2d7c222cc7361b5d144ed9f",
+            "spanId": "793384d78ff0a809",
+            "name": "postgresql UPDATE"
+          },
+          {
+            "traceId": "c42ef6b2d2d7c222cc7361b5d144ed9f",
+            "spanId": "83034aebfb290fef",
+            "name": "postgresql SELECT"
+          },
+          {
+            "traceId": "c42ef6b2d2d7c222cc7361b5d144ed9f",
+            "spanId": "9afa7d4d078d1bef",
+            "name": "resilience.scenario"
+          }
+        ],
+        "metrics": [
+          {
+            "name": "resilience.scenarios",
+            "value": 1,
+            "attributes": {
+              "fault": "interrupt",
+              "target": "outbox",
+              "outcome": "success"
+            }
+          },
+          {
+            "name": "resilience.duration",
+            "value": 191,
+            "attributes": {
+              "fault": "interrupt",
+              "target": "outbox",
+              "outcome": "success"
+            }
+          },
+          {
+            "name": "dependency.operation.duration",
+            "value": 0.0022357080000001694,
+            "attributes": {
+              "db.system.name": "postgresql",
+              "operation": "SELECT",
+              "outcome": "success"
+            }
+          },
+          {
+            "name": "dependency.operation.duration",
+            "value": 0.00019066599999861822,
+            "attributes": {
+              "db.system.name": "postgresql",
+              "operation": "CONNECT",
+              "outcome": "success"
+            }
+          },
+          {
+            "name": "dependency.operation.duration",
+            "value": 0.002362541000000419,
+            "attributes": {
+              "db.system.name": "postgresql",
+              "operation": "BEGIN",
+              "outcome": "success"
+            }
+          },
+          {
+            "name": "dependency.operation.duration",
+            "value": 0.002294583999999305,
+            "attributes": {
+              "db.system.name": "postgresql",
+              "operation": "COMMIT",
+              "outcome": "success"
+            }
+          },
+          {
+            "name": "dependency.operation.duration",
+            "value": 0.0016935419999990695,
+            "attributes": {
+              "db.system.name": "postgresql",
+              "operation": "UPDATE",
+              "outcome": "success"
+            }
+          },
+          {
+            "name": "dependency.operation.duration",
+            "value": 0.008122040999998716,
+            "attributes": {
+              "db.system.name": "postgresql",
+              "operation": "WITH",
+              "outcome": "success"
+            }
+          }
+        ],
+        "reason": "collected"
+      }
+    },
+    {
+      "scenarioId": "elasticsearch-duplicate-and-stale-version",
+      "status": "passed",
+      "telemetry": {
+        "status": "verified",
+        "scope": "phase17-sdk-in-process-export",
+        "activatedAt": "2026-10-17T11:29:40.009Z",
+        "removedAt": "2026-10-17T11:29:40.478Z",
+        "recoveryDurationMs": 0,
+        "traces": [
+          {
+            "traceId": "6aa0c22e09a2fbcc394b98b48dcec37a",
+            "spanId": "e7ae9aa6aaafe981",
+            "name": "elasticsearch PUT"
+          },
+          {
+            "traceId": "6aa0c22e09a2fbcc394b98b48dcec37a",
+            "spanId": "844d55921bd1d46a",
+            "name": "elasticsearch GET"
+          },
+          {
+            "traceId": "6aa0c22e09a2fbcc394b98b48dcec37a",
+            "spanId": "578507902ad5d2cd",
+            "name": "elasticsearch PUT"
+          },
+          {
+            "traceId": "6aa0c22e09a2fbcc394b98b48dcec37a",
+            "spanId": "041bc0f2bdf22726",
+            "name": "elasticsearch PUT"
+          },
+          {
+            "traceId": "6aa0c22e09a2fbcc394b98b48dcec37a",
+            "spanId": "1c8db54a0c962d5b",
+            "name": "elasticsearch PUT"
+          },
+          {
+            "traceId": "6aa0c22e09a2fbcc394b98b48dcec37a",
+            "spanId": "d186338348e9e32b",
+            "name": "elasticsearch GET"
+          },
+          {
+            "traceId": "6aa0c22e09a2fbcc394b98b48dcec37a",
+            "spanId": "f8e62501855e950d",
+            "name": "resilience.scenario"
+          }
+        ],
+        "metrics": [
+          {
+            "name": "resilience.scenarios",
+            "value": 1,
+            "attributes": {
+              "fault": "interrupt",
+              "target": "elasticsearch",
+              "outcome": "success"
+            }
+          },
+          {
+            "name": "resilience.duration",
+            "value": 469,
+            "attributes": {
+              "fault": "interrupt",
+              "target": "elasticsearch",
+              "outcome": "success"
+            }
+          },
+          {
+            "name": "dependency.operation.duration",
+            "value": 0.11402466600000116,
+            "attributes": {
+              "db.system.name": "elasticsearch",
+              "operation": "GET",
+              "outcome": "success"
+            }
+          },
+          {
+            "name": "dependency.operation.duration",
+            "value": 0.3536999180000003,
+            "attributes": {
+              "db.system.name": "elasticsearch",
+              "operation": "PUT",
+              "outcome": "success"
+            }
+          }
+        ],
+        "reason": "collected"
+      }
+    },
+    {
+      "scenarioId": "payment-ambiguous-success-concurrent-reconciliation",
+      "status": "passed",
+      "telemetry": {
+        "status": "verified",
+        "scope": "phase17-sdk-in-process-export",
+        "activatedAt": "2026-10-17T11:29:40.540Z",
+        "removedAt": "2026-10-17T11:29:40.646Z",
+        "recoveryDurationMs": 0,
+        "traces": [
+          {
+            "traceId": "dcb8cc17d014991038f1a86858d33560",
+            "spanId": "4371e076de77880a",
+            "name": "postgresql SELECT"
+          },
+          {
+            "traceId": "dcb8cc17d014991038f1a86858d33560",
+            "spanId": "d706a418e7b47d9b",
+            "name": "postgresql COMMIT"
+          },
+          {
+            "traceId": "dcb8cc17d014991038f1a86858d33560",
+            "spanId": "0d9f5708d25ae9ad",
+            "name": "postgresql SELECT"
+          },
+          {
+            "traceId": "dcb8cc17d014991038f1a86858d33560",
+            "spanId": "eb2c1c79df5449ea",
+            "name": "http GET"
+          },
+          {
+            "traceId": "dcb8cc17d014991038f1a86858d33560",
+            "spanId": "fca5ed274329822c",
+            "name": "postgresql CONNECT"
+          },
+          {
+            "traceId": "dcb8cc17d014991038f1a86858d33560",
+            "spanId": "c6c6f1eca9f2a711",
+            "name": "postgresql COMMIT"
+          },
+          {
+            "traceId": "dcb8cc17d014991038f1a86858d33560",
+            "spanId": "80c1343b0907d8af",
+            "name": "postgresql SELECT"
+          },
+          {
+            "traceId": "dcb8cc17d014991038f1a86858d33560",
+            "spanId": "203f993f1eb176fb",
+            "name": "postgresql BEGIN"
+          },
+          {
+            "traceId": "dcb8cc17d014991038f1a86858d33560",
+            "spanId": "4828caed45783a27",
+            "name": "postgresql COMMIT"
+          },
+          {
+            "traceId": "dcb8cc17d014991038f1a86858d33560",
+            "spanId": "60e23adb4deb3ed0",
+            "name": "postgresql SELECT"
+          },
+          {
+            "traceId": "dcb8cc17d014991038f1a86858d33560",
+            "spanId": "2868720a4abdf85e",
+            "name": "postgresql UPDATE"
+          },
+          {
+            "traceId": "dcb8cc17d014991038f1a86858d33560",
+            "spanId": "845769cd846bbe95",
+            "name": "postgresql UPDATE"
+          },
+          {
+            "traceId": "dcb8cc17d014991038f1a86858d33560",
+            "spanId": "edf4e3dbb51127b9",
+            "name": "postgresql COMMIT"
+          },
+          {
+            "traceId": "dcb8cc17d014991038f1a86858d33560",
+            "spanId": "c5aef93ab5a7dd8a",
+            "name": "postgresql SELECT"
+          },
+          {
+            "traceId": "dcb8cc17d014991038f1a86858d33560",
+            "spanId": "fc736b185af4e226",
+            "name": "postgresql SELECT"
+          },
+          {
+            "traceId": "dcb8cc17d014991038f1a86858d33560",
+            "spanId": "53f6aff484834657",
+            "name": "resilience.scenario"
+          }
+        ],
+        "metrics": [
+          {
+            "name": "resilience.scenarios",
+            "value": 1,
+            "attributes": {
+              "fault": "interrupt",
+              "target": "payments",
+              "outcome": "success"
+            }
+          },
+          {
+            "name": "resilience.duration",
+            "value": 106,
+            "attributes": {
+              "fault": "interrupt",
+              "target": "payments",
+              "outcome": "success"
+            }
+          },
+          {
+            "name": "http.client.request.duration",
+            "value": 0.01359441599999991,
+            "attributes": {
+              "http.request.method": "POST",
+              "outcome": "error"
+            }
+          },
+          {
+            "name": "http.client.request.duration",
+            "value": 0.007166165999999066,
+            "attributes": {
+              "http.request.method": "GET",
+              "outcome": "success"
+            }
+          },
+          {
+            "name": "dependency.operation.duration",
+            "value": 0.0783999569999978,
+            "attributes": {
+              "db.system.name": "postgresql",
+              "operation": "SELECT",
+              "outcome": "success"
+            }
+          },
+          {
+            "name": "dependency.operation.duration",
+            "value": 0.05046170800000435,
+            "attributes": {
+              "db.system.name": "postgresql",
+              "operation": "CREATE",
+              "outcome": "success"
+            }
+          },
+          {
+            "name": "dependency.operation.duration",
+            "value": 0.04022696100000028,
+            "attributes": {
+              "db.system.name": "postgresql",
+              "operation": "CONNECT",
+              "outcome": "success"
+            }
+          },
+          {
+            "name": "dependency.operation.duration",
+            "value": 0.016374751999999708,
+            "attributes": {
+              "db.system.name": "postgresql",
+              "operation": "BEGIN",
+              "outcome": "success"
+            }
+          },
+          {
+            "name": "dependency.operation.duration",
+            "value": 0.019115958000000315,
+            "attributes": {
+              "db.system.name": "postgresql",
+              "operation": "INSERT",
+              "outcome": "success"
+            }
+          },
+          {
+            "name": "dependency.operation.duration",
+            "value": 0.017211746000002675,
+            "attributes": {
+              "db.system.name": "postgresql",
+              "operation": "COMMIT",
+              "outcome": "success"
+            }
+          },
+          {
+            "name": "dependency.operation.duration",
+            "value": 0.00969616599999608,
+            "attributes": {
+              "db.system.name": "postgresql",
+              "operation": "UPDATE",
+              "outcome": "success"
+            }
+          },
+          {
+            "name": "business.observations",
+            "value": 1,
+            "attributes": {
+              "operation": "payment_attempt",
+              "outcome": "observed"
+            }
+          },
+          {
+            "name": "business.observations",
+            "value": 1,
+            "attributes": {
+              "operation": "reconciliation_attempt",
+              "outcome": "observed"
+            }
+          },
+          {
+            "name": "business.observations",
+            "value": 1,
+            "attributes": {
+              "operation": "payment_success",
+              "outcome": "observed"
+            }
+          }
+        ],
+        "reason": "collected"
+      }
+    },
+    {
+      "scenarioId": "refund-ambiguous-success-restart-idempotency",
+      "status": "passed",
+      "telemetry": {
+        "status": "verified",
+        "scope": "phase17-sdk-in-process-export",
+        "activatedAt": "2026-10-17T11:29:40.647Z",
+        "removedAt": "2026-10-17T11:29:40.856Z",
+        "recoveryDurationMs": 0,
+        "traces": [
+          {
+            "traceId": "5a6b13d6080affbd9e535b986f15bbf2",
+            "spanId": "37cfcca4f3d234b8",
+            "name": "postgresql SELECT"
+          },
+          {
+            "traceId": "5a6b13d6080affbd9e535b986f15bbf2",
+            "spanId": "f95a7a7a2b23ce43",
+            "name": "postgresql UPDATE"
+          },
+          {
+            "traceId": "5a6b13d6080affbd9e535b986f15bbf2",
+            "spanId": "99d7029768dacdb4",
+            "name": "postgresql SELECT"
+          },
+          {
+            "traceId": "5a6b13d6080affbd9e535b986f15bbf2",
+            "spanId": "da570656228f3f20",
+            "name": "postgresql COMMIT"
+          },
+          {
+            "traceId": "5a6b13d6080affbd9e535b986f15bbf2",
+            "spanId": "e81bfa212a79d1c1",
+            "name": "http GET"
+          },
+          {
+            "traceId": "5a6b13d6080affbd9e535b986f15bbf2",
+            "spanId": "afe9593e383515af",
+            "name": "postgresql CONNECT"
+          },
+          {
+            "traceId": "5a6b13d6080affbd9e535b986f15bbf2",
+            "spanId": "e80acafffc81b459",
+            "name": "postgresql BEGIN"
+          },
+          {
+            "traceId": "5a6b13d6080affbd9e535b986f15bbf2",
+            "spanId": "e766bbe70bf7c420",
+            "name": "postgresql SELECT"
+          },
+          {
+            "traceId": "5a6b13d6080affbd9e535b986f15bbf2",
+            "spanId": "6f915b06ee9ed115",
+            "name": "postgresql UPDATE"
+          },
+          {
+            "traceId": "5a6b13d6080affbd9e535b986f15bbf2",
+            "spanId": "79ae15f1884c763e",
+            "name": "postgresql UPDATE"
+          },
+          {
+            "traceId": "5a6b13d6080affbd9e535b986f15bbf2",
+            "spanId": "898ff4f0a0186943",
+            "name": "postgresql INSERT"
+          },
+          {
+            "traceId": "5a6b13d6080affbd9e535b986f15bbf2",
+            "spanId": "5108d4f18bbda2f5",
+            "name": "postgresql INSERT"
+          },
+          {
+            "traceId": "5a6b13d6080affbd9e535b986f15bbf2",
+            "spanId": "f6060a590f9632e4",
+            "name": "postgresql COMMIT"
+          },
+          {
+            "traceId": "5a6b13d6080affbd9e535b986f15bbf2",
+            "spanId": "f555ea19c2a97a70",
+            "name": "postgresql SELECT"
+          },
+          {
+            "traceId": "5a6b13d6080affbd9e535b986f15bbf2",
+            "spanId": "6a7d7cbb34467b39",
+            "name": "postgresql SELECT"
+          },
+          {
+            "traceId": "5a6b13d6080affbd9e535b986f15bbf2",
+            "spanId": "3da3db368cd62dd7",
+            "name": "resilience.scenario"
+          }
+        ],
+        "metrics": [
+          {
+            "name": "resilience.scenarios",
+            "value": 1,
+            "attributes": {
+              "fault": "interrupt",
+              "target": "payments",
+              "outcome": "success"
+            }
+          },
+          {
+            "name": "resilience.duration",
+            "value": 209,
+            "attributes": {
+              "fault": "interrupt",
+              "target": "payments",
+              "outcome": "success"
+            }
+          },
+          {
+            "name": "http.client.request.duration",
+            "value": 0.005244166000000406,
+            "attributes": {
+              "http.request.method": "POST",
+              "outcome": "error"
+            }
+          },
+          {
+            "name": "http.client.request.duration",
+            "value": 0.007395000000000437,
+            "attributes": {
+              "http.request.method": "GET",
+              "outcome": "success"
+            }
+          },
+          {
+            "name": "dependency.operation.duration",
+            "value": 0.05316124900000613,
+            "attributes": {
+              "db.system.name": "postgresql",
+              "operation": "SELECT",
+              "outcome": "success"
+            }
+          },
+          {
+            "name": "dependency.operation.duration",
+            "value": 0.0010571250000029897,
+            "attributes": {
+              "db.system.name": "postgresql",
+              "operation": "CONNECT",
+              "outcome": "success"
+            }
+          },
+          {
+            "name": "dependency.operation.duration",
+            "value": 0.012395708000000005,
+            "attributes": {
+              "db.system.name": "postgresql",
+              "operation": "BEGIN",
+              "outcome": "success"
+            }
+          },
+          {
+            "name": "dependency.operation.duration",
+            "value": 0.008490624999998544,
+            "attributes": {
+              "db.system.name": "postgresql",
+              "operation": "INSERT",
+              "outcome": "success"
+            }
+          },
+          {
+            "name": "dependency.operation.duration",
+            "value": 0.008640457999999851,
+            "attributes": {
+              "db.system.name": "postgresql",
+              "operation": "COMMIT",
+              "outcome": "success"
+            }
+          },
+          {
+            "name": "dependency.operation.duration",
+            "value": 0.011718875999997179,
+            "attributes": {
+              "db.system.name": "postgresql",
+              "operation": "UPDATE",
+              "outcome": "success"
+            }
+          },
+          {
+            "name": "business.observations",
+            "value": 1,
+            "attributes": {
+              "operation": "refund_outcome",
+              "outcome": "observed"
+            }
+          },
+          {
+            "name": "business.observations",
+            "value": 1,
+            "attributes": {
+              "operation": "refund_outcome",
+              "outcome": "success"
+            }
+          }
+        ],
+        "reason": "collected"
+      }
+    },
+    {
+      "scenarioId": "checkout-inventory-process-crash-redelivery-compensation",
+      "status": "passed",
+      "telemetry": {
+        "status": "verified",
+        "scope": "phase17-sdk-in-process-export",
+        "activatedAt": "2026-10-17T11:29:40.859Z",
+        "removedAt": "2026-10-17T11:29:41.311Z",
+        "recoveryDurationMs": 0,
+        "traces": [
+          {
+            "traceId": "ea16f385c2657d7ee1fd8393217ac005",
+            "spanId": "8fd28ce9bea692fc",
+            "name": "postgresql CONNECT"
+          },
+          {
+            "traceId": "ea16f385c2657d7ee1fd8393217ac005",
+            "spanId": "70614482c91de80f",
+            "name": "postgresql BEGIN"
+          },
+          {
+            "traceId": "ea16f385c2657d7ee1fd8393217ac005",
+            "spanId": "8b2a56647b4e7e72",
+            "name": "postgresql INSERT"
+          },
+          {
+            "traceId": "ea16f385c2657d7ee1fd8393217ac005",
+            "spanId": "fc49d61845474384",
+            "name": "postgresql SELECT"
+          },
+          {
+            "traceId": "ea16f385c2657d7ee1fd8393217ac005",
+            "spanId": "61c84db1e0362389",
+            "name": "postgresql INSERT"
+          },
+          {
+            "traceId": "ea16f385c2657d7ee1fd8393217ac005",
+            "spanId": "965bee2ffd2e9916",
+            "name": "postgresql UPDATE"
+          },
+          {
+            "traceId": "ea16f385c2657d7ee1fd8393217ac005",
+            "spanId": "994451e44e10b454",
+            "name": "postgresql UPDATE"
+          },
+          {
+            "traceId": "ea16f385c2657d7ee1fd8393217ac005",
+            "spanId": "4abf873b63780ccf",
+            "name": "postgresql UPDATE"
+          },
+          {
+            "traceId": "ea16f385c2657d7ee1fd8393217ac005",
+            "spanId": "e428299b6dc0d9d5",
+            "name": "postgresql COMMIT"
+          },
+          {
+            "traceId": "ea16f385c2657d7ee1fd8393217ac005",
+            "spanId": "bcb1ce6a4e50093e",
+            "name": "postgresql SELECT"
+          },
+          {
+            "traceId": "ea16f385c2657d7ee1fd8393217ac005",
+            "spanId": "e32a3e2387967655",
+            "name": "postgresql SELECT"
+          },
+          {
+            "traceId": "ea16f385c2657d7ee1fd8393217ac005",
+            "spanId": "db31217f477c4237",
+            "name": "postgresql SELECT"
+          },
+          {
+            "traceId": "ea16f385c2657d7ee1fd8393217ac005",
+            "spanId": "fb2d9aceec7302a0",
+            "name": "postgresql SELECT"
+          },
+          {
+            "traceId": "ea16f385c2657d7ee1fd8393217ac005",
+            "spanId": "65163ee45db2eda9",
+            "name": "postgresql SELECT"
+          },
+          {
+            "traceId": "ea16f385c2657d7ee1fd8393217ac005",
+            "spanId": "4cec28e89e17451e",
+            "name": "postgresql SELECT"
+          },
+          {
+            "traceId": "ea16f385c2657d7ee1fd8393217ac005",
+            "spanId": "bfce5dc397223039",
+            "name": "resilience.scenario"
+          }
+        ],
+        "metrics": [
+          {
+            "name": "resilience.scenarios",
+            "value": 1,
+            "attributes": {
+              "fault": "interrupt",
+              "target": "payments",
+              "outcome": "success"
+            }
+          },
+          {
+            "name": "resilience.duration",
+            "value": 452,
+            "attributes": {
+              "fault": "interrupt",
+              "target": "payments",
+              "outcome": "success"
+            }
+          },
+          {
+            "name": "http.client.request.duration",
+            "value": 0.0018517080000001443,
+            "attributes": {
+              "http.request.method": "POST",
+              "outcome": "success"
+            }
+          },
+          {
+            "name": "dependency.operation.duration",
+            "value": 0.014742581000004085,
+            "attributes": {
+              "db.system.name": "postgresql",
+              "operation": "SELECT",
+              "outcome": "success"
+            }
+          },
+          {
+            "name": "dependency.operation.duration",
+            "value": 0.0002173319999965173,
+            "attributes": {
+              "db.system.name": "postgresql",
+              "operation": "CONNECT",
+              "outcome": "success"
+            }
+          },
+          {
+            "name": "dependency.operation.duration",
+            "value": 0.004549542000000656,
+            "attributes": {
+              "db.system.name": "postgresql",
+              "operation": "BEGIN",
+              "outcome": "success"
+            }
+          },
+          {
+            "name": "dependency.operation.duration",
+            "value": 0.02538024900000528,
+            "attributes": {
+              "db.system.name": "postgresql",
+              "operation": "INSERT",
+              "outcome": "success"
+            }
+          },
+          {
+            "name": "dependency.operation.duration",
+            "value": 0.0035222920000032923,
+            "attributes": {
+              "db.system.name": "postgresql",
+              "operation": "COMMIT",
+              "outcome": "success"
+            }
+          },
+          {
+            "name": "dependency.operation.duration",
+            "value": 0.00828403900000376,
+            "attributes": {
+              "db.system.name": "postgresql",
+              "operation": "UPDATE",
+              "outcome": "success"
+            }
+          },
+          {
+            "name": "dependency.operation.duration",
+            "value": 0.0007858749999995786,
+            "attributes": {
+              "db.system.name": "postgresql",
+              "operation": "WITH",
+              "outcome": "success"
+            }
+          },
+          {
+            "name": "business.observations",
+            "value": 1,
+            "attributes": {
+              "operation": "order_created",
+              "outcome": "success"
+            }
+          },
+          {
+            "name": "business.observations",
+            "value": 1,
+            "attributes": {
+              "operation": "payment_attempt",
+              "outcome": "observed"
+            }
+          },
+          {
+            "name": "business.observations",
+            "value": 1,
+            "attributes": {
+              "operation": "reservation_attempt",
+              "outcome": "observed"
+            }
+          },
+          {
+            "name": "business.observations",
+            "value": 1,
+            "attributes": {
+              "operation": "payment_failure",
+              "outcome": "observed"
+            }
+          },
+          {
+            "name": "business.observations",
+            "value": 1,
+            "attributes": {
+              "operation": "compensation_started",
+              "outcome": "observed"
+            }
+          },
+          {
+            "name": "business.observations",
+            "value": 1,
+            "attributes": {
+              "operation": "order_failed",
+              "outcome": "error"
+            }
+          }
+        ],
+        "reason": "collected"
+      }
+    },
+    {
+      "scenarioId": "service-process-restart",
+      "status": "failed",
+      "telemetry": {
+        "status": "unavailable",
+        "scope": "phase17-sdk-in-process-export",
+        "activatedAt": null,
+        "removedAt": null,
+        "recoveryDurationMs": 0,
+        "traces": [],
+        "metrics": [
+          {
+            "name": "resilience.scenarios",
+            "value": 1,
+            "attributes": {
+              "fault": "restart",
+              "target": "orders",
+              "outcome": "error"
+            }
+          },
+          {
+            "name": "resilience.duration",
+            "value": 252,
+            "attributes": {
+              "fault": "restart",
+              "target": "orders",
+              "outcome": "error"
+            }
+          },
+          {
+            "name": "dependency.operation.duration",
+            "value": 0.0006207910000011752,
+            "attributes": {
+              "db.system.name": "postgresql",
+              "operation": "SELECT",
+              "outcome": "success"
+            }
+          },
+          {
+            "name": "dependency.operation.duration",
+            "value": 0.001124374999999428,
+            "attributes": {
+              "db.system.name": "postgresql",
+              "operation": "CREATE",
+              "outcome": "success"
+            }
+          }
+        ],
+        "reason": "sdk-unavailable"
+      }
+    }
+  ]
+}

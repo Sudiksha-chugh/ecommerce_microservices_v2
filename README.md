@@ -615,3 +615,7 @@ Opt-in, loopback-only incident investigation reuses Prometheus, Tempo and existi
 ### Phase 21 performance diagnostics
 
 Opt-in internal performance investigations correlate bounded Prometheus, Tempo and available sampled SQL evidence with deterministic findings and an estimated dominant trace envelope. AI defaults off; engineers review recommendations. See [architecture, limits and operations](docs/phase-21-ai-performance-investigation.md) and [verification](docs/phase-21-verification-report.md). Run `npm run test:performance` for offline tests.
+
+### Phase 22 resilience and contracts
+
+See [resilience design and recovery](docs/phase-22-resilience-contract-testing.md) and the [verification report](docs/phase-22-verification-report.md). Run `npm run test:resilience` for deterministic checks and `npm run resilience:live` for explicitly owned fixtures. The report records the completed Phase 22 verification matrix, source digest, cleanup evidence and scope limits.

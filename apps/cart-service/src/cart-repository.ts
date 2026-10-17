@@ -11,13 +11,18 @@ export class CartRepository {
   ) {}
   key(userId: string): string { return `${this.prefix}{${userId}}`; }
   private async execute<T>(operation: () => Promise<T>): Promise<T> {
+    let timer: ReturnType<typeof setTimeout> | undefined;
     try {
       if (!this.client.isReady) throw new Error('Redis not ready');
-      return await operation();
+      // The Redis queue timeout ends when the command is written. Bound the
+      // entire response wait as well, including an established socket blackhole.
+      return await Promise.race([operation(), new Promise<never>((_resolve, reject) => {
+        timer = setTimeout(() => reject(new CartError(503, 'Cart storage unavailable')), this.commandTimeoutMs);
+      })]);
     } catch (error) {
       if (error instanceof CartError) throw error;
       throw new CartError(503, 'Cart storage unavailable');
-    }
+    } finally { clearTimeout(timer); }
   }
   private commands() { return this.client.withCommandOptions({ timeout: this.commandTimeoutMs }); }
   private cart(pairs: unknown): Cart {

@@ -1,0 +1,1183 @@
+{
+  "schemaVersion": 2,
+  "verdict": "PHASE 22 COMPLETE",
+  "scope": "Requested Phase 22 continuation acceptance; no production-readiness claim",
+  "sourceRevision": "6f8edf87888149a6594addd99f1d432a6c6d5db3",
+  "sourceDigest": "7266a5da741edfcdf64f5e9dca48f80b69537ca62e940cf6dfe910b7f3940688",
+  "sourceScope": "apps, packages, tests, contracts, scripts, infrastructure; root package/tsconfig/vitest/compose files; generated docs excluded",
+  "sourceFiles": 454,
+  "sourceDigestUnchangedAcrossFinalVerification": true,
+  "branch": "phase22/resilience-contract-testing",
+  "workspace": "/Users/sudikshachugh/Desktop/ecommerce-v2-main",
+  "gitSafety": {
+    "branchSwitched": false,
+    "resetOrClean": false,
+    "stashCreated": false,
+    "commitsCreated": 0,
+    "pushesPerformed": 0,
+    "originalSourceWorktreeModified": false,
+    "developmentDataModified": false,
+    "priorCartTimeoutFixPreserved": true
+  },
+  "environment": {
+    "node": "v24.21.0",
+    "dockerServer": "29.8.0",
+    "images": [
+      {
+        "tag": "postgres:17",
+        "id": "sha256:a470461db3d4079fb4cb545328a6ef7c7d1ffc33e6981f5d3e2cfda1634d297e",
+        "repoDigest": "postgres@sha256:2d2b8998d31037bf721cfdf764d76ba74171b4fab3431b7f72c27c56ddbdf9e3"
+      },
+      {
+        "tag": "rabbitmq:4.2-management",
+        "id": "sha256:1dafa95a6312e6390f237b280d596902f974ea3c3eb1e669a0d9f859a97b9996",
+        "repoDigest": "rabbitmq@sha256:9e9fd21d60f060acc9ecbd847cd1dcb87e6550bdb0297c27e79a40bfe1766ce4"
+      },
+      {
+        "tag": "redis:8",
+        "id": "sha256:9bd2e561aa8ab3aaf9d40021f90d845342b979250f12edac423d80137125c022",
+        "repoDigest": "redis@sha256:2c2dff791878316e3b083188be0d578423b24813cdda5de0e80ea4f7b3e6bfd6"
+      },
+      {
+        "tag": "docker.elastic.co/elasticsearch/elasticsearch:8.15.0",
+        "id": "sha256:d0c5ac0a484de490f54b487c1e9793e2b5cbaee1444540111179c9abbb415b8e",
+        "repoDigest": "docker.elastic.co/elasticsearch/elasticsearch@sha256:84a73ced8390c059e7bc2858595c68dc36e6f8bdb98895dcab0074eda35ac96e"
+      }
+    ]
+  },
+  "typecheck": {
+    "command": "/Users/sudikshachugh/.nvm/versions/node/v24.21.0/bin/node node_modules/typescript/bin/tsc --noEmit -p tsconfig.json",
+    "exitCode": 0
+  },
+  "runs": {
+    "targeted": {
+      "artifact": "/private/tmp/phase22-cont-targeted-final.json",
+      "sha256": "66114a011cd4dd897ee7f1a8cb6485f419a8f650b88b5118d8af49e8b2e64963",
+      "passed": 316,
+      "total": 316,
+      "failed": 0,
+      "skipped": 0,
+      "todo": 0,
+      "startTimeEpochMs": 1792236096645
+    },
+    "regression1": {
+      "artifact": "/private/tmp/phase22-cont-final-regression-1.json",
+      "sha256": "5a21bf5de2b1bd088c3d474300b0cad21ac4d9f95b0d236d02f19f58e82c6443",
+      "passed": 1695,
+      "total": 1695,
+      "failed": 0,
+      "skipped": 0,
+      "todo": 0,
+      "startTimeEpochMs": 1792236132835
+    },
+    "regression2": {
+      "artifact": "/private/tmp/phase22-cont-final-regression-2.json",
+      "sha256": "dcdf5a11213cfcc96404214bcdc0d0f0e09656a7e091d9c763c338d557783745",
+      "passed": 1695,
+      "total": 1695,
+      "failed": 0,
+      "skipped": 0,
+      "todo": 0,
+      "startTimeEpochMs": 1792236317194
+    },
+    "observabilityAndContracts": {
+      "artifact": "/private/tmp/phase22-cont-final-observability-contracts.json",
+      "sha256": "3e331455b63f7a8748afe4824b6059f5a33d18584e23d755742959d7274812c2",
+      "passed": 665,
+      "total": 665,
+      "failed": 0,
+      "skipped": 0,
+      "todo": 0,
+      "startTimeEpochMs": 1792236342658
+    }
+  },
+  "groupsInEachFinalRegression": {
+    "framework": {
+      "total": 69,
+      "passed": 69,
+      "failed": 0,
+      "skipped": 0
+    },
+    "httpReadContracts": {
+      "total": 25,
+      "passed": 25,
+      "failed": 0,
+      "skipped": 0
+    },
+    "httpMutationContracts": {
+      "total": 166,
+      "passed": 166,
+      "failed": 0,
+      "skipped": 0
+    },
+    "eventContracts": {
+      "total": 43,
+      "passed": 43,
+      "failed": 0,
+      "skipped": 0
+    },
+    "networkCartTelemetrySecurity": {
+      "total": 13,
+      "passed": 13,
+      "failed": 0,
+      "skipped": 0
+    },
+    "observability": {
+      "total": 431,
+      "passed": 431,
+      "failed": 0,
+      "skipped": 0
+    },
+    "redisRateLimiting": {
+      "total": 89,
+      "passed": 89,
+      "failed": 0,
+      "skipped": 0
+    },
+    "cart": {
+      "total": 49,
+      "passed": 49,
+      "failed": 0,
+      "skipped": 0
+    },
+    "search": {
+      "total": 138,
+      "passed": 138,
+      "failed": 0,
+      "skipped": 0
+    }
+  },
+  "regressionFixtures": [
+    {
+      "project": "commerce-v2-stabilization-08a6cad6fd91",
+      "cleanupVerified": true,
+      "execution": "fresh independent stores, credentials, service schemas and Vitest process"
+    },
+    {
+      "project": "commerce-v2-stabilization-fc359d27523f",
+      "cleanupVerified": true,
+      "execution": "separately provisioned stores, credentials, service schemas and Vitest process"
+    }
+  ],
+  "postgresIntegration": {
+    "project": "commerce-v2-sql-91009dad4194",
+    "passed": true,
+    "cleanup": true,
+    "tests": {
+      "counts": {
+        "numTotalTests": 10,
+        "numPassedTests": 10,
+        "numFailedTests": 0,
+        "numPendingTests": 0,
+        "numTodoTests": 0,
+        "numFailedTestSuites": 0
+      },
+      "failures": [],
+      "unexecuted": [],
+      "suiteErrors": [],
+      "truncated": false,
+      "success": true
+    }
+  },
+  "commands": [
+    "/Users/sudikshachugh/.nvm/versions/node/v24.21.0/bin/node node_modules/vitest/vitest.mjs run --config vitest.phase22.config.mjs --reporter=json --outputFile=/private/tmp/phase22-cont-targeted-final.json",
+    "/Users/sudikshachugh/.nvm/versions/node/v24.21.0/bin/node --import tsx scripts/resilience-live.mjs",
+    "INTEGRATION_EXECUTION=host /Users/sudikshachugh/.nvm/versions/node/v24.21.0/bin/node scripts/integration-runner.mjs --reporter=json --outputFile=/private/tmp/phase22-cont-final-regression-1.json",
+    "INTEGRATION_EXECUTION=host /Users/sudikshachugh/.nvm/versions/node/v24.21.0/bin/node scripts/integration-runner.mjs --reporter=json --outputFile=/private/tmp/phase22-cont-final-regression-2.json",
+    "/Users/sudikshachugh/.nvm/versions/node/v24.21.0/bin/node node_modules/vitest/vitest.mjs run packages/observability/test tests/contracts --reporter=json --outputFile=/private/tmp/phase22-cont-final-observability-contracts.json",
+    "SQL_VERIFICATION_REPORT_DIR=/private/tmp/phase22-cont-final-sql /Users/sudikshachugh/.nvm/versions/node/v24.21.0/bin/node scripts/sql-integration-runner.mjs",
+    "/Users/sudikshachugh/.nvm/versions/node/v24.21.0/bin/node /private/tmp/phase22-cont-interruption.mjs"
+  ],
+  "adapters": {
+    "dependency": [
+      "postgres",
+      "rabbitmq",
+      "redis",
+      "elasticsearch"
+    ],
+    "process": [
+      "terminate",
+      "restart",
+      "interrupt"
+    ],
+    "network": [
+      "timeout",
+      "connection_reset"
+    ],
+    "delivery": [
+      "duplicate",
+      "delivery_delay",
+      "restart"
+    ],
+    "configuration": "strict typed discriminated union; no endpoint, command, path or external resource identity",
+    "ownership": "real Docker inspection or registered local receipt plus exact owned handles, rechecked before mutation",
+    "recovery": "watchdog and explicit bounded restoration/cleanup"
+  },
+  "transactionBoundaries": [
+    {
+      "boundary": "A order rollback",
+      "evidence": "postgres-order-outbox-atomic-rollback",
+      "status": "passed"
+    },
+    {
+      "boundary": "B commit before publisher",
+      "evidence": "order-commit-before-publisher",
+      "status": "passed"
+    },
+    {
+      "boundary": "C confirmed publish before mark",
+      "evidence": "outbox-process-crash-after-publish",
+      "status": "passed"
+    },
+    {
+      "boundary": "D payment provider success before persistence",
+      "evidence": "payment-provider-success-before-persistence",
+      "status": "passed"
+    },
+    {
+      "boundary": "E reservation before payment decline",
+      "evidence": "checkout-process-interruption",
+      "status": "passed"
+    },
+    {
+      "boundary": "F refund provider success before local confirmation",
+      "evidence": "refund-provider-success-before-confirmation",
+      "status": "passed"
+    },
+    {
+      "boundary": "G consumer commit before acknowledgement",
+      "evidence": "consumer-process-restart-before-ack",
+      "status": "passed"
+    }
+  ],
+  "httpMutationContracts": {
+    "definitions": 18,
+    "tests": 166,
+    "status": "passed",
+    "requestsResponsesAuthorizationIdempotencyErrorsVersioning": true
+  },
+  "httpReadAndSecurityContracts": {
+    "total": 25,
+    "passed": 25,
+    "failed": 0,
+    "skipped": 0
+  },
+  "eventContracts": {
+    "total": 43,
+    "passed": 43,
+    "failed": 0,
+    "skipped": 0
+  },
+  "live": {
+    "artifact": "phase-22-live-results.json",
+    "fixture": {
+      "runId": "74608450b5644749f5c38c7d",
+      "project": "phase22-74608450b5644749f5c38c7d",
+      "marker": "ecommerce-phase22",
+      "resources": [
+        "postgres",
+        "rabbitmq",
+        "redis",
+        "elasticsearch",
+        "orders",
+        "payments",
+        "inventory",
+        "consumer",
+        "outbox",
+        "network"
+      ]
+    },
+    "sourceDigest": "7266a5da741edfcdf64f5e9dca48f80b69537ca62e940cf6dfe910b7f3940688",
+    "status": "passed",
+    "dependencyScenarios": 4,
+    "additionalMatrixCases": 12,
+    "retainedBusinessChecks": 9,
+    "requiredCategories": 13,
+    "categoryEvidence": {
+      "postgresOutage": "postgres-owned-outage",
+      "rabbitmqOutage": "rabbitmq-owned-outage",
+      "redisOutage": "redis-owned-outage",
+      "elasticsearchOutage": "elasticsearch-owned-outage",
+      "serviceRestart": "service-process-restart",
+      "duplicateDelivery": "duplicate-event-delivery",
+      "consumerRestart": "consumer-process-restart-before-ack",
+      "outboxInterruption": "outbox-process-crash-after-publish",
+      "checkoutInterruption": "checkout-process-interruption",
+      "paymentRecovery": "payment-provider-success-before-persistence",
+      "refundRecovery": "refund-provider-success-before-confirmation",
+      "inventoryConcurrency": "inventory-concurrent-last-unit",
+      "networkTimeout": "network-timeout"
+    },
+    "telemetryExperiments": 25,
+    "cleanup": {
+      "verified": true
+    },
+    "matrix": [
+      {
+        "scenarioId": "service-process-restart",
+        "status": "passed",
+        "evidence": {
+          "processRestarts": 1,
+          "preservedOrders": 1
+        },
+        "invariants": [
+          {
+            "id": "eventual-recovery",
+            "kind": "immediate",
+            "recoveryHorizonMs": 0,
+            "status": "passed",
+            "evidence": {
+              "observed": 0,
+              "limit": 0,
+              "complete": true,
+              "elapsedMs": 1131
+            },
+            "detail": "assertion-satisfied"
+          }
+        ],
+        "cleanup": {
+          "verified": true
+        }
+      },
+      {
+        "scenarioId": "network-timeout",
+        "status": "passed",
+        "evidence": {
+          "boundedFailures": 1,
+          "recoveredRequests": 1
+        },
+        "invariants": [
+          {
+            "id": "no-false-success",
+            "kind": "immediate",
+            "recoveryHorizonMs": 0,
+            "status": "passed",
+            "evidence": {
+              "observed": 0,
+              "limit": 0,
+              "complete": true,
+              "elapsedMs": 154
+            },
+            "detail": "assertion-satisfied"
+          }
+        ],
+        "cleanup": {
+          "verified": true
+        }
+      },
+      {
+        "scenarioId": "network-connection-reset",
+        "status": "passed",
+        "evidence": {
+          "boundedFailures": 1,
+          "recoveredRequests": 1
+        },
+        "invariants": [
+          {
+            "id": "no-false-success",
+            "kind": "immediate",
+            "recoveryHorizonMs": 0,
+            "status": "passed",
+            "evidence": {
+              "observed": 0,
+              "limit": 0,
+              "complete": true,
+              "elapsedMs": 45
+            },
+            "detail": "assertion-satisfied"
+          }
+        ],
+        "cleanup": {
+          "verified": true
+        }
+      },
+      {
+        "scenarioId": "duplicate-event-delivery",
+        "status": "passed",
+        "evidence": {
+          "deliveries": 6,
+          "businessEffects": 1,
+          "duplicates": 5
+        },
+        "invariants": [
+          {
+            "id": "no-duplicate-effect",
+            "kind": "immediate",
+            "recoveryHorizonMs": 0,
+            "status": "passed",
+            "evidence": {
+              "observed": 0,
+              "limit": 0,
+              "complete": true,
+              "elapsedMs": 263
+            },
+            "detail": "assertion-satisfied"
+          }
+        ],
+        "cleanup": {
+          "verified": true
+        }
+      },
+      {
+        "scenarioId": "delayed-message-processing",
+        "status": "passed",
+        "evidence": {
+          "deliveries": 1,
+          "businessEffects": 1,
+          "duplicates": 0
+        },
+        "invariants": [
+          {
+            "id": "eventual-recovery",
+            "kind": "immediate",
+            "recoveryHorizonMs": 0,
+            "status": "passed",
+            "evidence": {
+              "observed": 0,
+              "limit": 0,
+              "complete": true,
+              "elapsedMs": 329
+            },
+            "detail": "assertion-satisfied"
+          }
+        ],
+        "cleanup": {
+          "verified": true
+        }
+      },
+      {
+        "scenarioId": "consumer-process-restart-before-ack",
+        "status": "passed",
+        "evidence": {
+          "redelivered": 1,
+          "businessEffects": 1,
+          "processRestarts": 1
+        },
+        "invariants": [
+          {
+            "id": "no-duplicate-effect",
+            "kind": "immediate",
+            "recoveryHorizonMs": 0,
+            "status": "passed",
+            "evidence": {
+              "observed": 0,
+              "limit": 0,
+              "complete": true,
+              "elapsedMs": 1151
+            },
+            "detail": "assertion-satisfied"
+          }
+        ],
+        "cleanup": {
+          "verified": true
+        }
+      },
+      {
+        "scenarioId": "order-commit-before-publisher",
+        "status": "passed",
+        "evidence": {
+          "orders": 1,
+          "recoverableOutboxEvents": 1
+        },
+        "invariants": [
+          {
+            "id": "no-lost-outbox",
+            "kind": "immediate",
+            "recoveryHorizonMs": 0,
+            "status": "passed",
+            "evidence": {
+              "observed": 0,
+              "limit": 0,
+              "complete": true,
+              "elapsedMs": 48
+            },
+            "detail": "assertion-satisfied"
+          }
+        ],
+        "cleanup": {
+          "verified": true
+        }
+      },
+      {
+        "scenarioId": "outbox-process-crash-after-publish",
+        "status": "passed",
+        "evidence": {
+          "confirmedDeliveries": 2,
+          "businessEffects": 1,
+          "publishedOutboxRows": 1
+        },
+        "invariants": [
+          {
+            "id": "no-lost-outbox",
+            "kind": "immediate",
+            "recoveryHorizonMs": 0,
+            "status": "passed",
+            "evidence": {
+              "observed": 0,
+              "limit": 0,
+              "complete": true,
+              "elapsedMs": 1262
+            },
+            "detail": "assertion-satisfied"
+          }
+        ],
+        "cleanup": {
+          "verified": true
+        }
+      },
+      {
+        "scenarioId": "payment-provider-success-before-persistence",
+        "status": "passed",
+        "evidence": {
+          "successfulProviderCharges": 1,
+          "reconciledPayments": 1,
+          "crashedProcesses": 1
+        },
+        "invariants": [
+          {
+            "id": "no-duplicate-payment",
+            "kind": "immediate",
+            "recoveryHorizonMs": 0,
+            "status": "passed",
+            "evidence": {
+              "observed": 0,
+              "limit": 0,
+              "complete": true,
+              "elapsedMs": 1319
+            },
+            "detail": "assertion-satisfied"
+          }
+        ],
+        "cleanup": {
+          "verified": true
+        }
+      },
+      {
+        "scenarioId": "refund-provider-success-before-confirmation",
+        "status": "passed",
+        "evidence": {
+          "successfulProviderRefunds": 1,
+          "reconciledRefunds": 1,
+          "crashedProcesses": 1
+        },
+        "invariants": [
+          {
+            "id": "no-duplicate-refund",
+            "kind": "immediate",
+            "recoveryHorizonMs": 0,
+            "status": "passed",
+            "evidence": {
+              "observed": 0,
+              "limit": 0,
+              "complete": true,
+              "elapsedMs": 1138
+            },
+            "detail": "assertion-satisfied"
+          }
+        ],
+        "cleanup": {
+          "verified": true
+        }
+      },
+      {
+        "scenarioId": "inventory-concurrent-last-unit",
+        "status": "passed",
+        "evidence": {
+          "contenders": 6,
+          "reservations": 1,
+          "restoredStock": 1
+        },
+        "invariants": [
+          {
+            "id": "no-overselling",
+            "kind": "immediate",
+            "recoveryHorizonMs": 0,
+            "status": "passed",
+            "evidence": {
+              "observed": 0,
+              "limit": 0,
+              "complete": true,
+              "elapsedMs": 50
+            },
+            "detail": "assertion-satisfied"
+          }
+        ],
+        "cleanup": {
+          "verified": true
+        }
+      },
+      {
+        "scenarioId": "checkout-process-interruption",
+        "status": "passed",
+        "evidence": {
+          "reservations": 1,
+          "durableReleaseCommands": 1,
+          "restoredStock": 1,
+          "invalidTransitions": 0
+        },
+        "invariants": [
+          {
+            "id": "valid-saga-transition",
+            "kind": "immediate",
+            "recoveryHorizonMs": 0,
+            "status": "passed",
+            "evidence": {
+              "observed": 0,
+              "limit": 0,
+              "complete": true,
+              "elapsedMs": 990
+            },
+            "detail": "assertion-satisfied"
+          }
+        ],
+        "cleanup": {
+          "verified": true
+        }
+      }
+    ]
+  },
+  "telemetry": {
+    "scope": "phase17-sdk-in-process-export",
+    "backendPersistenceClaimed": false,
+    "fabricatedReferencesOrSamples": false,
+    "phase17BootstrapReused": true,
+    "labels": "bounded fault/target/outcome and existing sanitized operation dimensions; no customer/order/payment/trace identifiers",
+    "experiments": [
+      {
+        "scenarioId": "postgres-order-outbox-atomic-rollback",
+        "status": "passed",
+        "scope": "phase17-sdk-in-process-export",
+        "telemetryStatus": "verified",
+        "activatedAt": "2026-10-17T11:22:05.864Z",
+        "removedAt": "2026-10-17T11:22:05.902Z",
+        "recoveryDurationMs": 0,
+        "traceReferences": 13,
+        "metricObservations": 13,
+        "trace": {
+          "traceId": "f6487813d29d65870812ac598d7834af",
+          "spanId": "18baaf42e70095dd",
+          "name": "resilience.scenario"
+        },
+        "scenarioCounterDelta": 1
+      },
+      {
+        "scenarioId": "postgres-order-concurrent-idempotency",
+        "status": "passed",
+        "scope": "phase17-sdk-in-process-export",
+        "telemetryStatus": "verified",
+        "activatedAt": "2026-10-17T11:22:05.907Z",
+        "removedAt": "2026-10-17T11:22:05.962Z",
+        "recoveryDurationMs": 0,
+        "traceReferences": 16,
+        "metricObservations": 10,
+        "trace": {
+          "traceId": "f9bd0dac659969fb6f2397e6d3125bb3",
+          "spanId": "4e01b59661c9d125",
+          "name": "resilience.scenario"
+        },
+        "scenarioCounterDelta": 1
+      },
+      {
+        "scenarioId": "inventory-last-unit-confirm-retry-release",
+        "status": "passed",
+        "scope": "phase17-sdk-in-process-export",
+        "telemetryStatus": "verified",
+        "activatedAt": "2026-10-17T11:22:05.964Z",
+        "removedAt": "2026-10-17T11:22:06.031Z",
+        "recoveryDurationMs": 0,
+        "traceReferences": 16,
+        "metricObservations": 10,
+        "trace": {
+          "traceId": "d764284aae21156ca87a41a222ee0649",
+          "spanId": "3d3b292acf0a9ac8",
+          "name": "resilience.scenario"
+        },
+        "scenarioCounterDelta": 1
+      },
+      {
+        "scenarioId": "rabbitmq-duplicate-redelivery-consumer-restart",
+        "status": "passed",
+        "scope": "phase17-sdk-in-process-export",
+        "telemetryStatus": "verified",
+        "activatedAt": "2026-10-17T11:22:06.034Z",
+        "removedAt": "2026-10-17T11:22:06.115Z",
+        "recoveryDurationMs": 0,
+        "traceReferences": 16,
+        "metricObservations": 8,
+        "trace": {
+          "traceId": "8e2ed3c46cc8a7d4aad198905e334530",
+          "spanId": "64b4459808f01862",
+          "name": "resilience.scenario"
+        },
+        "scenarioCounterDelta": 1
+      },
+      {
+        "scenarioId": "outbox-confirm-before-mark-ambiguity-restart",
+        "status": "passed",
+        "scope": "phase17-sdk-in-process-export",
+        "telemetryStatus": "verified",
+        "activatedAt": "2026-10-17T11:22:06.117Z",
+        "removedAt": "2026-10-17T11:22:06.298Z",
+        "recoveryDurationMs": 0,
+        "traceReferences": 14,
+        "metricObservations": 8,
+        "trace": {
+          "traceId": "74cfa1ad6c5500de8505e13b56b78f7f",
+          "spanId": "d5a9b50677d9d1e3",
+          "name": "resilience.scenario"
+        },
+        "scenarioCounterDelta": 1
+      },
+      {
+        "scenarioId": "elasticsearch-duplicate-and-stale-version",
+        "status": "passed",
+        "scope": "phase17-sdk-in-process-export",
+        "telemetryStatus": "verified",
+        "activatedAt": "2026-10-17T11:22:06.300Z",
+        "removedAt": "2026-10-17T11:22:06.671Z",
+        "recoveryDurationMs": 0,
+        "traceReferences": 7,
+        "metricObservations": 4,
+        "trace": {
+          "traceId": "5721a8c59799c2daf9274473f7b91132",
+          "spanId": "9822ca8ead93e32c",
+          "name": "resilience.scenario"
+        },
+        "scenarioCounterDelta": 1
+      },
+      {
+        "scenarioId": "payment-ambiguous-success-concurrent-reconciliation",
+        "status": "passed",
+        "scope": "phase17-sdk-in-process-export",
+        "telemetryStatus": "verified",
+        "activatedAt": "2026-10-17T11:22:06.734Z",
+        "removedAt": "2026-10-17T11:22:06.862Z",
+        "recoveryDurationMs": 0,
+        "traceReferences": 16,
+        "metricObservations": 14,
+        "trace": {
+          "traceId": "d517a8e86b9730c11f976742277b9ea6",
+          "spanId": "7f097f0bde6f8353",
+          "name": "resilience.scenario"
+        },
+        "scenarioCounterDelta": 1
+      },
+      {
+        "scenarioId": "refund-ambiguous-success-restart-idempotency",
+        "status": "passed",
+        "scope": "phase17-sdk-in-process-export",
+        "telemetryStatus": "verified",
+        "activatedAt": "2026-10-17T11:22:06.864Z",
+        "removedAt": "2026-10-17T11:22:07.059Z",
+        "recoveryDurationMs": 0,
+        "traceReferences": 16,
+        "metricObservations": 12,
+        "trace": {
+          "traceId": "b0615fe0d2e8820daf68959b2c82f4a2",
+          "spanId": "24438628647c9edc",
+          "name": "resilience.scenario"
+        },
+        "scenarioCounterDelta": 1
+      },
+      {
+        "scenarioId": "checkout-inventory-process-crash-redelivery-compensation",
+        "status": "passed",
+        "scope": "phase17-sdk-in-process-export",
+        "telemetryStatus": "verified",
+        "activatedAt": "2026-10-17T11:22:07.062Z",
+        "removedAt": "2026-10-17T11:22:07.516Z",
+        "recoveryDurationMs": 0,
+        "traceReferences": 16,
+        "metricObservations": 16,
+        "trace": {
+          "traceId": "a52eb767661fd6004a06031280775158",
+          "spanId": "d5d82ef4c3160080",
+          "name": "resilience.scenario"
+        },
+        "scenarioCounterDelta": 1
+      },
+      {
+        "scenarioId": "service-process-restart",
+        "status": "passed",
+        "scope": "phase17-sdk-in-process-export",
+        "telemetryStatus": "verified",
+        "activatedAt": "2026-10-17T11:22:08.104Z",
+        "removedAt": "2026-10-17T11:22:08.503Z",
+        "recoveryDurationMs": 357,
+        "traceReferences": 5,
+        "metricObservations": 6,
+        "trace": {
+          "traceId": "0cd9725410717dc6edacbfe23c083f83",
+          "spanId": "d959b631ffdee0e8",
+          "name": "resilience.scenario"
+        },
+        "scenarioCounterDelta": 1
+      },
+      {
+        "scenarioId": "network-timeout",
+        "status": "passed",
+        "scope": "phase17-sdk-in-process-export",
+        "telemetryStatus": "verified",
+        "activatedAt": "2026-10-17T11:22:08.701Z",
+        "removedAt": "2026-10-17T11:22:08.802Z",
+        "recoveryDurationMs": 0,
+        "traceReferences": 5,
+        "metricObservations": 5,
+        "trace": {
+          "traceId": "3276be11314453b3a85855563370f154",
+          "spanId": "e06e444edae3816b",
+          "name": "resilience.scenario"
+        },
+        "scenarioCounterDelta": 1
+      },
+      {
+        "scenarioId": "network-connection-reset",
+        "status": "passed",
+        "scope": "phase17-sdk-in-process-export",
+        "telemetryStatus": "verified",
+        "activatedAt": "2026-10-17T11:22:08.847Z",
+        "removedAt": "2026-10-17T11:22:08.848Z",
+        "recoveryDurationMs": 0,
+        "traceReferences": 5,
+        "metricObservations": 5,
+        "trace": {
+          "traceId": "2838645443bfb701e091c116448d2dcf",
+          "spanId": "e92ee745eb088903",
+          "name": "resilience.scenario"
+        },
+        "scenarioCounterDelta": 1
+      },
+      {
+        "scenarioId": "duplicate-event-delivery",
+        "status": "passed",
+        "scope": "phase17-sdk-in-process-export",
+        "telemetryStatus": "verified",
+        "activatedAt": "2026-10-17T11:22:08.962Z",
+        "removedAt": "2026-10-17T11:22:09.019Z",
+        "recoveryDurationMs": 15,
+        "traceReferences": 16,
+        "metricObservations": 7,
+        "trace": {
+          "traceId": "aec7df5794bfacd7421e52f0e4733865",
+          "spanId": "54cb7e61519f8ee1",
+          "name": "resilience.scenario"
+        },
+        "scenarioCounterDelta": 1
+      },
+      {
+        "scenarioId": "delayed-message-processing",
+        "status": "passed",
+        "scope": "phase17-sdk-in-process-export",
+        "telemetryStatus": "verified",
+        "activatedAt": "2026-10-17T11:22:09.233Z",
+        "removedAt": "2026-10-17T11:22:09.380Z",
+        "recoveryDurationMs": 79,
+        "traceReferences": 9,
+        "metricObservations": 7,
+        "trace": {
+          "traceId": "03633b2eb76dd690cc921cf1dbe71b40",
+          "spanId": "6852d7bffc35fd67",
+          "name": "resilience.scenario"
+        },
+        "scenarioCounterDelta": 1
+      },
+      {
+        "scenarioId": "consumer-process-restart-before-ack",
+        "status": "passed",
+        "scope": "phase17-sdk-in-process-export",
+        "telemetryStatus": "verified",
+        "activatedAt": "2026-10-17T11:22:09.956Z",
+        "removedAt": "2026-10-17T11:22:10.367Z",
+        "recoveryDurationMs": 370,
+        "traceReferences": 4,
+        "metricObservations": 3,
+        "trace": {
+          "traceId": "e15283b48c1c360fc5575d189e4af1e1",
+          "spanId": "519af22f6a8c5c24",
+          "name": "resilience.scenario"
+        },
+        "scenarioCounterDelta": 1
+      },
+      {
+        "scenarioId": "order-commit-before-publisher",
+        "status": "passed",
+        "scope": "phase17-sdk-in-process-export",
+        "telemetryStatus": "verified",
+        "activatedAt": "2026-10-17T11:22:10.633Z",
+        "removedAt": "2026-10-17T11:22:10.639Z",
+        "recoveryDurationMs": 0,
+        "traceReferences": 12,
+        "metricObservations": 8,
+        "trace": {
+          "traceId": "a96c16e8ff25ecd6cc73cb342743b428",
+          "spanId": "e02266943d2187be",
+          "name": "resilience.scenario"
+        },
+        "scenarioCounterDelta": 1
+      },
+      {
+        "scenarioId": "outbox-process-crash-after-publish",
+        "status": "passed",
+        "scope": "phase17-sdk-in-process-export",
+        "telemetryStatus": "verified",
+        "activatedAt": "2026-10-17T11:22:11.132Z",
+        "removedAt": "2026-10-17T11:22:11.742Z",
+        "recoveryDurationMs": 571,
+        "traceReferences": 13,
+        "metricObservations": 8,
+        "trace": {
+          "traceId": "6179dd9ff2b6bc20ebcf9cf09b070504",
+          "spanId": "2d2ca02183926b3d",
+          "name": "resilience.scenario"
+        },
+        "scenarioCounterDelta": 1
+      },
+      {
+        "scenarioId": "payment-provider-success-before-persistence",
+        "status": "passed",
+        "scope": "phase17-sdk-in-process-export",
+        "telemetryStatus": "verified",
+        "activatedAt": "2026-10-17T11:22:12.449Z",
+        "removedAt": "2026-10-17T11:22:13.076Z",
+        "recoveryDurationMs": 577,
+        "traceReferences": 10,
+        "metricObservations": 7,
+        "trace": {
+          "traceId": "c719962aa95abac19e0b11e0ccdf33f7",
+          "spanId": "dcde127c0ef808e0",
+          "name": "resilience.scenario"
+        },
+        "scenarioCounterDelta": 1
+      },
+      {
+        "scenarioId": "refund-provider-success-before-confirmation",
+        "status": "passed",
+        "scope": "phase17-sdk-in-process-export",
+        "telemetryStatus": "verified",
+        "activatedAt": "2026-10-17T11:22:13.702Z",
+        "removedAt": "2026-10-17T11:22:14.262Z",
+        "recoveryDurationMs": 523,
+        "traceReferences": 15,
+        "metricObservations": 7,
+        "trace": {
+          "traceId": "a5dfb18387f6709d151d666e8e04f839",
+          "spanId": "089f54a86cccb85e",
+          "name": "resilience.scenario"
+        },
+        "scenarioCounterDelta": 1
+      },
+      {
+        "scenarioId": "inventory-concurrent-last-unit",
+        "status": "passed",
+        "scope": "phase17-sdk-in-process-export",
+        "telemetryStatus": "verified",
+        "activatedAt": "2026-10-17T11:22:14.406Z",
+        "removedAt": "2026-10-17T11:22:14.419Z",
+        "recoveryDurationMs": 5,
+        "traceReferences": 16,
+        "metricObservations": 10,
+        "trace": {
+          "traceId": "0a138eff1f1503a4e32bc3ec81dbf8fb",
+          "spanId": "b2a80c72c74ecafa",
+          "name": "resilience.scenario"
+        },
+        "scenarioCounterDelta": 1
+      },
+      {
+        "scenarioId": "checkout-process-interruption",
+        "status": "passed",
+        "scope": "phase17-sdk-in-process-export",
+        "telemetryStatus": "verified",
+        "activatedAt": "2026-10-17T11:22:14.891Z",
+        "removedAt": "2026-10-17T11:22:15.256Z",
+        "recoveryDurationMs": 332,
+        "traceReferences": 16,
+        "metricObservations": 15,
+        "trace": {
+          "traceId": "3b654b5f957ba289607dd59c81baa0e9",
+          "spanId": "753a2ccf99939586",
+          "name": "resilience.scenario"
+        },
+        "scenarioCounterDelta": 1
+      },
+      {
+        "scenarioId": "redis-owned-outage",
+        "status": "passed",
+        "scope": "phase17-sdk-in-process-export",
+        "telemetryStatus": "verified",
+        "activatedAt": "2026-10-17T11:22:15.994Z",
+        "removedAt": "2026-10-17T11:22:16.268Z",
+        "recoveryDurationMs": 101,
+        "traceReferences": 5,
+        "metricObservations": 6,
+        "trace": {
+          "traceId": "6e35c1c73165568d5cd60c0754021c73",
+          "spanId": "9420ce011989f8de",
+          "name": "resilience.scenario"
+        },
+        "scenarioCounterDelta": 1
+      },
+      {
+        "scenarioId": "rabbitmq-owned-outage",
+        "status": "passed",
+        "scope": "phase17-sdk-in-process-export",
+        "telemetryStatus": "verified",
+        "activatedAt": "2026-10-17T11:22:16.682Z",
+        "removedAt": "2026-10-17T11:22:17.091Z",
+        "recoveryDurationMs": 80,
+        "traceReferences": 1,
+        "metricObservations": 2,
+        "trace": {
+          "traceId": "95e26efa29e2f9d1f6d5a495ca9bd42b",
+          "spanId": "bc1257e854ca30f1",
+          "name": "resilience.scenario"
+        },
+        "scenarioCounterDelta": 1
+      },
+      {
+        "scenarioId": "elasticsearch-owned-outage",
+        "status": "passed",
+        "scope": "phase17-sdk-in-process-export",
+        "telemetryStatus": "verified",
+        "activatedAt": "2026-10-17T11:22:17.512Z",
+        "removedAt": "2026-10-17T11:22:18.138Z",
+        "recoveryDurationMs": 97,
+        "traceReferences": 5,
+        "metricObservations": 4,
+        "trace": {
+          "traceId": "37db6a3e4bf3335a5f22384632f5764c",
+          "spanId": "f992f58bd17f5dc4",
+          "name": "resilience.scenario"
+        },
+        "scenarioCounterDelta": 1
+      },
+      {
+        "scenarioId": "postgres-owned-outage",
+        "status": "passed",
+        "scope": "phase17-sdk-in-process-export",
+        "telemetryStatus": "verified",
+        "activatedAt": "2026-10-17T11:22:18.512Z",
+        "removedAt": "2026-10-17T11:22:20.064Z",
+        "recoveryDurationMs": 120,
+        "traceReferences": 9,
+        "metricObservations": 6,
+        "trace": {
+          "traceId": "1050e1fe6f4256d630990e9fb8382bcf",
+          "spanId": "fb570104147fe4be",
+          "name": "resilience.scenario"
+        },
+        "scenarioCounterDelta": 1
+      }
+    ]
+  },
+  "interruption": {
+    "status": "passed",
+    "signal": "SIGTERM",
+    "fixture": {
+      "runId": "621d8c5fac3a5653935cec90",
+      "project": "phase22-621d8c5fac3a5653935cec90",
+      "marker": "ecommerce-phase22",
+      "resources": [
+        "postgres",
+        "rabbitmq",
+        "redis",
+        "elasticsearch",
+        "orders",
+        "payments",
+        "inventory",
+        "consumer",
+        "outbox",
+        "network"
+      ]
+    },
+    "sourceDigest": "7266a5da741edfcdf64f5e9dca48f80b69537ca62e940cf6dfe910b7f3940688",
+    "childExitCode": 1,
+    "interruptedDuringOwnedMatrixWorker": true,
+    "ownedWorkerExited": true,
+    "telemetryUnavailableExplicit": true,
+    "cleanupVerified": true,
+    "manualRecoveryIdempotent": true
+  },
+  "cleanupAudit": {
+    "phase22ContainersRemaining": 0,
+    "phase22NetworksRemaining": 0,
+    "finalRegressionContainersRemaining": 0,
+    "finalSqlContainersRemaining": 0,
+    "verifiedByDockerInspection": true
+  },
+  "securityVerification": {
+    "ownedFixturesOnly": true,
+    "targetAllowlisting": true,
+    "arbitraryCommandsRejected": true,
+    "productionFaultEndpointsAdded": false,
+    "newHooksUnavailableToNormalProductionConfig": true,
+    "authenticationAuthorizationContracts": true,
+    "secretTextExcludedFromTelemetryEvidence": true,
+    "developmentDataUntouched": true,
+    "boundedFaultsAndWatchdog": true,
+    "recoveryAndCleanupVerified": true,
+    "productionAppImportsOfTestWorkers": 0
+  },
+  "priorVerification": {
+    "artifactDirectory": "history/phase22-initial",
+    "sourceDigest": "fc5b61fd947f7eab44f8eadd5ff839415a3b7605be3d208f2fed2aff48cedd4b",
+    "verdict": "PHASE 22 VERIFICATION INCOMPLETE",
+    "historicalOnly": true,
+    "usedAsCurrentVerification": false
+  },
+  "continuationAttempts": [
+    {
+      "stage": "initial continuation exports",
+      "tests": {
+        "total": 308,
+        "passed": 290,
+        "failed": 18
+      },
+      "reason": "New adapter/telemetry modules were not re-exported; corrected before final verification",
+      "liveStartup": "import rejected before fixture creation"
+    },
+    {
+      "stage": "telemetry validation live attempt",
+      "status": "failed",
+      "reason": "Metric attribute allowlist was incorrectly required in full rather than optional per series",
+      "cleanupVerified": true,
+      "resolution": "Use partial allowed metric attributes and collect genuine SDK observations"
+    },
+    {
+      "stage": "development targeted suite",
+      "passed": 308,
+      "total": 308,
+      "historicalOnly": true
+    },
+    {
+      "stage": "pre-final source candidate",
+      "passed": 315,
+      "total": 315,
+      "sourceDigest": "4af98e6260fbe4a5308d61badfc06b844446f4e7245c4390a34ae8c2aa1d37bf",
+      "resolution": "Added shutdown-unavailable reporting and its test before final freeze",
+      "historicalOnly": true
+    }
+  ],
+  "knownLimitations": [
+    "Telemetry evidence proves local Phase 17 SDK export/collection, not Prometheus/Tempo/Grafana persistence or complete child-process span coverage.",
+    "The deterministic provider transfers no real funds and is not evidence about a real provider integration.",
+    "Service data is isolated by schema in a disposable cluster; this is not a cross-cluster partition experiment.",
+    "JavaScript cannot cancel arbitrary uncooperative third-party effects; provided capabilities use bounded I/O, watchdogs and owned handles, with manual recovery for host/daemon failure.",
+    "Contract checks are scoped to the schema subset and actual consumer parsing behavior, not universal backward compatibility or every possible route.",
+    "Delivery remains at least once; durable unknown/manual-review business states are not equated with automatic terminal recovery."
+  ],
+  "acceptance": {
+    "faultAdaptersImplementedAndTested": true,
+    "transactionBoundariesVerified": true,
+    "httpMutationContractsVerified": true,
+    "eventContractsVerified": true,
+    "perScenarioTelemetryCaptured": true,
+    "allRequiredLiveCategoriesPass": true,
+    "businessInvariantsPass": true,
+    "typecheckPasses": true,
+    "twoIndependentFrozenSourceRegressionsPass": true,
+    "noDevelopmentDataModified": true,
+    "fixtureCleanupPasses": true,
+    "documentationComplete": true
+  }
+}
